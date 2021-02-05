@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:ignore="MissingConstraints">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/time_string"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dp_15"
+            android:text="@string/timeString"
+            android:textColor="@color/black_333" />
+
+        <LinearLayout
+            android:id="@+id/layout_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/time_string"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="@dimen/dp_144"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_15"
+                android:layout_weight="1"
+                android:background="@drawable/shape_b_ffffff_c_4"
+                android:gravity="center"
+                android:paddingTop="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_8"
+                android:text="2019-03-15"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16"
+                tools:ignore="RtlCompat"
+                tools:text="2019-03-15" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_13"
+                android:layout_marginEnd="@dimen/dp_13"
+                android:text="至"
+                android:textColor="#FFC9C9C9"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:layout_width="@dimen/dp_144"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp_15"
+                android:layout_weight="1"
+                android:background="@drawable/shape_b_ffffff_c_4"
+                android:gravity="center"
+                android:paddingTop="@dimen/dp_8"
+                android:paddingBottom="@dimen/dp_8"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16"
+                tools:ignore="RtlCompat"
+                tools:text="2019-03-15" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout_time"
+            android:padding="@dimen/dp_15"
+            android:text="@string/event_type"
+            android:textColor="@color/black_333" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bottom_layout"
+            android:layout_below="@id/type"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="3"
+            tools:listitem="@layout/my_work_record_tag_item">
+
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <LinearLayout
+            android:id="@+id/bottom_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/dp_35"
+            android:orientation="horizontal"
+            tools:ignore="RtlCompat">
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_25"
+                android:layout_weight="1"
+                android:background="@drawable/shape_b_fff2f4f5_c_5"
+                android:text="@string/remove"
+                android:textColor="@color/gray_666"
+                android:textSize="@dimen/sp_18" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:layout_marginEnd="@dimen/dp_25"
+                android:layout_weight="1"
+                android:background="@drawable/shape_b_ff50b7fc_c_5"
+                android:text="@string/sure"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_18" />
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_title_search" />
+
+    <View
+        android:id="@+id/fill_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/toolbar_layout"
+        android:background="@color/gray_eee" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/fill_line">
+
+        <com.weique.overhaul.v2.app.customview.VerticalSwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/screen"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_47"
+                    android:layout_below="@+id/banner"
+                    android:background="@drawable/shape_b_ffffff_c_6"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:id="@+id/sort"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/dp_60"
+                        android:layout_weight="2"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/sort_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableRight="@drawable/peas_icon"
+                            android:drawablePadding="@dimen/dp_5"
+                            android:ellipsize="end"
+                            android:gravity="center_vertical"
+                            android:maxLength="12"
+                            android:singleLine="true"
+                            android:text="@string/sort"
+                            android:textColor="@color/gray_666"
+                            android:textSize="14sp" />
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:id="@+id/status"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignTop="@+id/screen"
+                        android:layout_alignEnd="@+id/screen"
+                        android:layout_weight="2"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/status_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/status"
+                            android:textColor="@color/gray_666"
+                            android:textSize="14sp" />
+
+                        <ImageView
+                            android:id="@+id/status_arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_5"
+                            android:src="@drawable/peas_icon" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/screen"
+                    android:layout_margin="@dimen/dp_20"
+                    tools:listitem="@layout/activity_events_reported_item" />
+            </RelativeLayout>
+        </com.weique.overhaul.v2.app.customview.VerticalSwipeRefreshLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:padding="@dimen/dp_10"
+            android:src="@drawable/add_icon_nor"
+            app:backgroundTint="@color/colorPrimaryDark"
+            app:layout_anchor="@id/recycler"
+            app:layout_anchorGravity="bottom|right|end"
+            app:layout_behavior="com.weique.overhaul.v2.app.behavior.FabScrollBehavior" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

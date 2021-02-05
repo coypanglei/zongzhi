@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_b_ffffff_c_6"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_50"
+        android:gravity="center"
+        android:paddingLeft="@dimen/dp_20"
+        android:paddingRight="@dimen/dp_20"
+        android:text="@string/event_priority"
+        android:textColor="@color/black_333"
+        android:textSize="@dimen/sp_18" />
+
+    <include layout="@layout/view_line_full" />
+
+    <LinearLayout
+        android:id="@+id/event_one"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_50"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/dp_20">
+
+        <ImageView
+            android:layout_width="@dimen/dp_10"
+            android:layout_height="@dimen/dp_10"
+            android:background="@drawable/shape_circle_10_b_214bff" />
+
+        <TextView
+            android:id="@+id/event_one_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_10"
+            android:text="@string/event_one"
+            android:textColor="@color/green_00cfab"
+            android:textSize="@dimen/sp_18" />
+
+    </LinearLayout>
+
+    <include layout="@layout/view_line_full" />
+
+    <LinearLayout
+        android:id="@+id/event_two"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_50"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/dp_20">
+
+        <ImageView
+            android:layout_width="@dimen/dp_10"
+            android:layout_height="@dimen/dp_10"
+            android:background="@drawable/shape_circle_10_b_16ceab" />
+
+        <TextView
+            android:id="@+id/event_two_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_10"
+            android:text="@string/event_two"
+            android:textColor="@color/yellow_ffb700"
+            android:textSize="@dimen/sp_18" />
+
+    </LinearLayout>
+
+    <include layout="@layout/view_line_full" />
+
+    <LinearLayout
+        android:id="@+id/event_three"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_50"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/dp_20">
+
+        <ImageView
+            android:layout_width="@dimen/dp_10"
+            android:layout_height="@dimen/dp_10"
+            android:background="@drawable/shape_circle_10_b_ffb600" />
+
+        <TextView
+            android:id="@+id/event_three_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_10"
+            android:text="@string/event_three"
+            android:textColor="@color/red_ff2700"
+            android:textSize="@dimen/sp_18" />
+
+    </LinearLayout>
+</LinearLayout>

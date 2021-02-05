@@ -1,0 +1,2 @@
+include ':app', ':lib_zxing', ':arms', ':libwebrtc', ':libskywebrtc2', ':libskywebrtc', ':ocr_ui', ':nicedialog', ':agentweb', ':libraryadapter'
+

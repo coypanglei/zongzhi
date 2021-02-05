@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/title"
+        layout="@layout/include_title_submit" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title"
+        android:scrollbars="none">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/layout_one"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingStart="@dimen/dp_16"
+                android:paddingEnd="@dimen/dp_16"
+                android:paddingBottom="@dimen/dp_20">
+
+                <LinearLayout
+                    android:id="@+id/event_type_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_47"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:background="@color/gray_F8F9FB"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/dp_16"
+                    android:paddingEnd="@dimen/dp_16">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_16"
+                        android:layout_height="@dimen/dp_16"
+                        android:src="@drawable/event_type" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_6"
+                        android:layout_marginLeft="@dimen/dp_6"
+                        android:layout_weight="1"
+                        android:text="@string/event_type"
+                        android:textColor="@color/black_333"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/type_unSelect"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/gray_999"
+                        android:textSize="15sp"
+                        tools:text="社情民意" />
+
+                    <TextView
+                        android:id="@+id/type_isSelect"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableRight="@drawable/arrow_icon"
+                        android:drawablePadding="@dimen/dp_5"
+                        android:textColor="@color/black_333"
+                        android:textSize="15sp"
+                        android:visibility="gone"
+                        tools:text="社情民意" />
+
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/event_describe"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_90"
+                    android:layout_below="@id/event_type_view"
+                    android:layout_marginTop="@dimen/dp_20"
+                    android:background="@null"
+                    android:gravity="start"
+                    android:hint="@string/event_hint" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/event_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/event_describe"
+                    android:paddingBottom="@dimen/dp_15" />
+
+                <LinearLayout
+                    android:id="@+id/photo_media_view"
+                    android:layout_width="@dimen/dp_77"
+                    android:layout_height="@dimen/dp_77"
+                    android:layout_below="@+id/event_list"
+                    android:background="@drawable/shape_gray_line_d4d4d4"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_25"
+                        android:layout_height="@dimen/dp_25"
+                        android:layout_marginBottom="@dimen/dp_5"
+                        android:src="@drawable/add_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/photo_media"
+                        android:textColor="@color/gray_999"
+                        android:textSize="@dimen/sp_11" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/record_view"
+                    android:layout_width="@dimen/dp_77"
+                    android:layout_height="@dimen/dp_77"
+                    android:layout_below="@+id/event_list"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/photo_media_view"
+                    android:layout_toRightOf="@+id/photo_media_view"
+                    android:background="@drawable/shape_gray_line_d4d4d4"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_25"
+                        android:layout_height="@dimen/dp_25"
+                        android:layout_marginBottom="@dimen/dp_5"
+                        android:src="@drawable/luyin_icon_grey" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/start_record"
+                        android:textColor="@color/gray_999"
+                        android:textSize="@dimen/sp_11" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/select_event_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_one"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:padding="@dimen/dp_16">
+
+                <TextView
+                    android:id="@+id/title_t"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/selet_event_titile"
+                    android:textColor="@color/black_333"
+                    android:textSize="17sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/event_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/title_t"
+                    android:layout_marginTop="@dimen/dp_10" />
+
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

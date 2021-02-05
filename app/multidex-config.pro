@@ -1,0 +1,1 @@
+-keep class  com.weique.overhaul.v2.app.GlobalConfiguration

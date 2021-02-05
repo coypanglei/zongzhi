@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/null_title"
+        style="@style/titleBar"
+        android:background="@color/white" />
+
+    <com.weique.overhaul.v2.app.customview.VerticalSwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/dp_30"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/top_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="horizontal">
+
+
+                    <ImageView
+                        android:id="@+id/head_img"
+                        android:layout_width="@dimen/dp_60"
+                        android:layout_height="@dimen/dp_60"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/dp_25"
+                        android:layout_marginTop="@dimen/dp_26"
+                        android:layout_marginBottom="@dimen/dp_26"
+                        android:scaleType="centerCrop" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/sp_19"
+                            android:textStyle="bold"
+                            tools:text="王莉" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:layout_marginTop="@dimen/dp_8"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tag_one"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="网格："
+                                android:textColor="@color/gray_666"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="middle"
+                                android:maxLines="2"
+                                android:textColor="@color/gray_666"
+                                android:textSize="14sp"
+                                tools:text="云龙区二九社区网格" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/dp_15"
+                        android:layout_marginEnd="@dimen/dp_15"
+                        android:drawableEnd="@drawable/my_icon_inter"
+                        android:drawableRight="@drawable/my_icon_inter"
+                        android:text="@string/user_info_"
+                        android:textColor="@color/gray_999"
+                        android:textSize="@dimen/sp_12" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_10"
+                    android:background="@color/gray_F8F9FB" />
+
+
+                <TextView
+                    android:id="@+id/layout_event"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:background="@color/white"
+                    android:drawableStart="@drawable/my_icon_event"
+                    android:drawableEnd="@drawable/arrow_icon"
+                    android:drawablePadding="@dimen/dp_22"
+                    android:padding="@dimen/dp_20"
+                    android:text="@string/participate_event"
+                    android:textColor="@color/black_333"
+                    android:textSize="17sp"
+                    android:visibility="gone" />
+
+
+                <TextView
+                    android:id="@+id/task_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_1"
+                    android:background="@color/white"
+                    android:drawableStart="@drawable/work_list_icon"
+                    android:drawableEnd="@drawable/arrow_icon"
+                    android:drawablePadding="@dimen/dp_20"
+                    android:padding="@dimen/dp_20"
+                    android:text="@string/work_list"
+                    android:textColor="@color/black_333"
+                    android:textSize="17sp"
+                    android:visibility="gone" />
+
+                <RelativeLayout
+                    android:id="@+id/layout_the_inspection_points"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible">
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/dp_1"
+                        android:background="@color/white"
+                        android:drawableStart="@drawable/icon_integral_points"
+                        android:drawableEnd="@drawable/arrow_icon"
+                        android:drawablePadding="@dimen/dp_20"
+                        android:padding="@dimen/dp_20"
+                        android:text="@string/the_inspection_points"
+                        android:textColor="@color/black_333"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:id="@+id/tv_the_inspection_points"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/dp_1"
+                        android:textColor="@color/black_333"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/dp_40"
+                        android:textSize="17sp" />
+                </RelativeLayout>
+
+
+                <TextView
+                    android:id="@+id/layout_attendance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_1"
+                    android:background="@color/white"
+                    android:drawableStart="@drawable/my_icon_kaoqin"
+                    android:drawableEnd="@drawable/arrow_icon"
+                    android:drawablePadding="@dimen/dp_20"
+                    android:padding="@dimen/dp_20"
+                    android:text="@string/attendance"
+                    android:textColor="@color/black_333"
+                    android:textSize="17sp" />
+
+
+                <TextView
+                    android:id="@+id/layout_interview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_1"
+                    android:background="@color/white"
+                    android:drawableStart="@drawable/interview"
+                    android:drawableEnd="@drawable/arrow_icon"
+                    android:drawablePadding="@dimen/dp_20"
+                    android:padding="@dimen/dp_20"
+                    android:text="@string/foot_line"
+                    android:textColor="@color/black_333"
+                    android:textSize="17sp" />
+
+
+                <TextView
+                    android:id="@+id/layout_patrol"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_1"
+                    android:background="@color/white"
+                    android:drawableStart="@drawable/patrol_icon"
+                    android:drawableEnd="@drawable/arrow_icon"
+                    android:drawablePadding="@dimen/dp_20"
+                    android:padding="@dimen/dp_20"
+                    android:text="@string/work_line"
+                    android:textColor="@color/black_333"
+                    android:textSize="17sp" />
+
+
+                <TextView
+                    android:id="@+id/chat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_1"
+                    android:background="@color/white"
+                    android:drawableStart="@drawable/video_consult"
+                    android:drawableEnd="@drawable/arrow_icon"
+                    android:drawablePadding="@dimen/dp_20"
+                    android:padding="@dimen/dp_20"
+                    android:text="视频会商"
+                    android:textColor="@color/black_333"
+                    android:textSize="17sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/layout_settings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:background="@color/white"
+                    android:drawableStart="@drawable/my_icon_settings"
+                    android:drawableEnd="@drawable/arrow_icon"
+                    android:drawablePadding="@dimen/dp_20"
+                    android:padding="@dimen/dp_20"
+                    android:text="@string/setting"
+                    android:textColor="@color/black_333"
+                    android:textSize="17sp" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </com.weique.overhaul.v2.app.customview.VerticalSwipeRefreshLayout>
+
+</LinearLayout>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/include_title" />
+
+    <LinearLayout
+        android:id="@+id/screen_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/dp_16"
+        android:paddingEnd="@dimen/dp_16">
+
+        <LinearLayout
+            android:id="@+id/select_grid_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_45"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/select_grid"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:id="@+id/select_grid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:layout_weight="1"
+                android:drawableEnd="@drawable/arrow_icon"
+                android:drawablePadding="@dimen/dp_5"
+                android:ellipsize="start"
+                android:gravity="end"
+                android:maxLines="2"
+                android:textColor="@color/gray_666"
+                android:textSize="@dimen/sp_14"
+                tools:text="1121312" />
+        </LinearLayout>
+
+        <include layout="@layout/view_line_full" />
+
+        <LinearLayout
+            android:id="@+id/select_tier_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_45"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/select_tier"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:id="@+id/select_standard_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:layout_weight="1"
+                android:drawableEnd="@drawable/arrow_icon"
+                android:drawablePadding="@dimen/dp_5"
+                android:ellipsize="start"
+                android:gravity="end"
+                android:maxLines="2"
+                android:text="@string/all"
+                android:textColor="@color/gray_666"
+                android:textSize="@dimen/sp_14" />
+        </LinearLayout>
+
+        <include layout="@layout/view_line_full" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_45"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/search_"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_14" />
+
+            <EditText
+                android:id="@+id/search_et"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/dp_10"
+                android:layout_weight="1"
+                android:background="@null"
+                android:gravity="end|center_vertical"
+                android:hint="@string/input_search_content"
+                android:singleLine="true"
+                android:textColor="@color/gray_666"
+                android:textSize="@dimen/sp_14" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_below="@+id/screen_layout"
+        android:gravity="end|center_vertical"
+        android:paddingStart="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_20"
+        tools:text="共计XX条数据"
+        android:textColor="@color/black_333" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/number">
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/dp_10"
+                android:background="@color/white"
+                tools:listitem="@layout/standard_address_one_item" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:padding="@dimen/dp_10"
+            android:src="@drawable/add_icon_nor"
+            app:backgroundTint="@color/colorPrimaryDark"
+            app:layout_anchor="@id/recycler_view"
+            app:layout_anchorGravity="bottom|right|end"
+            app:layout_behavior="com.weique.overhaul.v2.app.behavior.FabScrollBehavior" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

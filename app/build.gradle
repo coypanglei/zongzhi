@@ -1,0 +1,712 @@
+//noinspection GradleDependency
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion rootProject.ext.android["compileSdkVersion"]
+    buildToolsVersion rootProject.ext.android["buildToolsVersion"]
+    useLibrary 'org.apache.http.legacy'
+
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "com.weique.overhaul.v2"
+        minSdkVersion rootProject.ext.android["minSdkVersion"]
+        targetSdkVersion rootProject.ext.android["targetSdkVersion"]
+        versionCode rootProject.ext.android["versionCode"]
+        versionName rootProject.ext.android["versionName"]
+        testInstrumentationRunner rootProject.ext.dependencies["androidJUnitRunner"]
+        //高斯模糊
+        renderscriptTargetApi 25
+        renderscriptSupportModeEnabled true
+        //检查项目依赖的全部module包括module依赖的module（没有页面的module也算
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
+        ndk {// 设置支持的SO库架构（cpu类型）/*'x86',*/  'x86_64', 'armeabi',
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+        //65536
+        multiDexEnabled true
+    }
+    //自动签名
+    signingConfigs {
+        config {
+            keyAlias 'weique'
+            keyPassword 'weique'
+            storeFile file('../weique.jks')
+            storePassword 'weique'
+        }
+    }
+    buildTypes {
+        /*测试 debug*/
+        debug {
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            buildConfigField "boolean", "USE_CANARY", "true"
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled false
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        /*release*/
+        release {
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            buildConfigField "boolean", "USE_CANARY", "false"
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+        disable "MissingTranslation"
+        disable "ResourceType"
+        abortOnError false
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDir 'libs'
+            resources.srcDirs = ['src/main/resources', 'src/main/resources/']
+        }
+    }
+    //配置自定义打包名称
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def fileName
+            def date = new Date()
+            def formattedDate = date.format("yyyy_MM_dd_HH_mm", TimeZone.getTimeZone("GMT+8:00"))
+            fileName = "渠道_${variant.flavorName}" +
+                    "_版本_${variant.mergedFlavor.versionName}" +
+                    "_时间_${formattedDate}" +
+                    "_环境_${variant.buildType.name}.apk"
+            outputFileName = fileName
+        }
+    }
+    //分渠道打包
+    flavorDimensions "default"
+    productFlavors {
+        /*normal_演示环境*/
+        normal_云创园 {
+            dimension "default"
+            versionCode 116
+            versionName "1.1.6"
+            buildConfigField "String", "SERVER_URL", '"http://47.102.147.120:8082"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "normal_演示环境",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name_yun",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher_yunchuang",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+        normal_阿里测试 {
+            dimension "default"
+            versionCode 1
+            versionName "1.1.6"
+            buildConfigField "String", "SERVER_URL", '"http://47.102.147.120:2020"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "阿里测试",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+        //邯郸
+        normal_邯郸 {
+            dimension "default"
+            versionCode 102
+            versionName "1.0.2"
+            buildConfigField "String", "SERVER_URL", '"http://157.0.243.104:8013"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "邯郸",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+        normal_宿迁 {
+            dimension "default"
+            versionCode 100
+            versionName "1.0.0"
+            buildConfigField "String", "SERVER_URL", '"http://47.102.147.120:8081"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "邯郸",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name_yingji",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }//铜山
+        normal_铜山 {
+            dimension "default"
+            versionCode 122
+            versionName "1.2.2"
+            buildConfigField "String", "SERVER_URL", '"http://157.0.243.110:8280"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "铜山综治",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+        //鼓楼 ali
+        normal_鼓楼政法委 {
+            dimension "default"
+            versionCode 208
+            versionName "2.0.8"
+            buildConfigField "String", "SERVER_URL", '"http://xzgl.jsweique.com"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "鼓楼政法委",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name_gulou",
+                    isChinaElectronics: false,
+                    isGuLouZF         : true,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher_gulou",
+                    splashIcon        : "@mipmap/ic_launcher_gulou",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+
+            ]
+        }
+        //鼓楼 ali
+        normal_鼓楼opf {
+            dimension "default"
+            applicationId "com.weique.overhaul.opf"
+            versionCode 101
+            versionName "1.0.1"
+            buildConfigField "String", "SERVER_URL", '"http://1p4.xzgl.jsweique.com"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "鼓楼1加4",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name_opf",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher_opf",
+                    splashIcon        : "@mipmap/ic_launcher_opf",
+                    JPUSH_APPKEY      : "b0e78a699a5ce6e38498a36a",
+                    baidumapkey       : "7S4sYop3jL20GnBufLSHBKCmlmGNE2jd",
+            ]
+        }
+
+        //鼓楼 森林防火
+        normal_鼓楼森林防火 {
+            dimension "default"
+            versionCode 100
+            versionName "1.0.0"
+            buildConfigField "String", "SERVER_URL", '"http://47.102.147.120:8090"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "鼓楼森林防火",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+        //鼓楼公安 ali
+        normal_鼓楼公安 {
+            dimension "default"
+            versionCode 110
+            versionName "1.1.0"
+            buildConfigField "String", "SERVER_URL", '"http://xzgl.jsweique.com"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "鼓楼公安",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name_gulou",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher_gulou",
+                    splashIcon        : "@mipmap/ic_launcher_gulou",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+        //经开区夏庄村  大庙 经开
+        normal_经开区 {
+            dimension "default"
+            versionCode 110
+            versionName "1.1.0"
+            buildConfigField "String", "SERVER_URL", '"http://101.133.211.243:8088"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "经开区",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+
+        //丰县
+        normal_丰县综治 {
+            dimension "default"
+            versionCode 1
+            versionName "1.1.8"
+            buildConfigField "String", "SERVER_URL", '"http://58.218.242.84:8280"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "丰县综治",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+
+        /*疫情环境*/
+        normal_鼓楼疫情 {
+            dimension "default"
+            versionCode 110
+            versionName "1.1.0"
+            buildConfigField "String", "SERVER_URL", '"http://47.102.147.120:8088"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "鼓楼疫情",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+
+        }
+        normal_贾汪公安 {
+            dimension "default"
+            versionCode 110
+            versionName "1.1.0"
+            buildConfigField "String", "SERVER_URL", '"http://222.187.92.84:2021"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "贾汪公安",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name_one",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/jinghui_img",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+        /*贾汪政法委*/
+        normal_贾汪政法委 {
+            dimension "default"
+            versionCode 120
+            versionName "1.2.0"
+            buildConfigField "String", "SERVER_URL", '"http://36.154.82.22:2021"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "贾汪政法委",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+
+        normal_合肥企业 {
+            dimension "default"
+            versionCode 112
+            versionName "1.1.2"
+            buildConfigField "String", "SERVER_URL", '"http://58.243.183.70:2021"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "合肥企业疫情",
+                    baiduAppKey       : "ae5fcf1c25",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+        normal_合肥综治 {
+            dimension "default"
+            versionCode 124
+            versionName "1.2.4"
+            buildConfigField "String", "SERVER_URL", '"http://58.243.183.70:8088"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "合肥综治",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+
+
+        normal_贾汪公安新地址 {
+            dimension "default"
+            versionCode 116
+            versionName "1.1.6"
+            buildConfigField "String", "SERVER_URL", '"http://47.102.147.120:8081"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "@string/app_name_one",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name_one",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/jinghui_img",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+        normal_沛县综治 {
+            dimension "default"
+            versionCode 121
+            versionName "1.2.1"
+            buildConfigField "String", "SERVER_URL", '"http://120.195.6.67:2021"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "沛县综治",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+        /*贾汪公安*/
+        normal_云龙综治 {
+            dimension "default"
+            versionCode 201
+            versionName "2.0.1"
+            buildConfigField "String", "SERVER_URL", '"http://222.187.92.83:2021"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "云龙综治",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher",
+                    splashIcon        : "@drawable/logo",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+        //天津西营门街道
+        normal_天津西营门街道 {
+            dimension "default"
+            versionCode 104
+            versionName "1.0.4"
+            buildConfigField "String", "SERVER_URL", '"http://47.102.147.120:9011"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "天津西营门街道",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name",
+                    isChinaElectronics: true,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright_jinghai",
+                    appIcon           : "@mipmap/ic_jinghai",
+                    splashIcon        : "@mipmap/ic_jinghai",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq"
+            ]
+        }
+
+        normal_天津静海综治 {
+            dimension "default"
+            versionCode 103
+            versionName "1.0.3"
+            buildConfigField "String", "SERVER_URL", '"http://211.94.218.54:2001"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "天津静海",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name_jinghai",
+                    isChinaElectronics: true,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright_jinghai",
+                    appIcon           : "@mipmap/ic_jinghai",
+                    splashIcon        : "@mipmap/ic_jinghai",
+                    JPUSH_APPKEY      : "08bb7e178b07305a965fbf6f",
+                    baidumapkey       : "aAGdo6tKDCCj0fdXkRmLXXlMjGHoDzVq",
+            ]
+        }
+
+
+        /*沛县4加1*/
+        normal_沛县1加4 {
+            dimension "default"
+            applicationId "com.weique.overhaul.opf"
+            versionCode 105
+            versionName "105"
+            buildConfigField "String", "SERVER_URL", '"http://36.133.29.114:9002"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "1加4",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name_opf",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher_opf",
+                    splashIcon        : "@mipmap/ic_launcher_opf",
+                    JPUSH_APPKEY      : "b0e78a699a5ce6e38498a36a",
+                    baidumapkey       : "7S4sYop3jL20GnBufLSHBKCmlmGNE2jd",
+            ]
+        }
+        /*4加1*/
+        normal_云龙1加4 {
+            dimension "default"
+            applicationId "com.weique.overhaul.opf"
+            versionCode 105
+            versionName "105"
+            buildConfigField "String", "SERVER_URL", '"http://xzyl.jsweique.com:9005"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "1加4",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name_opf",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher_opf",
+                    splashIcon        : "@mipmap/ic_launcher_opf",
+                    JPUSH_APPKEY      : "b0e78a699a5ce6e38498a36a",
+                    baidumapkey       : "7S4sYop3jL20GnBufLSHBKCmlmGNE2jd",
+            ]
+        }
+
+        normal_合肥1加4 {
+            dimension "default"
+            applicationId "com.weique.overhaul.opf"
+            versionCode 101
+            versionName "1.0.1"
+            buildConfigField "String", "SERVER_URL", '"http://58.243.183.70:8084"'
+            manifestPlaceholders = [
+                    channelName       : "normal",
+                    coverage          : "1加4",
+                    baiduAppKey       : "@string/baidu_all_zz",
+                    appName           : "@string/app_name_opf",
+                    isChinaElectronics: false,
+                    isGuLouZF         : false,
+                    copyright         : "@string/app_splash_copyright",
+                    appIcon           : "@mipmap/ic_launcher_opf",
+                    splashIcon        : "@mipmap/ic_launcher_opf",
+                    JPUSH_APPKEY      : "b0e78a699a5ce6e38498a36a",
+                    baidumapkey       : "7S4sYop3jL20GnBufLSHBKCmlmGNE2jd",
+            ]
+        }
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
+        jumboMode = true
+        preDexLibraries = false
+        additionalParameters = [
+                '--multi-dex',//多分包
+                '--set-max-idx-number=60000'//每个包内方法数上限
+        ]
+    }
+
+    //根据cpu打包 include 配置几个 就会打几个包
+    /*splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'armeabi-v7a', 'armeabi-v7a'
+            universalApk true
+        }
+    }*/
+    dependencies {
+        implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+        compileOnly rootProject.ext.dependencies["androideventbus"]
+
+        implementation 'com.android.support:design:28.0.0'
+        implementation 'com.android.support.constraint:constraint-layout:2.0.1'
+        implementation 'android.arch.lifecycle:extensions:1.1.1'
+        annotationProcessor rootProject.ext.dependencies["dagger2-compiler"]
+        implementation rootProject.ext.dependencies["progressmanager"]
+        implementation rootProject.ext.dependencies["retrofit-url-manager"]
+        implementation rootProject.ext.dependencies["lifecyclemodel"]
+        implementation rootProject.ext.dependencies["timber"]
+        implementation rootProject.ext.dependencies["support-v4"]
+
+        //view
+        annotationProcessor(rootProject.ext.dependencies["butterknife-compiler"]) {
+            exclude module: 'support-annotations'
+        }
+
+        implementation rootProject.ext.dependencies["paginate"]
+
+        //arms
+        implementation project(':arms')
+        implementation project(':nicedialog')
+        implementation project(':agentweb')
+        implementation rootProject.ext.dependencies["autosize"]
+        implementation 'me.jessyan:arms-imageloader-glide:2.5.2'
+        //test
+        testImplementation rootProject.ext.dependencies["junit"]
+        debugImplementation rootProject.ext.dependencies["canary-debug"]
+        implementation rootProject.ext.dependencies["canary-release"]
+
+        //引导页
+        implementation 'cn.bingoogolapple:bga-banner:2.1.7@aar'
+        implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
+        implementation 'com.github.razerdp:BasePopup:2.2.1'
+        //recycler
+//        implementation 'com.gcssloop.recyclerview:pagerlayoutmanager:2.3.8'
+        //tableLayout
+        implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
+        //路由框架
+        annotationProcessor rootProject.ext.dependencies["arouter-compiler"]
+        implementation rootProject.ext.dependencies["arouter"]
+        //选择器
+        implementation rootProject.ext.dependencies["pickerview"]
+        // 4.4以上沉浸式状态栏和沉浸式导航栏管理
+        implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
+        //bug监控
+        implementation 'com.tencent.bugly:crashreport:3.1.9'
+        implementation 'com.tencent.bugly:nativecrashreport:3.7.1'
+        implementation 'com.youth.banner:banner:1.4.10'
+        //饺子播放器
+        implementation 'cn.jzvd:jiaozivideoplayer:7.2.4'
+        //侧滑删除
+        implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
+        //谷歌流式布局库
+        implementation 'com.google.android:flexbox:1.0.0'
+        //loading
+        implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+        //recycler view 分割线
+        implementation 'com.yqritc:recyclerview-flexibledivider:1.4.0'
+        //SVGAPlayer-Android
+        implementation 'com.github.yyued:SVGAPlayer-Android:2.4.7'
+        //相册 相机
+        implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.9'
+        // 相机
+        implementation 'com.lzy.widget:imagepicker:0.6.1'  //指定版本
+        //动态修改IP地址
+        implementation 'me.jessyan:retrofit-url-manager:1.4.0'
+        //材料设计  -  搜索
+        implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+        //跑马灯
+        implementation 'com.gongwen:marqueelibrary:1.1.3'
+        //html 解析框架
+        implementation 'org.jsoup:jsoup:1.12.1'
+
+        implementation 'com.google.android.material:material:1.2.1'
+        implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+
+        // java
+        implementation project(path: ':libskywebrtc2')
+        implementation 'org.java-websocket:Java-WebSocket:1.4.0'
+        implementation 'com.alibaba:fastjson:1.2.62'
+        //A menu which can ... BOOM! - Android
+//        implementation 'com.nightonke:boommenu:2.1.1'
+
+        // nodejs
+        implementation project(':libskywebrtc')
+        implementation project(':lib_zxing')
+        implementation project(':ocr_ui')
+        implementation 'com.necer.ncalendar:ncalendar:5.0.0'
+        implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+        implementation 'com.shuhart.stepview:stepview:1.5.1'
+
+
+        implementation 'com.google.android.exoplayer:exoplayer:2.11.3'
+
+        //表格
+        implementation 'com.github.huangyanbin:SmartTable:2.2.0'
+        //
+        implementation 'com.airbnb.android:lottie:3.4.4'
+        //adapter通过引入方式添加新版本
+        implementation project(':libraryadapter')
+
+        implementation rootProject.ext.dependencies["shadowLayout"]
+
+    }
+}

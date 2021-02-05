@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/dp_2"
+    android:paddingEnd="@dimen/dp_2">
+
+    <View
+        android:id="@+id/indicator_item"
+        android:layout_width="@dimen/dp_12"
+        android:layout_height="@dimen/dp_3" />
+
+</RelativeLayout>

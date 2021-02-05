@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/dp_16"
+        android:paddingTop="@dimen/dp_12"
+        android:paddingRight="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_12">
+
+        <LinearLayout
+            android:id="@+id/select_event_sort"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/must1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/flag_star"
+                android:textColor="@color/red"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_8"
+                android:text="@string/event_sort"
+                android:textColor="@color/gray_666"
+                android:textSize="15sp" />
+
+
+            <TextView
+                android:id="@+id/event_sort_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/arrow_icon"
+                android:drawablePadding="@dimen/dp_5"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:maxLines="2"
+                android:paddingStart="@dimen/dp_5"
+                android:textColor="@color/black_333"
+                android:textSize="14sp"
+                tools:ignore="RtlSymmetry" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/event_sort_memo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:drawableStart="@drawable/event_sort_memo_image"
+            android:drawablePadding="@dimen/dp_5"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/yellow_f99943"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:text="11111111111111111" />
+
+    </LinearLayout>
+
+
+    <include layout="@layout/view_line" />
+
+
+    <RelativeLayout
+        android:id="@+id/select_event_priority"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:paddingLeft="@dimen/dp_16"
+        android:paddingRight="@dimen/dp_16">
+
+        <TextView
+            android:id="@+id/must2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/flag_star"
+            android:textColor="@color/red"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/dp_8"
+            android:layout_toEndOf="@+id/must2"
+            android:text="@string/event_priority"
+            android:textColor="@color/gray_666"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/priority_image"
+            android:layout_width="@dimen/dp_10"
+            android:layout_height="@dimen/dp_10"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/priority_value" />
+
+        <TextView
+            android:id="@+id/priority_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:drawableEnd="@drawable/arrow_icon"
+            android:drawablePadding="@dimen/dp_5"
+            android:ellipsize="end"
+            android:maxLength="30"
+            android:singleLine="true"
+            android:textColor="@color/black_333"
+            android:textSize="14sp" />
+
+        <include layout="@layout/view_line_full" />
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/map_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/dp_16"
+        android:paddingRight="@dimen/dp_16">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10">
+
+            <TextView
+                android:id="@+id/must3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/flag_star"
+                android:textColor="@color/red"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_8"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/map_address"
+                android:textColor="@color/gray_666"
+                android:textSize="15sp" />
+
+
+            <TextView
+                android:id="@+id/map_location_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/arrow_icon"
+                android:drawablePadding="@dimen/dp_5"
+                android:textColor="@color/black_333"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <include layout="@layout/view_line_full" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/dp_16"
+        android:paddingRight="@dimen/dp_16">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/flag_star"
+                android:textColor="@color/red"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_8"
+                android:gravity="center_vertical"
+                android:text="事件地址"
+                android:textColor="@color/gray_666"
+                android:textSize="15sp" />
+
+            <EditText
+                android:id="@+id/address_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:background="@null"
+                android:drawablePadding="@dimen/dp_5"
+                android:ellipsize="middle"
+                android:gravity="end|center_vertical"
+                android:maxLines="2"
+                android:textColor="@color/black_333"
+                android:textSize="14sp" />
+
+
+        </LinearLayout>
+
+        <!--<include layout="@layout/view_line_full" />-->
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/standard_address_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_50"
+        android:paddingLeft="@dimen/dp_16"
+        android:paddingRight="@dimen/dp_16"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/must4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/flag_star"
+            android:textColor="@color/red"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/dp_8"
+            android:layout_toEndOf="@+id/must4"
+            android:text="@string/standard_address"
+            android:textColor="@color/gray_666"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/standard_address_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:drawableEnd="@drawable/arrow_icon"
+            android:drawablePadding="@dimen/dp_5"
+            android:ellipsize="end"
+            android:maxLength="30"
+            android:singleLine="true"
+            android:textColor="@color/black_333"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+</LinearLayout>

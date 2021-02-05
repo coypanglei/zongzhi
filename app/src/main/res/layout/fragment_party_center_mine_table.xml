@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/all_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:ignore="RtlHardcoded">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/title_back"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_120"
+            android:background="@drawable/top_img2" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/user_photo_text"
+                android:layout_width="@dimen/dp_62"
+                android:layout_height="@dimen/dp_62"
+                android:layout_marginStart="@dimen/dp_25"
+                android:background="@drawable/shape_circle_faa79d"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_17"
+                tools:text="姓名" />
+
+            <ImageView
+                android:id="@+id/user_photo_image"
+                android:layout_width="@dimen/dp_62"
+                android:layout_height="@dimen/dp_62"
+                android:layout_marginStart="@dimen/dp_25"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_11"
+                android:layout_marginLeft="@dimen/dp_11"
+                android:layout_toEndOf="@+id/user_photo_text"
+                android:layout_toRightOf="@+id/user_photo_text"
+                android:textColor="@color/white"
+                android:textSize="21sp"
+                tools:text="姓名" />
+
+            <TextView
+                android:id="@+id/user_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/user_name"
+                android:layout_marginStart="@dimen/dp_11"
+                android:layout_marginLeft="@dimen/dp_11"
+                android:layout_marginTop="@dimen/dp_5"
+                android:layout_toEndOf="@+id/user_photo_text"
+                android:layout_toRightOf="@+id/user_photo_text"
+                android:textColor="@color/pink_fdcbc5"
+                android:textSize="13sp"
+                tools:text="查看并编辑个人资料" />
+        </RelativeLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_back"
+            android:layout_margin="@dimen/dp_6"
+            android:background="@color/white"
+            app:cardCornerRadius="@dimen/dp_5"
+            app:cardElevation="@dimen/dp_10"
+            app:cardUseCompatPadding="true">
+
+            <RelativeLayout
+                android:id="@+id/integral_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_60">
+
+                <TextView
+                    android:id="@+id/integral_"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/dp_17"
+                    android:layout_marginLeft="@dimen/dp_17"
+                    android:drawableStart="@drawable/jifen_icon"
+                    android:drawableLeft="@drawable/jifen_icon"
+                    android:drawablePadding="@dimen/dp_6"
+                    android:text="@string/integral_all"
+                    android:textColor="@color/fray_7f"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/integral_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/integral_"
+                    android:layout_toRightOf="@+id/integral_"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    tools:text="1089" />
+
+                <TextView
+                    android:layout_width="65dp"
+                    android:layout_height="@dimen/dp_20"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/dp_16"
+                    android:layout_marginRight="@dimen/dp_16"
+                    android:background="@drawable/shape_pink_faa79d"
+                    android:drawableEnd="@drawable/arrow_icon_fen"
+                    android:drawableRight="@drawable/arrow_icon_fen"
+                    android:text="@string/see_detail"
+                    android:textColor="@color/pink_white"
+                    android:textSize="@dimen/sp_10" />
+
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/card_view"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/dp_16"
+            android:paddingRight="@dimen/dp_16">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_333"
+                android:textSize="20sp"
+                android:visibility="gone"
+                tools:text="文案文案" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_25"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/collect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/shoucang_icon"
+                    android:drawablePadding="14dp"
+                    android:paddingStart="@dimen/dp_16"
+                    android:paddingLeft="@dimen/dp_16"
+                    android:paddingEnd="@dimen/dp_20"
+                    android:paddingRight="@dimen/dp_20"
+                    android:text="@string/collect"
+                    android:textColor="@color/black_333"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/history"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/lishi_icon"
+                    android:drawablePadding="14dp"
+                    android:paddingLeft="@dimen/dp_20"
+                    android:paddingRight="@dimen/dp_20"
+                    android:text="@string/history"
+                    android:textColor="@color/black_333"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/diss"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/tucao_icon"
+                    android:drawablePadding="14dp"
+                    android:paddingLeft="@dimen/dp_20"
+                    android:paddingRight="@dimen/dp_20"
+                    android:text="@string/dis"
+                    android:textColor="@color/black_333"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/dp_24">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/answer"
+                    android:textColor="@color/black_333"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:drawableEnd="@drawable/right_row"
+                    android:drawableRight="@drawable/right_row"
+                    android:gravity="center_vertical"
+                    android:paddingStart="@dimen/dp_20"
+                    android:paddingLeft="@dimen/dp_20"
+                    android:text="@string/click_input"
+                    android:textColor="@color/gray_999"
+                    android:textSize="12sp"
+                    tools:ignore="RtlSymmetry" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/answer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_129"
+                android:layout_marginBottom="@dimen/dp_25"
+                android:background="@drawable/shape_gray_line">
+
+                <View
+                    android:layout_width="@dimen/dp_218"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="@dimen/dp_1"
+                    android:background="@drawable/background_img" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/dp_22"
+                    android:layout_marginLeft="@dimen/dp_22"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_explains"
+                        android:textColor="@color/black_333"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_8"
+                        android:text="@string/text_explains_1"
+                        android:textColor="@color/gray_999"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_25"
+                        android:drawableEnd="@drawable/row_icon_red"
+                        android:drawableRight="@drawable/row_icon_red"
+                        android:drawablePadding="6dp"
+                        android:text="@string/start_answer"
+                        android:textColor="@color/red_1"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</androidx.core.widget.NestedScrollView>

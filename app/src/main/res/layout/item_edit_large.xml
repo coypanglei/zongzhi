@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_marginTop="@dimen/dp_10"
+            android:id="@+id/tv_name_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/et_name"
+            android:gravity="left"
+            android:paddingLeft="@dimen/dp_5"
+            android:textColor="@color/black"
+            android:textSize="@dimen/dp_16"
+            tools:text="姓名" />
+
+        <EditText
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:id="@+id/et_name"
+            style="@style/AddEditStyle"
+            android:background="@drawable/shape_gray_f4f4f4"
+            android:layout_width="match_parent"
+            android:layout_centerInParent="true"
+            android:singleLine="false"
+            android:gravity="left|top"
+            android:layout_weight="2"
+            android:imeOptions="actionDone"
+            android:paddingRight="@dimen/dp_12"
+            android:textColor="@color/black"
+            android:textColorHint="@color/c9c9cd" />
+
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/dp_16"
+    android:paddingRight="@dimen/dp_16">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_5"
+        tools:text="成龍"
+        android:textColor="@color/black_333"
+        android:textSize="@dimen/sp_15" />
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:padding="@dimen/dp_5"
+        android:singleLine="true"
+        android:textSize="@dimen/sp_13" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/dp_5">
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            tools:text="2019-02-13"
+            android:textColor="@color/gray_999"
+            android:textSize="@dimen/sp_12" />
+
+        <TextView
+            android:id="@+id/reseau"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="成龍"
+            android:textColor="@color/black_333"
+            android:textSize="@dimen/sp_15" />
+    </LinearLayout>
+
+    <include layout="@layout/view_line_full" />
+</LinearLayout>

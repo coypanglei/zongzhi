@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_title_submit" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/dp_10">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/dp_16"
+            android:paddingEnd="@dimen/dp_16"
+            android:paddingBottom="@dimen/dp_30">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="企业名称"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <EditText
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入企业名称(必填)"
+                android:inputType="text"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="统一社会信用代号"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <EditText
+                android:id="@+id/code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入统一社会信用代号(必填)"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="经营地址"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <EditText
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入经营地址(必填)"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="定位选择"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:id="@+id/local"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawableEnd="@drawable/arrow_icon"
+                android:hint="请输入选择定位(必填)"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="法人代表姓名"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <EditText
+                android:id="@+id/legal_person_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入法人代表姓名(必填)"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="法人代表联系方式"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <EditText
+                android:id="@+id/legal_person_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入法人代表联系方式(必填)"
+                android:inputType="phone"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="联系人姓名"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <EditText
+                android:id="@+id/linkman_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入联系人姓名(必填)"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="联系人电话"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <EditText
+                android:id="@+id/linkman_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入联系人电话(必填)"
+                android:inputType="phone"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="拟复工时间"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:id="@+id/reword_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawableEnd="@drawable/arrow_icon"
+                android:hint="请选择复工时间(必填)"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="拟复工人数"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <EditText
+                android:id="@+id/rework_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入复工人数(必填)"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="是否建立全员健康文档"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:id="@+id/health_document"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawableEnd="@drawable/arrow_icon"
+                android:hint="请选择是否建立全员健康文档(必填)"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="疫情防控重点人员人数"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <EditText
+                android:id="@+id/emphasis_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入疫情防控重点人员人数(必填,默认无)"
+                android:maxLines="2"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="企业自查情况(多选)"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <RadioButton
+                android:id="@+id/rb1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:text="防控管理到位，建立防疫制度，成立防控机构，设立专人专岗、落实体温监测、消毒灭杀、信息报送等措施"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <RadioButton
+                android:id="@+id/rb2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:text="应急预案到位，制定复工及疫情防控应急工作预案，建立应急处理流程、防控措施等"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <RadioButton
+                android:id="@+id/rb3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:text="人员排查到位，对复工员工两周内旅居史、接触史等相关情况全面排查、注意登记"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <RadioButton
+                android:id="@+id/rb4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_10"
+                android:text="防疫物资到位，按企业人数备足口罩、体温计、消毒液等卫生防疫用品"
+                android:textColor="@color/gray_666"
+                android:textColorHint="@color/gray_999"
+                android:textSize="@dimen/sp_14" />
+
+            <include layout="@layout/view_line_full" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:gravity="center_vertical"
+                android:text="营业执照图片上传(必选)"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+
+            <ImageView
+                android:id="@+id/license"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/picture" />
+
+            <include layout="@layout/view_line_full" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

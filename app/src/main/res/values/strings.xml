@@ -1,0 +1,445 @@
+<resources>
+    <string name="app_name">社会治理网格通</string>
+    <string name="app_name_jinghai">服务通</string>
+    <string name="app_splash_copyright">江苏微雀</string>
+    <string name="app_splash_copyright_jinghai">中国电子系统技术有限公司</string>
+    <string name="app_name_one">梳网清格</string>
+    <string name="app_name_yun">云创空间</string>
+    <string name="app_name_gulou">鼓楼网格通</string>
+    <string name="app_name_yingji">应急管理</string>
+    <string name="app_name_opf">基层治理</string>
+    <string name="placeholder_s">%1$sS</string>
+    <string name="today_integral_s">%1$s积分</string>
+    <string name="standard_address_t_s">%1$s信息</string>
+    <string name="standard_address_c_s">%1$s地址编码</string>
+    <string name="up_load_max_file_number">最多只能上传%1$d张图片</string>
+    <string name="video_up_load_max_file_number">最多只能上传%1$d个视频</string>
+    <string name="party_detail_info">党支部&#160;&#160;%1$s\n区域&#160;&#160;%2$s</string>
+    <string name="search_state">搜索\“%1$s\”</string>
+    <string name="jump"><![CDATA[跳过 >]]></string>
+    <string name="jumpp">跳过</string>
+    <string name="goto_home">进入主界面</string>
+    <string name="hint_login_username">输入手机号码</string>
+    <string name="hint_login_name">输入登录账号</string>
+    <string name="old_password">输入旧密码</string>
+    <string name="input_password">输入新密码(6-24位字母加数字)</string>
+    <string name="again_password">重复新密码(6-24位字母加数字)</string>
+    <string name="hint_login_auth_code">输入验证码</string>
+    <string name="hint_login_password">输入密码</string>
+    <string name="hint_login_auth_code_tw">输入图文验证码</string>
+    <string name="login">立即登录</string>
+    <string name="login_">立即登录</string>
+    <string name="login_forget_pwd">忘记密码</string>
+    <string name="register_new_user">注册新用户</string>
+    <string name="contact_service">联系客服</string>
+    <string name="about_we">关于我们</string>
+    <string name="agenda">待办</string>
+    <string name="my">我的</string>
+    <string name="gather_info">信息采集</string>
+    <string name="up_tell_intent">事件上报</string>
+    <string name="up_tell">上报</string>
+    <string name="identity_verification">身份核实</string>
+    <string name="attendance_clock">考勤打卡</string>
+    <string name="work_stat">工作统计</string>
+    <string name="address_verification">地址核实</string>
+    <string name="track_query">事件核实</string>
+    <string name="backlog_task">轨迹查询</string>
+    <string name="in_event">参与事件</string>
+    <string name="contradiction">矛盾化解</string>
+    <string name="grid_map">网格地图</string>
+    <string name="to_do_tasks">待办任务</string>
+    <string name="one_up">一键上报</string>
+    <string name="one_cell">一键呼叫</string>
+    <string name="grid_member">网格员-</string>
+    <string name="grid_leader">网格长-</string>
+    <string name="work_record">工作记录</string>
+    <string name="record">记录</string>
+    <string name="participate_event">参与事件</string>
+    <string name="upload_list">上传列表</string>
+    <string name="setting">设置</string>
+    <string name="header_image">头像</string>
+    <string name="my_name">姓名</string>
+    <string name="age">年龄</string>
+    <string name="gender">性别</string>
+    <string name="be_born">出生日期</string>
+    <string name="position">职位</string>
+    <string name="unit">单位</string>
+    <string name="unit_position">单位/职务</string>
+    <string name="telephone">电话</string>
+    <string name="id_number">身份证号</string>
+    <string name="address">地址</string>
+    <string name="scope">辖区范围</string>
+    <string name="version_information">版本信息(二维码)</string>
+    <!--behavior-->
+    <string name="custom_behavior">com.weique.overhaul.v2.app.behavior.CustomBehavior</string>
+
+    <string name="timeString">时间</string>
+    <string name="event_type">事件类型</string>
+    <string name="remove">清除</string>
+    <string name="sure">确定</string>
+    <string name="event_source">事件来源</string>
+    <string name="event_theme">事件主题</string>
+    <string name="phone_login">手机快捷登录</string>
+    <string name="get_auth_code">获取验证码</string>
+    <string name="residue">剩余%1$d</string>
+    <string name="data_count">共计%1$d条数据</string>
+    <string name="input_phone">请输入正确的手机号码</string>
+    <string name="auth_code_not_null">验证码不能为空</string>
+    <string name="please_input_success_code">请输入正确的验证码</string>
+    <string name="connect_network_hint">您需要链接网络,才能继续使用</string>
+    <string name="integrated_with">导航</string>
+    <string name="ove">取消</string>
+    <string name="submit">提交</string>
+    <string name="submit_use">提交并使用</string>
+    <string name="affirm">确认</string>
+    <string name="goto_set">去设置</string>
+    <string name="event_hint">请输入事件描述，150字以内</string>
+    <string name="photo_media">照片/视频</string>
+    <string name="photo">照片</string>
+    <string name="selet_event_titile">请选择事件标签</string>
+    <string name="start_record">开始录音</string>
+    <string name="mes">消息</string>
+    <string name="mes_detail">消息详情</string>
+    <string name="sys">扫一扫</string>
+    <string name="flag_star">*</string>
+    <string name="attendance">打卡签到</string>
+    <string name="the_inspection_points">考核积分</string>
+    <string name="work_line">巡检</string>
+    <string name="foot_line">走访</string>
+    <string name="evaluating">评价考核</string>
+    <string name="statistical_work">工作统计</string>
+    <string name="work">工作</string>
+    <string name="version_update">版本更新</string>
+    <string name="reset_password">修改密码</string>
+    <string name="form">来源：</string>
+    <string name="registration_time">登记时间</string>
+    <string name="source">来源</string>
+    <string name="subordinate_grid">所属网格</string>
+    <string name="attachment">附件</string>
+    <string name="attachment_hint">添加附件</string>
+    <string name="back">返回</string>
+    <string name="integral">积分</string>
+    <string name="all_reply">全部回复</string>
+    <string name="go_back">返回</string>
+    <string name="integral_all">累计积分：</string>
+    <string name="see_detail">查看详情</string>
+    <string name="history">历史</string>
+    <string name="dis">吐槽</string>
+    <string name="answer">我要答题</string>
+    <string name="click_input">点击进入</string>
+    <string name="text_explains">术业有专攻，道义有精论</string>
+    <string name="start_answer">开始答题</string>
+    <string name="text_explains_1">周而复始，如期而至</string>
+    <string name="text_0">0</string>
+    <string name="news_center">新闻中心</string>
+    <string name="education">主题教育</string>
+    <string name="notice">通知公告</string>
+    <string name="party_activity">党建活动</string>
+    <string name="mine">个人中心</string>
+    <string name="more">更多</string>
+    <string name="diss_detail">你的详细意见:</string>
+    <string name="please_input_diss">请写下你的详细意见(0-150字)</string>
+    <string name="diss_photo">请提供相关问题的截图或照片:</string>
+    <string name="growth_integral">成长总积分</string>
+    <string name="integral_ruel">积分规则</string>
+    <string name="today_cumulative">今日已累计</string>
+    <string name="recommend">推荐</string>
+    <string name="all">全部</string>
+    <string name="null_content">暂无内容</string>
+    <string name="null_net_work">暂无网络</string>
+    <string name="null_result">搜索无结果</string>
+    <string name="collect">收藏</string>
+    <string name="delete">删除</string>
+    <string name="all_choice">全部频道</string>
+    <string name="party_center">党建中心</string>
+    <string name="integral_add_explain">1分/每日首次登录</string>
+    <string name="read_articles">阅读文章</string>
+    <string name="integral_add_explain_1">1分/每有效阅读一篇</string>
+    <string name="do_answer">参与答题</string>
+    <string name="do_c_answer">完成答题获得相应积分</string>
+    <string name="is_finish">已完成</string>
+    <string name="go_and_see">去看看</string>
+    <string name="go_and_answer">去答题</string>
+    <string name="input_search_content">输入搜索内容</string>
+    <string name="history_search">历史搜索</string>
+    <string name="hot_search">热门搜索</string>
+    <string name="bencidati">本次答对题目</string>
+    <string name="select_info_type">选择信息类型</string>
+    <string name="search_info_type">搜索信息类型</string>
+    <string name="get_info_fail">获取信息失败</string>
+    <string name="input_keyword">请输入关键字</string>
+    <string name="info_type">信息类型</string>
+    <string name="person_info_detail">人员详细信息</string>
+    <string name="person">人</string>
+    <string name="family">户</string>
+    <string name="family_address_detail">住户详细信息</string>
+    <string name="thing">物</string>
+    <string name="thing_address_info">公共设施详细信息</string>
+    <string name="land">地</string>
+    <string name="land_address_detail">常规地址详细信息</string>
+    <string name="organization">组织</string>
+    <string name="organization_detail">公司/商户等信息</string>
+    <string name="go_in">进入</string>
+    <string name="go_see">查看</string>
+    <string name="is_answer">本套题已做答！</string>
+    <string name="logout">安全退出</string>
+    <string name="code_myself">自编码</string>
+    <string name="code_event">事项单号</string>
+    <string name="tier_code">层级代码</string>
+    <string name="tier">层级</string>
+    <string name="sub_info">下级</string>
+    <string name="area_name">行政区域名称</string>
+    <string name="standard_address_code">标准地址编码</string>
+    <string name="standard_name">标准名称</string>
+    <string name="up_address">上级地址</string>
+    <string name="standard_address">标准地址</string>
+    <string name="standard_address_name">标准地址名称</string>
+    <string name="map_address">地图定位</string>
+    <string name="remark">备注</string>
+    <string name="required">(必填)</string>
+    <string name="required_select">(必选)</string>
+    <string name="address_required">标准地址名称(必填)</string>
+    <string name="remark1">备注说明</string>
+    <string name="lon_lat">经度:%1$f"\n纬度:%2$f</string>
+    <string name="address_lon_lat">{\"lat\":%1$f,\"lng\":%2$f}</string>
+    <string name="no_super_address">无上级地址</string>
+    <string name="please_input">请输入</string>
+    <string name="please_input_s">请输入(必填 )</string>
+    <string name="sort">分类</string>
+    <string name="status">状态</string>
+    <string name="event_priority">事件等级</string>
+    <string name="event_sort">事件分类</string>
+    <string name="select_event_label">请选择事件标签</string>
+    <string name="rapid_input">快捷输入</string>
+    <string name="add_dot">添加地点</string>
+    <string name="event_two">紧急事件</string>
+    <string name="event_three">重大事件</string>
+    <string name="event_one">普通事件</string>
+    <string name="event_detail">事件详情</string>
+    <string name="call">呼叫</string>
+    <string name="send_back">退回</string>
+    <string name="order_status_text">订单状态</string>
+    <string name="is_self_handle">是否自处理</string>
+    <string name="slogan">共建共治共享</string>
+    <string name="slogan1">人民安居乐业，社会安定有序</string>
+    <string name="event_typr">事件类型：</string>
+    <string name="prove">协同查验</string>
+    <string name="invalid">作废</string>
+    <string name="sign_in_text">签到</string>
+    <string name="my_collect">我的收藏</string>
+    <string name="add_new">新增</string>
+    <string name="history_hint">历史记录</string>
+    <string name="reset">重置</string>
+    <string name="ei">立即体验</string>
+    <string name="user_info_">个人信息</string>
+    <string name="source_">来源：</string>
+    <string name="detection">检测</string>
+    <string name="next_speak">下次再说</string>
+    <string name="update_new">马上更新</string>
+    <string name="background_run">后台运行</string>
+    <string name="dispose_agine">再次处理</string>
+    <string name="announcement_detail">通知详情</string>
+    <string name="detail">详情</string>
+    <string name="install">安装</string>
+    <string name="loading">下载中</string>
+    <string name="agreement">登录即表示同意</string>
+    <string name="user_agreement">用户协议</string>
+    <string name="privacy_policy">隐私政策</string>
+    <string name="think_again">再想想</string>
+    <string name="consent">同意</string>
+    <string name="last_edit_time">最后编辑时间</string>
+    <string name="start_chat">发起会话</string>
+    <string name="agreement_dialog_content">感谢您使用社会治理网格通!\n\n
+        我们根据最近的最新的监管要求更新了用户协议和隐私政策,特向您说明如下:\n\n
+        1.社会治理网格通是由微雀信息科技有限公司开发、拥有、运营的移动工具类应用;保护用户隐私是微雀信息科技的一项基本政策,微雀信息科技不会泄露您的个人信息;\n\n
+        2.基于您的明示授权,为了给您带泪更好的服务,我们会根据您使用服务具体功能需要,收集必要的用户信息和设备权限(如手机号码、地理位置、设备信息、拍照、录音等)，
+        您有权拒绝或取消授权;\n\n
+        3.未经您的授权同意,我们不会将进的信息共享给第三方或用于您未授权其它用途;
+    </string>
+    <string name="agreement_dialog_content_zhongdian">感谢您使用社会治理服务通!\n\n
+        我们根据最近的最新的监管要求更新了用户协议和隐私政策,特向您说明如下:\n\n
+        1.本应用是由中国电子系统技术有限公司开发、拥有、运营的移动工具类应用;保护用户隐私是
+        中国电子系统技术有限公司的一项基本政策,中国电子系统技术有限公司不会泄露您的个人信息;\n\n
+        2.基于您的明示授权,为了给您带泪更好的服务,我们会根据您使用服务具体功能需要,
+        收集必要的用户信息和设备权限(如手机号码、地理位置、设备信息、拍照、录音等)，
+        您有权拒绝或取消授权;\n\n
+        3.未经您的授权同意,我们不会将进的信息共享给第三方或用于您未授权其它用途;
+    </string>
+    <string name="agreement_dialog_content1">
+        4.您可以阅读最新
+    </string>
+    <string name="agreement_dialog_content2">
+        《用户协议》
+    </string>
+    <string name="agreement_dialog_content3">
+        《隐私政策》
+    </string>
+    <string name="agreement_dialog_content4">
+        了解我们申请使用相关权限的情况，以及对您个人隐私的保护措施。
+    </string>
+    <string name="synergy_be_present">协同部门是否到场</string>
+    <string name="no_feedback">无反馈信息</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="edit_content">编辑</string>
+    <string name="finish">完成</string>
+    <string name="task_list">任务列表</string>
+    <string name="work_list">工作清单</string>
+    <string name="overdue">逾期</string>
+    <string name="go_to_complete">去完成</string>
+    <string name="address_">地址：</string>
+    <string name="is_overdue">已逾期</string>
+
+    <!--视频通话-->
+    <string name="av_waiting">正在等待对方接受邀请.</string>
+    <string name="av_audio_invite">邀请你进行语音通话</string>
+    <string name="av_video_invite">邀请你进行视频通话</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="hello">Hello World, JPush!</string>
+    <string name="tag_hint">Tag can be number, alphabet, underscore, Chinese. Use , to split many tags.</string>
+    <string name="alias_hint">Alias can be number, alphabet, underscore, Chinese.</string>
+    <string name="mobilenumber_hint">The phone number can only start with a "+" or a number,other can only contain "-" and Numbers</string>
+    <string name="style_hint">style should be number</string>
+    <string name="error_style_empty">style cannot be empty</string>
+    <string name="error_alias_empty">alias cannot be empty</string>
+    <string name="error_tag_empty">tag cannot be empty</string>
+    <string name="error_tag_gs_empty">Invalid format</string>
+    <string name="mobilenumber_empty_guide">will clear last set phone number</string>
+    <string name="error_network">Failed to init due to network exception.</string>
+    <string name="logining">Running in background. Please see log.</string>
+    <string name="setting_su">Succeed to set</string>
+    <string name="reporting">核查上报</string>
+
+    <!--百度统计用的key-->
+    <string name="baidu_all_zz">ae5fcf1c25</string>
+    <string name="init_gridding_fail">初始化网格失败,请稍后再试</string>
+    <string name="select_grid">请选择网格</string>
+    <string name="select_tier">请选择层级</string>
+    <string name="select_standard_address">请选择标准地址</string>
+    <string name="select_standard_tier">标准地址层级</string>
+    <string name="select_text">查询</string>
+    <string name="search_">检索</string>
+    <string name="search_correlation">检索相关</string>
+    <string name="check">查验</string>
+    <string name="merge_info">合并</string>
+    <string name="info_lack">信息不全</string>
+    <string name="local_error">定位错误</string>
+    <string name="law_inform">法院通知</string>
+    <string name="order_list">订单列表</string>
+    <string name="initiator">发起人</string>
+    <string name="collect_info">采集信息</string>
+    <string name="please_input_search_info_type">请输入要查询的信息类型</string>
+    <string name="data_report">数据报表</string>
+    <string name="contradiction_adjustment">矛盾调解</string>
+    <string name="InternetVisit">网格走访</string>
+    <string name="network_inspection">网格巡检</string>
+    <string name="data_statistics">数据统计</string>
+    <string name="grid_personnel_attendance">网格员考勤</string>
+    <string name="newly_record">新增记录</string>
+    <string name="newly_ipqc_record">新增巡检记录</string>
+    <string name="matter_involve">涉及权利事项</string>
+    <string name="select_matter_hint">选择执法事项</string>
+    <string name="select_sort_hint">请选择案件分类</string>
+    <string name="law_source_hint">请选择案件来源</string>
+    <string name="select_affect_hint">请选择案件影响</string>
+    <string name="law_source">案件来源</string>
+    <string name="law_sort">案件分类</string>
+    <string name="law_affect">案件影响</string>
+    <string name="is_important">是否是重大行政案件</string>
+    <string name="base_info">基本信息</string>
+    <string name="title">标题</string>
+    <string name="title_hint">请填写标题</string>
+    <string name="unit_name">单位名称/姓名</string>
+    <string name="unit_name_hint">请填写单位名称/姓名</string>
+    <string name="contact">联系方式</string>
+    <string name="contact_hint">请填写联系方式</string>
+    <string name="address_a">地址/住址</string>
+    <string name="address_a_hint">请填写地址</string>
+    <string name="law_info">案件信息</string>
+    <string name="cause_of_action">案由</string>
+    <string name="cause_of_action_hint">请填写案由</string>
+    <string name="accept_time">受理时间</string>
+    <string name="accept_time_hint">请选择受理时间</string>
+    <string name="crime_time">案发时间</string>
+    <string name="crime_time_hint">请选择案发时间</string>
+    <string name="crime_address">案发地点</string>
+    <string name="crime_address_hint">请选择案发地点</string>
+    <string name="add_parties">新建当事人</string>
+    <string name="parties_info">当事人信息</string>
+    <string name="parties_type">当事人类型</string>
+    <string name="natural_person">自然人</string>
+    <string name="legal_organization">法人或组织</string>
+    <string name="my_name_hint">请填写姓名</string>
+    <string name="gender_hint">请选择性别</string>
+    <string name="age_hint">请填写年龄</string>
+    <string name="id_number_hint">请填写身份证号码</string>
+    <string name="accepting_cases_record">受理记录</string>
+    <string name="transaction_cases_record">办理记录</string>
+    <string name="accepting_cases_sign">受理人签名</string>
+    <string name="transaction_cases_sign">办理人签名</string>
+    <string name="accepting_cases_sign_hit">请输入受理人签名</string>
+    <string name="transaction_cases_sign_hit">请输入办理人签名</string>
+    <string name="input_record">请填写受理记录</string>
+    <string name="transaction_input_record">请填写办理记录</string>
+    <string name="timeString_hint">请选择时间</string>
+    <string name="next_transaction">下一步审核办理</string>
+    <string name="transaction_link">办理环节</string>
+    <string name="transaction_p">审核办理人</string>
+    <string name="transaction_p_hint">请输入审核办理人</string>
+    <string name="transaction_link_hint">请选择办理环节</string>
+    <string name="department_unit">部门单位</string>
+    <string name="department_unit_hint">请选择部门单位</string>
+    <string name="audit_date">审核期限</string>
+    <string name="audit_date_hint">请选择审核期限(截止时间)</string>
+    <string name="day">天</string>
+    <string name="organization_legal_name">法人或组织名称</string>
+    <string name="organization_legal_name_hint">请输入法人或组织名称</string>
+    <string name="firm_code">企业信用代码</string>
+    <string name="firm_code_hint">请输入企业信用代码</string>
+    <string name="charge_name">负责人姓名</string>
+    <string name="charge_name_hint">请输入负责人姓名</string>
+    <string name="charge_duty">负责人职务</string>
+    <string name="charge_duty_hint">请输入负责人职务</string>
+    <string name="select">选择</string>
+    <string name="book_address">通讯录</string>
+    <string name="video_hs">视频会商</string>
+    <string name="input_inspect_record">请输入巡检记录</string>
+    <string name="input_select_resource">请选择资源</string>
+    <string name="input_inspect_record_d">请输入巡检描述/记录/详情，150字以内</string>
+    <string name="input_interview_d">请输入走访详情</string>
+
+    <string name="economic_management">经济管理</string>
+    <string name="man">男</string>
+    <string name="woman">女</string>
+
+    <!--数据统计的标题-->
+    <string-array name="data_statistic">
+        <item>汇总统计</item>
+        <item>区域详情</item>
+    </string-array>
+
+
+    <string name="comprehensive_law_enforcement">综合执法</string>
+
+    <!--数据统计的标题-->
+    <string-array name="data_comprehensive_law_enforcement">
+        <item>案件</item>
+        <item>事件</item>
+    </string-array>
+
+    <string name="transformation_case">转为行政案件</string>
+    <!--经济管理-->
+    <string name="project_management">项目管理</string>
+    <string name="enterprise_management">企业管理</string>
+    <string name="enterprise_information_collection">企业信息采集</string>
+    <string name="project_information_collection">项目信息采集</string>
+
+
+    <string name="input_content">请输入检索内容</string>
+    <string name="be_born_hint">请选择出生日期</string>
+    <string name="please_input_name_id_hint">请输入姓名或身份证号码</string>
+    <string name="time_t">办理时间</string>
+    <string name="id_card">0123456789xX</string>
+</resources>

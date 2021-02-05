@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="15dp"
+    android:layout_marginTop="@dimen/dp_10"
+    android:layout_marginEnd="15dp"
+    android:background="@drawable/shape_b_ffffff_c_6"
+    android:orientation="vertical"
+    tools:ignore="RtlCompat">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_12"
+            android:layout_marginTop="@dimen/dp_12"
+            android:layout_marginBottom="@dimen/dp_12"
+            android:textColor="@color/gray_2b1"
+            android:textSize="@dimen/sp_13"
+            tools:text="2019-06-13 11:34" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="@dimen/dp_14"
+            android:layout_height="@dimen/dp_14"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/shape_b_f66a0d_c_4"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_10"
+            tools:text="急" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:layout_marginTop="@dimen/dp_12"
+            android:layout_marginBottom="@dimen/dp_12"
+            android:layout_marginEnd="@dimen/dp_12"
+            android:textColor="#FF3EBD9F"
+            android:textSize="@dimen/sp_14"
+            tools:text="处理中" />
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginStart="@dimen/dp_12"
+        android:layout_marginEnd="@dimen/dp_12"
+        android:background="@color/theme_background" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_12"
+        android:orientation="horizontal"
+        android:layout_marginStart="@dimen/dp_12"
+        tools:ignore="RtlCompat">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="@color/black_333"
+            android:textSize="@dimen/sp_14"
+            android:text="@string/event_source"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="@color/black_333"
+            android:textStyle="bold"
+            android:layout_marginStart="@dimen/dp_25"
+            android:textSize="@dimen/sp_14"
+            tools:text="网格员登记"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_marginBottom="@dimen/dp_20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_12"
+        android:orientation="horizontal"
+        android:layout_marginStart="@dimen/dp_12"
+        tools:ignore="RtlCompat">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="@color/black_333"
+            android:textSize="@dimen/sp_14"
+            android:text="@string/event_theme"/>
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="@color/black_333"
+            android:textStyle="bold"
+            android:layout_marginStart="@dimen/dp_25"
+            android:textSize="@dimen/sp_14"
+            tools:text="8081701二九社区王立上报治安防范事件8081701二九社区王立"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:orientation="horizontal"
+            tools:ignore="RtlCompat">
+            <ImageView
+                android:layout_width="@dimen/dp_12"
+                android:layout_height="@dimen/dp_12"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_6"
+                android:background="@drawable/icon_voice" />
+
+            <ImageView
+                android:layout_width="@dimen/dp_12"
+                android:layout_height="@dimen/dp_12"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_4"
+                android:background="@drawable/icon_video" />
+
+            <ImageView
+                android:layout_width="@dimen/dp_12"
+                android:layout_height="@dimen/dp_12"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_4"
+                android:layout_marginEnd="@dimen/dp_12"
+                android:background="@drawable/icon_pic" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

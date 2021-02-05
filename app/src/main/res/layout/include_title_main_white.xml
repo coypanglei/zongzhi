@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    style="@style/titleBar"
+    app:contentInsetStart="0dp">
+
+    <include layout="@layout/include_title_text" />
+
+    <RelativeLayout
+        android:id="@+id/icon_news_layout"
+        android:layout_width="@dimen/dp_54"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/message_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_news_" />
+
+
+        <TextView
+            android:id="@+id/message_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/message_img"
+            android:layout_marginTop="@dimen/dp_3"
+            android:text="@string/mes"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_10" />
+
+        <TextView
+            android:id="@+id/info_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_m_5"
+            android:layout_marginTop="@dimen/dp_m_5"
+            android:layout_toEndOf="@+id/message"
+            android:layout_toRightOf="@+id/message"
+            android:background="@drawable/shape_b_ff0000_c_round"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_6"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/icon_scan"
+        android:layout_width="@dimen/dp_54"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_gravity="left"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/scan_img"
+            android:layout_width="30dp"
+            android:layout_height="@dimen/dp_22"
+            android:src="@drawable/icon_scan" />
+
+        <TextView
+            android:id="@+id/scan_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sys"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_10" />
+
+    </LinearLayout>
+
+
+</androidx.appcompat.widget.Toolbar>

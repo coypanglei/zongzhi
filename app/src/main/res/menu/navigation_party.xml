@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/news_center"
+        android:icon="@drawable/navigation_news_center"
+        android:title="@string/news_center" />
+    <item
+        android:id="@+id/education"
+        android:icon="@drawable/navigation_education"
+        android:title="@string/education" />
+    <item
+        android:id="@+id/notice"
+        android:icon="@drawable/navigation_notice"
+        android:title="@string/notice" />
+    <item
+        android:id="@+id/party_activity"
+        android:icon="@drawable/navigation_party_activity"
+        android:title="@string/party_activity" />
+    <item
+        android:id="@+id/mine"
+        android:icon="@drawable/navigation_mine"
+        android:title="@string/mine" />
+
+</menu>
