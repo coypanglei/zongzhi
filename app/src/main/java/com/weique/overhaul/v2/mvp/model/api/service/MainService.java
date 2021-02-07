@@ -97,8 +97,8 @@ public interface MainService {
      * @param map map
      * @return Observable
      */
-    @GET("app/login/GetNavForMobile")
-    Observable<BaseBean<ArrayList<HomeMenuItemBean>>> getHomeModuleLabel(@QueryMap Map<String, Object> map);
+    @GET("{path}")
+    Observable<BaseBean<ArrayList<HomeMenuItemBean>>> getHomeModuleLabel(@Path(value = "path", encoded = true) String url, @QueryMap Map<String, Object> map);
 
     /**
      * APP端上传图片使用

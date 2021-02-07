@@ -2,19 +2,16 @@ package com.weique.overhaul.v2.mvp.contract;
 
 import android.content.Context;
 
-import androidx.fragment.app.FragmentActivity;
-
 import com.jess.arms.mvp.IModel;
 import com.jess.arms.mvp.IView;
 import com.weique.overhaul.v2.mvp.model.entity.BaseBean;
 import com.weique.overhaul.v2.mvp.model.entity.EventProceedRecordBean;
 import com.weique.overhaul.v2.mvp.model.entity.GridInformationBean;
-import com.weique.overhaul.v2.mvp.model.entity.UploadFileRsponseBean;
+import com.weique.overhaul.v2.mvp.model.entity.InformationItemPictureBean;
 
 import java.util.List;
 
 import io.reactivex.Observable;
-import okhttp3.MultipartBody;
 
 
 /**
@@ -42,10 +39,6 @@ public interface EventsReportedLookContract {
          */
         void setData(Object json);
 
-        /**
-         * 点击 办理 评论  归档 退回
-         */
-        void next();
 
         /**
          * 设置办理人列表
@@ -59,9 +52,13 @@ public interface EventsReportedLookContract {
 
         /**
          * 去相册
+         *
          * @param max
          */
         void goToPhotoAlbum(int max);
+
+        void setUpLoadItem(List<InformationItemPictureBean> list);
+
     }
 
     interface Model extends IModel {
@@ -74,33 +71,13 @@ public interface EventsReportedLookContract {
         Observable<BaseBean<Object>> getEventRecordInfo(String id, String custId);
 
         /**
-         * 小流程节点处理
-         *
-         * @param content content
-         * @param id  id
-         * @param status  status
-         * @param synergyStatus  synergyStatus
-         * @return Observable
-         */
-        Observable<BaseBean<Object>> setEventNodeHandle(String content, String id, int status,int synergyStatus);
-
-        /**
          * 评价
          *
          * @param evaluation evaluation
          * @param recordId   recordId
          * @return Observable
          */
-        Observable<BaseBean<Object>> createEvaluation(String evaluation, String recordId,String images);
-
-
-        /**
-         * 归档
-         *
-         * @param recordId recordId
-         * @return Observable
-         */
-        Observable<BaseBean<Object>> placeOnFile(String recordId);
+        Observable<BaseBean<Object>> createEvaluation(String evaluation, String recordId, String images);
 
         /**
          * 归档
@@ -108,7 +85,7 @@ public interface EventsReportedLookContract {
          * @param custId custId
          * @return Observable
          */
-        Observable<BaseBean<List<EventProceedRecordBean>>> getEventProceedRecord(String custId,String eventRId);
+        Observable<BaseBean<List<EventProceedRecordBean>>> getEventProceedRecord(String custId, String eventRId);
 
         Observable<BaseBean<GridInformationBean>> getGetDepartment(String departmentId);
 

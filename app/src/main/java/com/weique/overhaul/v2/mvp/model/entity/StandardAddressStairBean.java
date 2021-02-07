@@ -22,34 +22,38 @@ public class StandardAddressStairBean {
      */
     public static final int GRIDDING = 0;
     /**
+     * 邻里服务站
+     */
+    public static final int SERVICE_STATION = 1;
+    /**
      * 社区
      */
-    public static final int COMMUNITY = 1;
+    public static final int COMMUNITY = 2;
     /**
      * 街道
      */
-    public static final int STREET = 2;
+    public static final int STREET = 3;
     /**
      * 区
      */
-    public static final int AREA = 3;
+    public static final int AREA = 4;
     /**
      * 市
      */
-    public static final int CITY = 4;
+    public static final int CITY = 5;
     /**
      * 省
      */
-    public static final int PROVINCE = 5;
+    public static final int PROVINCE = 6;
     /**
      * 国家
      */
-    public static final int STATE = 6;
+    public static final int STATE = 7;
 
     /**
      * 网格及其网格以上
      */
-    private String[] currentRankNameWithUp = {"网格", "社区", "街道", "区", "市", "省", "国家"};
+    private String[] currentRankNameWithUp = {"网格", "邻里服务站", "社区", "街道", "区", "市", "省", "国家"};
 
     /**
      * 网格以下
@@ -59,7 +63,7 @@ public class StandardAddressStairBean {
     //用 @IntDef "包住" 常量；
     // @Retention 定义策略
     // 声明构造器
-    @IntDef({GRIDDING, COMMUNITY, STREET, AREA, CITY, PROVINCE, STATE})
+    @IntDef({GRIDDING, SERVICE_STATION, COMMUNITY, STREET, AREA, CITY, PROVINCE, STATE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface StandardAddressEnumBean {
 

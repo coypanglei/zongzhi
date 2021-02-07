@@ -73,29 +73,49 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
-                    tools:listitem="@layout/chat_item"
-                    android:layout_height="wrap_content">
-
-
-                </androidx.recyclerview.widget.RecyclerView>
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/dp_77"
+                    tools:itemCount="1"
+                    tools:listitem="@layout/chat_item" />
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_chat"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/dp_20"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/shape_b_2483f5_c_4"
-        android:text="@string/start_chat"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_18"
-         />
 
+    <LinearLayout
+        android:id="@+id/bottom_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:padding="@dimen/dp_16">
+
+        <Button
+            android:id="@+id/start_chat_r"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_b_2483f5_c_4"
+            android:text="@string/start_chat_r"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_18" />
+
+        <Button
+            android:id="@+id/btn_chat"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="@dimen/dp_10"
+            android:layout_weight="1"
+            android:background="@drawable/shape_b_f39800_c_2"
+            android:text="@string/start_chat_v"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_18" />
+
+    </LinearLayout>
 </RelativeLayout>

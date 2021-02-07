@@ -12,7 +12,6 @@ import com.weique.overhaul.v2.R;
 
 
 /**
- *
  * @author dds
  * @date 2018/11/7
  */
@@ -53,7 +52,7 @@ public class NodejsActivity extends AppCompatActivity {
         WebrtcUtil.callSingle(this,
                 et_signal.getText().toString(),
                 et_room.getText().toString().trim(),
-                true);
+                true, "", "");
     }
 
     public void JoinRoomSingleAudio(View view) {
@@ -61,7 +60,7 @@ public class NodejsActivity extends AppCompatActivity {
             WebrtcUtil.callSingle(this,
                     et_signal.getText().toString(),
                     et_room.getText().toString().trim(),
-                    false);
+                    false, "", "");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -69,7 +68,8 @@ public class NodejsActivity extends AppCompatActivity {
 
     public void JoinRoom(View view) {
         try {
-            WebrtcUtil.call(this, et_signal.getText().toString(), et_room.getText().toString().trim());
+            WebrtcUtil.call(this, et_signal.getText().toString(),
+                    et_room.getText().toString().trim(),"","");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -61,7 +61,9 @@ public class CommonDialogFragment extends DialogFragment {
         CommonDialogFragment instance = new CommonDialogFragment();
         instance.setCancelable(cancelable);
         instance.mCancelListener = cancelListener;
-        instance.mOnCallDialog = callDialog;
+        if (instance.mOnCallDialog == null) {
+            instance.mOnCallDialog = callDialog;
+        }
         return instance;
     }
 

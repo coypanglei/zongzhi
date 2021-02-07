@@ -16,7 +16,6 @@ android {
     }
 
 
-
     buildTypes {
         release {
             minifyEnabled false
@@ -34,4 +33,7 @@ dependencies {
     implementation 'org.simple:androideventbus:1.0.5.1'
     implementation project(':libwebrtc')
     implementation project(path: ':arms')
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
 }

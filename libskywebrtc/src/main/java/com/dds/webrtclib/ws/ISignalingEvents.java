@@ -1,5 +1,7 @@
 package com.dds.webrtclib.ws;
 
+import com.dds.webrtclib.bean.ConnectionInfoBean;
+
 import org.webrtc.IceCandidate;
 
 import java.util.ArrayList;
@@ -18,10 +20,10 @@ public interface ISignalingEvents {
     void onWebSocketOpenFailed(String msg);
 
     // 进入房间
-    void onJoinToRoom(ArrayList<String> connections, String myId);
+    void onJoinToRoom(List<ConnectionInfoBean> connections, String myId, String name, String headUrl);
 
     // 有新人进入房间
-    void onRemoteJoinToRoom(String socketId);
+    void onRemoteJoinToRoom(String socketId,String userName,String headUrl);
 
     void onRemoteIceCandidate(String socketId, IceCandidate iceCandidate);
 

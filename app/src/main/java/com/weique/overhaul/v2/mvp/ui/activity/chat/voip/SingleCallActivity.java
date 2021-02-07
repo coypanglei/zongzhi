@@ -43,6 +43,7 @@ public class SingleCallActivity extends AppCompatActivity {
     TextView descTextView;
 
 
+    private static boolean mVideoEnable;
     private static String roomId;
     private static String who;//谁发起的会话
     private static String header;//谁发起的会话
@@ -50,14 +51,15 @@ public class SingleCallActivity extends AppCompatActivity {
     private AsyncPlayer ringPlayer;
 
 
-    public static void openActivity(Context context, String targetId, String HeadUrl, String name) {
+    public static void openActivity(Context context, String targetId, String name, String headUrl, boolean videoEnable) {
         try {
             Intent voip = new Intent(context, SingleCallActivity.class);
             voip.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             context.startActivity(voip);
             roomId = targetId;
+            mVideoEnable = videoEnable;
             who = name;
-            header = HeadUrl;
+            header = headUrl;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,6 +87,8 @@ public class SingleCallActivity extends AppCompatActivity {
 
             GlideUtil.loadImage(SingleCallActivity.this, header, portraitImageView);
             nameTextView.setText(UserInfoUtil.getUserInfo().getName());
+            who = who.replace("视频", "");
+            who = who.replace("语音", "");
             descTextView.setText(who);
 
             // 权限检测
@@ -144,7 +148,11 @@ public class SingleCallActivity extends AppCompatActivity {
                     finish();
                     break;
                 case R.id.agree:
-                    WebrtcUtil.call(SingleCallActivity.this, Constant.CHAT_IP, roomId);
+                    WebrtcUtil.call(SingleCallActivity.this,
+                            Constant.CHAT_IP, roomId, mVideoEnable,
+                            UserInfoUtil.getUserInfo().getName(),
+                            GlideUtil.handleUrl(this, UserInfoUtil.getUserInfo().getHeadUrl())
+                    );
                     ringPlayer.stop();
                     finish();
                     break;

@@ -28,8 +28,20 @@ public class EditTextDialog extends Dialog {
     private Button confirm;
     private OnConfirmClickListener OnConfirmClickListener;
 
+    private String titleText = "提示";
+    private String hint = "请输入";
+    private String confirmText = "确定";
+
     public interface OnConfirmClickListener {
         void onConfirmClick(String contents);
+    }
+
+    public EditTextDialog(@NonNull Context context, String titleText, String hint, String confirmText) {
+        super(context, R.style.dialog_style);
+        this.mContext = context;
+        this.titleText = titleText;
+        this.hint = hint;
+        this.confirmText = confirmText;
     }
 
     public EditTextDialog(@NonNull Context context) {
@@ -68,21 +80,27 @@ public class EditTextDialog extends Dialog {
         try {
             title = view.findViewById(R.id.title);
             title.setVisibility(View.GONE);
+            title.setText(titleText);
             content = view.findViewById(R.id.content);
+            content.setHint(hint);
             content.setFocusable(true);
             content.setFocusableInTouchMode(true);
             content.requestFocus();
             impose = view.findViewById(R.id.impose);
             confirm = view.findViewById(R.id.confirm);
-            confirm.setText("回复");
+            confirm.setText(confirmText);
             confirm.setOnClickListener(v -> {
-                String s = content.getText().toString();
-                if (StringUtil.isNullString(s)) {
-                    ArmsUtils.makeText("请填写回复内容");
-                    return;
+                try {
+                    String s = content.getText().toString();
+                    if (StringUtil.isNullString(s)) {
+                        ArmsUtils.makeText(content.getHint().toString());
+                        return;
+                    }
+                    OnConfirmClickListener.onConfirmClick(s);
+                    dismiss();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                OnConfirmClickListener.onConfirmClick(s);
-                dismiss();
             });
             content.addTextChangedListener(new TextWatcher() {
                 @Override

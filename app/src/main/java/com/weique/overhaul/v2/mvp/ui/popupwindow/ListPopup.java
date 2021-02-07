@@ -19,6 +19,8 @@ import com.weique.overhaul.v2.mvp.ui.adapter.ListPopItemAdapter;
 import java.util.List;
 
 import razerdp.basepopup.BasePopupWindow;
+import razerdp.util.animation.AnimationHelper;
+import razerdp.util.animation.ScaleConfig;
 
 /**
  * @author GK
@@ -98,13 +100,19 @@ public class ListPopup extends BasePopupWindow implements View.OnClickListener {
     // 返回作用于PopupWindow的show和dismiss动画，本库提供了默认的几款动画，这里可以自由实现
     @Override
     protected Animation onCreateShowAnimation() {
-        return getDefaultScaleAnimation(true);
+
+        return AnimationHelper.asAnimation()
+                .withScale(ScaleConfig.CENTER)
+                .toShow();
+
     }
 
 
     @Override
     protected Animation onCreateDismissAnimation() {
-        return getDefaultScaleAnimation(false);
+        return AnimationHelper.asAnimation()
+                .withScale(ScaleConfig.CENTER)
+                .toDismiss();
     }
 
 

@@ -2,7 +2,11 @@
     <item
         android:id="@+id/agenda"
         android:icon="@drawable/selector_main_icon_work"
-        android:title="@string/work" />
+        android:title="@string/home_p" />
+    <item
+        android:id="@+id/app_p"
+        android:icon="@drawable/selector_main_icon_app"
+        android:title="@string/app_p" />
     <item
         android:id="@+id/my"
         android:icon="@drawable/selector_main_icon"

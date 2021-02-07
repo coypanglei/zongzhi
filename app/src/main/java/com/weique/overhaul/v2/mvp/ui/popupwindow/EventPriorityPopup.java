@@ -51,7 +51,7 @@ public class EventPriorityPopup extends BasePopupWindow implements View.OnClickL
      * @param context
      */
     public EventPriorityPopup(Context context) {
-        super(context, BasePopupWindow.MATCH_PARENT, BasePopupWindow.WRAP_CONTENT);
+        super(context);
         initpopup();
     }
 
@@ -61,8 +61,8 @@ public class EventPriorityPopup extends BasePopupWindow implements View.OnClickL
 //        setBlurBackgroundEnable(true);
             setBackgroundColor(ArmsUtils.getColor(getContext(), R.color.transparent48));
             setOutSideDismiss(true);
-//            setSoftInputMode(PopupWindow.INPUT_METHOD_NEEDED);
-//            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            setSoftInputMode(PopupWindow.INPUT_METHOD_NEEDED);
+            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             eventPriorityBean = new EventPriorityBean();
             eventOne = findViewById(R.id.event_one);
             eventOneText = findViewById(R.id.event_one_text);
@@ -88,21 +88,25 @@ public class EventPriorityPopup extends BasePopupWindow implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.event_one:
-                eventPriorityBean.setPriority(EventPriorityBean.COMMON);
-                dismiss();
-                break;
-            case R.id.event_two:
-                eventPriorityBean.setPriority(EventPriorityBean.URGENCY);
-                dismiss();
-                break;
-            case R.id.event_three:
-                eventPriorityBean.setPriority(EventPriorityBean.SIGNIFICANT);
-                dismiss();
-                break;
-            default:
+        try {
+            switch (v.getId()) {
+                case R.id.event_one:
+                    eventPriorityBean.setPriority(EventPriorityBean.COMMON);
+                    dismiss();
+                    break;
+                case R.id.event_two:
+                    eventPriorityBean.setPriority(EventPriorityBean.URGENCY);
+                    dismiss();
+                    break;
+                case R.id.event_three:
+                    eventPriorityBean.setPriority(EventPriorityBean.SIGNIFICANT);
+                    dismiss();
+                    break;
+                default:
+            }
+            onLevelItemClick.onLevelClick(eventPriorityBean);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        onLevelItemClick.onLevelClick(eventPriorityBean);
     }
 }

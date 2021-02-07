@@ -35,7 +35,7 @@ public class EventsReportedAdapter extends BaseQuickAdapter<EventsReportedBean.L
             helper.setText(R.id.event_name, StringUtil.setText(item.getTitle()));
             helper.setText(R.id.event_sort_name, StringUtil.setText(item.getName()));
             helper.setText(R.id.record_time, StringUtil.setText(item.getTime()));
-            helper.setText(R.id.status, StringUtil.setText(item.getCurrentIndexString(item.getEnumOrderStatus())));
+            helper.setText(R.id.status, StringUtil.setText(EventsReportedBean.ListBean.getCurrentIndexString(item.getEnumOrderStatus())));
         } catch (Exception e) {
             e.printStackTrace();
         }

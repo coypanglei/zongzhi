@@ -35,14 +35,6 @@ public class EventBusConstant {
      */
     public static final int DOWNLOAD_PREGRESS = 6;
     public static final int DOWNLOAD_PREGRESS_OK = 7;
-    /**
-     * 更新头像
-     */
-    public static final int UPDATE_HEAD_PHOTO = 8;
-    /**
-     * 更新名称
-     */
-    public static final int UPDATE_HEAD_NAME = 14;
 
     /**
      * 获取消息相关信息
@@ -59,9 +51,13 @@ public class EventBusConstant {
      */
     public static final int SET_SCAN_ICON_STATUS = 10;
     /**
-     * 通用更新
+     * 通用更新 局部刷新
      */
     public static final int COMMON_UPDATE = 11;
+    /**
+     * 通用整体刷新  刷新整个界面数据
+     */
+    public static final int COMMON_REFRESH = 19;
     /**
      * 通用跳转
      */
@@ -100,9 +96,9 @@ public class EventBusConstant {
 
 
     /**
-     *  搜索的key
+     * 搜索的key
      */
-    public static final  int SEARCH_KEY= 17;
+    public static final int SEARCH_KEY = 17;
 
 
 }

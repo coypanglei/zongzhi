@@ -16,7 +16,7 @@ public interface IWebSocket {
     void close();
 
     // 加入房间
-    void joinRoom(String room);
+    void joinRoom(String room, String name, String headUrl);
 
     //处理回调消息
     void handleMessage(String message);

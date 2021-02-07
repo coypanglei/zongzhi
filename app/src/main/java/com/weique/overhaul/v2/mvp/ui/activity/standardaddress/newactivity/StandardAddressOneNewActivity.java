@@ -34,8 +34,10 @@ import com.weique.overhaul.v2.app.utils.AccessControlUtil;
 import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.app.utils.KeybordUtil;
 import com.weique.overhaul.v2.app.utils.StringUtil;
+import com.weique.overhaul.v2.app.utils.UserInfoUtil;
 import com.weique.overhaul.v2.di.component.DaggerStandardAddressOneNewComponent;
 import com.weique.overhaul.v2.mvp.contract.StandardAddressOneNewContract;
+import com.weique.overhaul.v2.mvp.model.SearchProjectBean;
 import com.weique.overhaul.v2.mvp.model.entity.BaseSearchPopupBean;
 import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
 import com.weique.overhaul.v2.mvp.model.entity.UserGideBean;
@@ -46,6 +48,7 @@ import com.weique.overhaul.v2.mvp.ui.activity.standardaddress.StandardAddressAdd
 import com.weique.overhaul.v2.mvp.ui.activity.standardaddress.StandardAddressLookActivity;
 import com.weique.overhaul.v2.mvp.ui.activity.standardaddress.StandardAddressUpListActivity;
 import com.weique.overhaul.v2.mvp.ui.adapter.StandardAddressOneAdapter;
+import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonTreeListPopup;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.SearchPopup;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
@@ -133,6 +136,12 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
     @Autowired(name = ARouerConstant.TITLE)
     public static String title;
     /**
+     * 新增  资源时选择的网格 信息
+     */
+    @Autowired(name = ARouerConstant.DATA_BEAN)
+    SearchProjectBean.DepartmentsBean selectedObject;
+
+    /**
      * 选择网格的弹框
      */
     private static final int GRID = 0;
@@ -149,11 +158,18 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
     /**
      * 这里和 InformationCollectionActivity  isCRUD 的又区分
      */
-    private  boolean isCRUD = false;
+    private boolean isCRUD = false;
     /**
      * 是否是第一次获取数据
      */
     private boolean isFirstGetData = true;
+
+    /**
+     * popup
+     */
+    private CommonTreeListPopup<SearchProjectBean.DepartmentsBean> popup;
+    private SearchProjectBean.DepartmentsBean defaultDepartmentBean;
+    private LinearLayoutManager linearLayoutManager;
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -183,7 +199,25 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
             }
             initRecycler();
             clickItem = GRID;
-            mPresenter.getGridList(true, false, "");
+            if (selectedObject != null) {
+                selectGridLayout.setClickable(false);
+                selectGrid.setText(selectedObject.getName());
+                selectGrid.setTag(selectedObject.getId());
+                departmentId = selectedObject.getId();
+            } else {
+                selectGridLayout.setClickable(true);
+                defaultDepartmentBean = new SearchProjectBean.DepartmentsBean();
+                defaultDepartmentBean.setLevel(StandardAddressStairBean.AREA);
+                defaultDepartmentBean.setEnumCommunityLevel(UserInfoUtil.getUserInfo().getEnumCommunityLevel());
+                defaultDepartmentBean.setLeaf(true);
+                defaultDepartmentBean.setId(UserInfoUtil.getUserInfo().getDepartmentId());
+                defaultDepartmentBean.setFullPath(UserInfoUtil.getUserInfo().getFullPath());
+                defaultDepartmentBean.setName(UserInfoUtil.getUserInfo().getDepartmentName() + "(默认)");
+                selectedObject = defaultDepartmentBean;
+                selectGrid.setText(defaultDepartmentBean.getName());
+                selectGrid.setTag(defaultDepartmentBean.getId());
+                departmentId = defaultDepartmentBean.getId();
+            }
             searchEt.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -202,33 +236,26 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
                         if (StringUtil.isNullString(departmentId)) {
                             return;
                         }
-                        mPresenter.getGriddingFourRace(true, false, departmentId, tierId, keyWord);
+                        getGriddingFourRace(true, false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             });
             AccessControlUtil.controlByLevelCommunity(add);
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    if (recyclerView.canScrollVertically(1)) {
-                        Timber.i(TAG, "direction 1: true");
-                    } else {
-                        Timber.i(TAG, "direction 1: false");//滑动到底部
-                    }
-                    if (recyclerView.canScrollVertically(-1)) {
-                        Timber.i(TAG, "direction -1: true");
-                    } else {
-                        Timber.i(TAG, "direction -1: false");//滑动到顶部
-                    }
-                }
-            });
+            getGriddingFourRace(true, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void getGriddingFourRace(boolean pullToRefresh, boolean isLoadMore) {
+        mPresenter.getGriddingFourRace(pullToRefresh, isLoadMore, departmentId, tierId, keyWord);
+    }
+
+    private void getDepartments(boolean pullToRefresh, boolean isLoadMore, String keyword, String id, boolean addChild) {
+//        mPresenter.getGridList(pullToRefresh, isLoadMore, keyword);
+        mPresenter.getDepartments(id, addChild);
     }
 
     @Override
@@ -268,7 +295,7 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
                 case R.id.select_grid_layout:
                     clickItem = GRID;
                     isFirstGetData = false;
-                    mPresenter.getGridList(true, false, "");
+                    getDepartments(true, false, "", "", false);
                     break;
                 case R.id.select_tier_layout:
                     if (StringUtil.isNullString(departmentId)) {
@@ -286,6 +313,10 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
                     if (StringUtil.isNullString(departmentId)) {
                         ArmsUtils.makeText("请选择网格");
                         break;
+                    }
+                    if (selectedObject.getEnumCommunityLevel() > StandardAddressStairBean.GRIDDING) {
+                        ArmsUtils.makeText("区域选择到网格,才可以添加数据");
+                        return;
                     }
                     /*if (StringUtil.isNullString(tierId)) {
                         ArmsUtils.makeText("请选择层级");
@@ -328,10 +359,11 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
     private void initRecycler() {
         try {
             swipeRefreshLayout.setOnRefreshListener(() -> {
-                mPresenter.getGriddingFourRace(true, false, departmentId, tierId, keyWord);
+                getGriddingFourRace(true, false);
             });
             adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
-            ArmsUtils.configRecyclerView(recyclerView, new LinearLayoutManager(this));
+            linearLayoutManager = new LinearLayoutManager(this);
+            ArmsUtils.configRecyclerView(recyclerView, linearLayoutManager);
             recyclerView.addItemDecoration(decoration);
             recyclerView.setAdapter(adapter);
             adapter.setOnItemChildClickListener((adapter, view, position) -> {
@@ -364,7 +396,7 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
             });
             adapter.setOnLoadMoreListener(() -> {
                 try {
-                    mPresenter.getGriddingFourRace(false, true, departmentId, tierId, keyWord);
+                    getGriddingFourRace(false, true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -401,11 +433,12 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
                                 departmentName = baseSearchPopupBean.getName();
                                 selectGrid.setText(StringUtil.setText(departmentName));
                                 if (baseSearchPopupBean instanceof UserGideBean.ListBean) {
-                                    UserGideBean.ListBean userGideBean = (UserGideBean.ListBean) baseSearchPopupBean;
+                                    UserGideBean.ListBean userGideBean
+                                            = (UserGideBean.ListBean) baseSearchPopupBean;
                                     pointsInJSON = userGideBean.getPointsInJSON();
                                 }
                                 if (StringUtil.isNotNullString(departmentId)) {
-                                    mPresenter.getGriddingFourRace(true, false, departmentId, tierId, keyWord);
+                                    getGriddingFourRace(true, false);
                                 }
                             }
                             return;
@@ -423,7 +456,7 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
                                 switch (clickItem) {
 
                                     case GRID:
-                                        mPresenter.getGridList(true, false, keyword);
+                                        getDepartments(true, false, keyword, "", false);
                                         break;
                                     case TIER:
                                         mPresenter.getDepartmentDownInfo(true, false, departmentId);
@@ -440,7 +473,7 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
                             try {
                                 switch (clickItem) {
                                     case GRID:
-                                        mPresenter.getGridList(false, true, keyword);
+                                        getDepartments(false, true, keyword, "", false);
                                         break;
                                     case TIER:
                                         searchPopup.setLoadMoreViewHide(true);
@@ -479,7 +512,7 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
                                         break;
                                     default:
                                 }
-                                mPresenter.getGriddingFourRace(true, false, departmentId, tierId, keyWord);
+                                getGriddingFourRace(true, false);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -515,6 +548,60 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
         }
     }
 
+    @Override
+    public void showTreePopup(List<SearchProjectBean.DepartmentsBean> departmentsBeans, boolean addChild) {
+        try {
+            if (departmentsBeans == null || departmentsBeans.size() <= 0) {
+                ArmsUtils.makeText("未查询到相关信息");
+                return;
+            }
+            for (SearchProjectBean.DepartmentsBean bean : departmentsBeans) {
+                bean.setLeaf(bean.getEnumCommunityLevel() == StandardAddressStairBean.GRIDDING);
+            }
+
+            if (popup == null) {
+                popup = new CommonTreeListPopup<>(this, true);
+                popup.setListener(new CommonTreeListPopup.CommonTreeListPopupListener<SearchProjectBean.DepartmentsBean>() {
+                    @Override
+                    public void onItemClickGetSubset(String elementId) {
+                        getDepartments(true, false, "", elementId, true);
+                    }
+
+                    @Override
+                    public void onItemClickInput(SearchProjectBean.DepartmentsBean da) {
+                        selectGrid.setText(da.getName());
+                        selectGrid.setTag(da.getId());
+                        departmentId = da.getId();
+                        selectedObject = da;
+                        popup.dismiss();
+                        getGriddingFourRace(true, false);
+                    }
+
+                    @Override
+                    public void onSearchByKeyword(String keyWord) {
+//                        mKeyWord = keyWord;
+                    }
+
+                    @Override
+                    public void onLoadMore() {
+
+                    }
+                });
+            }
+            if (addChild) {
+                popup.setDataTree(departmentsBeans);
+            } else {
+                departmentsBeans.add(0, defaultDepartmentBean);
+                popup.setData(departmentsBeans, false);
+            }
+            if (!popup.isShowing()) {
+                popup.showPopupWindow();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 更新 item 信息 删除  修改和新增
@@ -523,31 +610,36 @@ public class StandardAddressOneNewActivity extends BaseActivity<StandardAddressO
      */
     @Subscriber(tag = RouterHub.APP_STANDARDADDRESSONENEWACTIVITY)
     private void onEventCallBack(EventBusBean eventBusBean) {
-        switch (eventBusBean.getCode()) {
-            case EventBusConstant.ADD:
-                if (eventBusBean.getData() instanceof StandardAddressStairBean.StandardAddressStairBaseBean) {
-                    StandardAddressStairBean.StandardAddressStairBaseBean bean = (StandardAddressStairBean.StandardAddressStairBaseBean) eventBusBean.getData();
-                    if (adapter.getData().size() <= 0) {
-                        ArrayList<StandardAddressStairBean.StandardAddressStairBaseBean> beans = new ArrayList<>();
-                        beans.add(bean);
-                        adapter.setNewData(beans);
-                    } else {
-                        adapter.addData(0, bean);
+        try {
+            switch (eventBusBean.getCode()) {
+                case EventBusConstant.ADD:
+                    if (eventBusBean.getData() instanceof StandardAddressStairBean.StandardAddressStairBaseBean) {
+                        StandardAddressStairBean.StandardAddressStairBaseBean bean = (StandardAddressStairBean.StandardAddressStairBaseBean) eventBusBean.getData();
+                        if (adapter.getData().size() <= 0) {
+                            ArrayList<StandardAddressStairBean.StandardAddressStairBaseBean> beans = new ArrayList<>();
+                            beans.add(bean);
+                            adapter.setNewData(beans);
+                        } else {
+                            adapter.addData(0, bean);
+                        }
+                        linearLayoutManager.scrollToPosition(0);
                     }
-                }
-                break;
-            case EventBusConstant.ALERT:
-                if (eventBusBean.getData() instanceof StandardAddressStairBean.StandardAddressStairBaseBean && deletePosition >= 0) {
-                    StandardAddressStairBean.StandardAddressStairBaseBean bean = (StandardAddressStairBean.StandardAddressStairBaseBean) eventBusBean.getData();
-                    adapter.setData(deletePosition, bean);
-                }
-                break;
-            case EventBusConstant.DELETE:
-                if (deletePosition >= 0) {
-                    adapter.remove(deletePosition);
-                }
-                break;
-            default:
+                    break;
+                case EventBusConstant.ALERT:
+                    if (eventBusBean.getData() instanceof StandardAddressStairBean.StandardAddressStairBaseBean && deletePosition >= 0) {
+                        StandardAddressStairBean.StandardAddressStairBaseBean bean = (StandardAddressStairBean.StandardAddressStairBaseBean) eventBusBean.getData();
+                        adapter.setData(deletePosition, bean);
+                    }
+                    break;
+                case EventBusConstant.DELETE:
+                    if (deletePosition >= 0) {
+                        adapter.remove(deletePosition);
+                    }
+                    break;
+                default:
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

@@ -11,19 +11,29 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bigkoo.pickerview.view.TimePickerView;
+import com.blankj.utilcode.util.ObjectUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.jess.arms.base.BaseLazyLoadFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
+import com.weique.overhaul.v2.app.common.Constant;
 import com.weique.overhaul.v2.app.common.EnumConstant;
+import com.weique.overhaul.v2.app.utils.PickerViewUtil;
 import com.weique.overhaul.v2.di.component.DaggerEconomicManagementBaseInfoComponent;
 import com.weique.overhaul.v2.mvp.contract.EconomicManagementBaseInfoContract;
 import com.weique.overhaul.v2.mvp.model.entity.BasicInformationBean;
+import com.weique.overhaul.v2.mvp.model.entity.NameAndIdBean;
 import com.weique.overhaul.v2.mvp.presenter.EconomicManagementBaseInfoPresenter;
 import com.weique.overhaul.v2.mvp.ui.adapter.CommentCurrencyAdapter;
+import com.weique.overhaul.v2.mvp.ui.adapter.CommonRecyclerPopupAdapter;
+import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonRecyclerPopupWindow;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -52,6 +62,12 @@ public class EconomicManagementBaseInfoFragment extends BaseLazyLoadFragment<Eco
     private static final String BEHAVIOR = "behavior";
     @BindView(R.id.rv_content)
     RecyclerView rvContent;
+    /**
+     * 初始化  选择框
+     */
+    private List<NameAndIdBean> typeList = new ArrayList<>();
+    private CommonRecyclerPopupWindow<NameAndIdBean> commonRecyclerPopupWindow;
+    private CommonRecyclerPopupAdapter commonRecyclerPopupAdapter;
 
     private int type = 0;
 
@@ -200,11 +216,140 @@ public class EconomicManagementBaseInfoFragment extends BaseLazyLoadFragment<Eco
                 Timber.e(adapter.getData().get(position).toString());
                 BasicInformationBean.RecordsBean bean = (BasicInformationBean.RecordsBean) adapter.getData().get(position);
 
+//                switch (view.getId()) {
+//                    /*
+//                     *  点击编辑
+//                     */
+//                    case R.id.et_name:
+//
+//                        try {
+//
+//                            switch (bean.getParamtype()) {
+//                                case DATA_ITEM:
+//                                    initTimePicker(bean);
+//                                    break;
+//                                case SELECT_ITEM:
+//                                    initSelectAll(bean);
+//                                    break;
+//                                default:
+//                                    break;
+//                            }
+//
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//
+//
+//                        break;
+//                        /*
+//                         图片添加
+//                         */
+//                    case R.id.rl_img_add:
+////                        if (ObjectUtils.isEmpty(bean.getValue())) {
+////                            assert mPresenter != null;
+////                            mPresenter.getPermission();
+////                            imgBean = bean;
+////                        }
+//                        break;
+//                        /*
+//                         地址添加
+//                         */
+//                    case R.id.iv_address:
+////                        imgBean = bean;
+////                        ARouter.getInstance().build(RouterHub.APP_NEWMAPACTIVITY)
+////                                .withString(ARouerConstant.SOURCE, RouterHub.APP_ENTERPRISE_INFORMATION_COLLECTION)
+////                                .navigation();
+//
+//                        break;
+//                    default:
+//                        break;
+//                }
+
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+
+    /**
+     * 初始化时间选择器
+     */
+    private void initTimePicker(final BasicInformationBean.RecordsBean bean) {
+
+        TimePickerView startTimePickerView;
+        startTimePickerView = PickerViewUtil.selectPickerTimeToday(getActivity(), Constant.YMD, (date, v) -> {
+            try {
+                //开始时间
+                SimpleDateFormat format = new SimpleDateFormat(Constant.YMD1, Locale.CHINA);
+                /*
+                 * 更新数据 ，不会破坏原有的布局
+                 */
+                bean.setValue(format.format(date));
+                mAdapter.setNewData(mAdapter.getData());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        startTimePickerView.show();
+
+    }
+
+
+    private void initSelectAll(final BasicInformationBean.RecordsBean bean) {
+        Timber.e("asd");
+        typeList.clear();
+        typeList.add(new NameAndIdBean("", "教育"));
+        typeList.add(new NameAndIdBean("", "教育"));
+
+        typeList.add(new NameAndIdBean("", "教育"));
+
+        typeList.add(new NameAndIdBean("", "教育"));
+
+        typeList.add(new NameAndIdBean("", "教育"));
+
+        typeList.add(new NameAndIdBean("", "教育"));
+        typeList.add(new NameAndIdBean("", "教育"));
+
+        typeList.add(new NameAndIdBean("", "教育"));
+
+        typeList.add(new NameAndIdBean("", "教育"));
+
+        typeList.add(new NameAndIdBean("", "教育"));
+
+        typeList.add(new NameAndIdBean("", "教育"));
+
+
+        if (commonRecyclerPopupAdapter == null) {
+            commonRecyclerPopupAdapter = new CommonRecyclerPopupAdapter();
+        }
+        commonRecyclerPopupWindow = new CommonRecyclerPopupWindow<>(getContext(),
+                commonRecyclerPopupAdapter, new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                NameAndIdBean nameAndIdBean = (NameAndIdBean) adapter.getItem(position);
+            /*
+              更新數據
+             */
+                if (ObjectUtils.isNotEmpty(nameAndIdBean)) {
+                    bean.setValue(nameAndIdBean.getName());
+                    bean.setSelectValue(nameAndIdBean.getId());
+                    mAdapter.setNewData(mAdapter.getData());
+                }
+            /*
+              关闭选择框
+             */
+                commonRecyclerPopupWindow.dismiss();
+            }
+        });
+
+        if (!commonRecyclerPopupWindow.isShowing()) {
+            commonRecyclerPopupWindow.showPopupWindow();
+        }
+
+        commonRecyclerPopupWindow.setNewData(typeList);
     }
 
 

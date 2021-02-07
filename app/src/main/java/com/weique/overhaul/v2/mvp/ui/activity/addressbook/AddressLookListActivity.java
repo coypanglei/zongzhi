@@ -23,6 +23,7 @@ import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
+import com.weique.overhaul.v2.app.common.ARouerConstant;
 import com.weique.overhaul.v2.app.common.Constant;
 import com.weique.overhaul.v2.app.common.RouterHub;
 import com.weique.overhaul.v2.app.utils.AppUtils;
@@ -34,7 +35,6 @@ import com.weique.overhaul.v2.mvp.model.entity.AddressBookListBean;
 import com.weique.overhaul.v2.mvp.presenter.AddressLookListPresenter;
 import com.weique.overhaul.v2.mvp.ui.adapter.AddressBookListAdapter;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonDialog;
-import com.jess.arms.utils.LoadingDialog;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -49,6 +49,8 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
 public class AddressLookListActivity extends BaseActivity<AddressLookListPresenter> implements AddressLookListContract.View {
     @Autowired(name = "ID")
     String id;
+    @Autowired(name = ARouerConstant.SOURCE)
+    String source;
 
     @Autowired(name = "addressName")
     String addressName;

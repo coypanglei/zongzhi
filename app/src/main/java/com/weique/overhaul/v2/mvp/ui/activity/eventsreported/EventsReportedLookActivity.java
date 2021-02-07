@@ -6,8 +6,9 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,11 +25,11 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.utils.ArmsUtils;
+import com.jess.arms.utils.MemoryLeakUtil;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.listener.OnResultCallbackListener;
@@ -41,7 +42,6 @@ import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.app.utils.GlideUtil;
 import com.weique.overhaul.v2.app.utils.PictureSelectorUtils;
 import com.weique.overhaul.v2.app.utils.StringUtil;
-import com.weique.overhaul.v2.app.utils.UserInfoUtil;
 import com.weique.overhaul.v2.di.component.DaggerEventsReportedLookComponent;
 import com.weique.overhaul.v2.mvp.contract.EventsReportedLookContract;
 import com.weique.overhaul.v2.mvp.model.entity.EventPriorityBean;
@@ -50,24 +50,27 @@ import com.weique.overhaul.v2.mvp.model.entity.EventsReportedBean;
 import com.weique.overhaul.v2.mvp.model.entity.EventsReportedLookBean;
 import com.weique.overhaul.v2.mvp.model.entity.InformationDynamicFormSelectBean;
 import com.weique.overhaul.v2.mvp.model.entity.InformationItemPictureBean;
+import com.weique.overhaul.v2.mvp.model.entity.NameAndIdBean;
 import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
 import com.weique.overhaul.v2.mvp.model.entity.event.EventBusBean;
 import com.weique.overhaul.v2.mvp.presenter.EventsReportedLookPresenter;
 import com.weique.overhaul.v2.mvp.ui.activity.information.PictureLookActivity;
 import com.weique.overhaul.v2.mvp.ui.activity.map.MapActivity;
+import com.weique.overhaul.v2.mvp.ui.adapter.CommonRecyclerPopupBothSidesAdapter;
 import com.weique.overhaul.v2.mvp.ui.adapter.EventsReportedAgentAdapter;
 import com.weique.overhaul.v2.mvp.ui.adapter.EventsReportedLookAdapter;
 import com.weique.overhaul.v2.mvp.ui.adapter.EventsReportedLookFlowAdapter;
 import com.weique.overhaul.v2.mvp.ui.adapter.InformationAddPhotoAdapter;
-import com.weique.overhaul.v2.mvp.ui.dialogFragment.CommonDialogFragment;
-import com.weique.overhaul.v2.mvp.ui.dialogFragment.DialogFragmentHelper;
+import com.weique.overhaul.v2.mvp.ui.fragment.eventreport.EventsReportedFFragment;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonDialog;
+import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonRecyclerPopupWindow;
+import com.weique.overhaul.v2.mvp.ui.popupwindow.HeatDialog;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.OrderHandleDetailDialog;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,17 +78,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import razerdp.basepopup.BasePopupWindow;
+import razerdp.util.animation.AnimationHelper;
+import razerdp.util.animation.ScaleConfig;
 import timber.log.Timber;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 import static com.weique.overhaul.v2.mvp.model.entity.InformationItemPictureBean.IS_VIS_DELETE;
-import static com.weique.overhaul.v2.mvp.ui.dialogFragment.DialogFragmentHelper.EVALUTATE_TAG;
 
 
 /**
@@ -105,6 +109,8 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
     TextView eventSortMemo;
     ImageView eventPriorityImage;
     TextView eventPriority;
+    TextView deadlineTime;
+    TextView upTime;
     TextView mapAddress;
     TextView map_address_detail;
     TextView standardAddress;
@@ -137,13 +143,28 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
     @Autowired(name = ARouerConstant.SOURCE)
     String source;
 
+    /**
+     * {@link com.weique.overhaul.v2.mvp.ui.fragment.eventreport.EventsReportedFFragment#MY 我的上报进入}
+     * {@link com.weique.overhaul.v2.mvp.ui.fragment.eventreport.EventsReportedFFragment#HANDLE}
+     * {@link com.weique.overhaul.v2.mvp.ui.fragment.eventreport.EventsReportedFFragment#ACCEPT}
+     * {@link com.weique.overhaul.v2.mvp.ui.fragment.eventreport.EventsReportedFFragment#INSPECT}
+     * {@link com.weique.overhaul.v2.mvp.ui.fragment.eventreport.EventsReportedFFragment#SYNERGY}
+     * //类型对应的状态
+     */
+    @Autowired(name = ARouerConstant.TYPE)
+    int type;
 
-    @BindView(R.id.send_back)
-    Button sendBack;
-    @BindView(R.id.submit)
-    Button submit;
-    @BindView(R.id.but_transformation)
-    Button butTransformation;
+
+    @BindView(R.id.positive)
+    TextView positive;
+    @BindView(R.id.positive_layout)
+    LinearLayout positiveLayout;
+    @BindView(R.id.positive_arrow)
+    ImageView positiveArrow;
+    @BindView(R.id.negative)
+    TextView negative;
+    @BindView(R.id.neutral)
+    TextView neutral;
 
     private View inflate_head;
 
@@ -182,6 +203,9 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
     private RecyclerView afterHandleVideo;
     private ImageView afterRecordView;
     private int lastClickViewId;
+    private CommonRecyclerPopupBothSidesAdapter<NameAndIdBean> adapter;
+    private CommonRecyclerPopupWindow<NameAndIdBean> commonRecyclerPopupWindow;
+    private HeatDialog heatDialog;
 
 
     @Override
@@ -209,6 +233,95 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
     }
 
     /**
+     * 根据类型(从哪来的)  和 订单状态判断 按钮怎么显示
+     */
+    private void controllerButByTypeAndOrderState() {
+        try {
+            switch (type) {
+                //我的上报 再次处理 作废
+                case EventsReportedFFragment.MY:
+                    //退回 和 作废操作
+                    if (EventsReportedBean.ListBean.EventsReportedEnumNewBean.EXIT
+                            == eventsReportedLookBean.getEnumOrderStatus()) {
+                        bottomLayout.setVisibility(View.VISIBLE);
+                        positiveLayout.setVisibility(View.VISIBLE);
+                        positiveArrow.setVisibility(View.GONE);
+                        positive.setText("再次处理");
+
+                        negative.setText("作废");
+                        negative.setVisibility(View.VISIBLE);
+
+                        neutral.setVisibility(View.GONE);
+                        //评价操作
+                    } else if (EventsReportedBean.ListBean.EventsReportedEnumNewBean.WAIT_EVALUATE
+                            == eventsReportedLookBean.getEnumOrderStatus() ||
+                            EventsReportedBean.ListBean.EventsReportedEnumNewBean.INSPECT_SUCCESS
+                                    == eventsReportedLookBean.getEnumOrderStatus()) {
+                        bottomLayout.setVisibility(View.VISIBLE);
+                        positiveLayout.setVisibility(View.VISIBLE);
+                        positiveArrow.setVisibility(View.GONE);
+                        positive.setText("评价");
+
+                        negative.setVisibility(View.GONE);
+
+                        neutral.setVisibility(View.GONE);
+                    } else {
+                        bottomLayout.setVisibility(View.GONE);
+                    }
+                    break;
+                //待处置 处置  流转  上报  下派 延期  请求协同
+                case EventsReportedFFragment.HANDLE:
+                    bottomLayout.setVisibility(View.VISIBLE);
+                    positiveLayout.setVisibility(View.VISIBLE);
+                    positiveArrow.setVisibility(View.VISIBLE);
+                    positive.setText("处置方式");
+
+                    negative.setText("请求协同");
+                    negative.setVisibility(View.VISIBLE);
+
+                    neutral.setVisibility(View.VISIBLE);
+                    break;
+                //待受理 受理 退回
+                case EventsReportedFFragment.ACCEPT:
+                    bottomLayout.setVisibility(View.VISIBLE);
+                    positiveLayout.setVisibility(View.VISIBLE);
+                    positiveArrow.setVisibility(View.GONE);
+                    positive.setText("受理");
+                    negative.setText("退回");
+                    negative.setVisibility(View.VISIBLE);
+
+                    neutral.setVisibility(View.GONE);
+                    break;
+                //待核查 核查通过 核查退回
+                case EventsReportedFFragment.INSPECT:
+                    bottomLayout.setVisibility(View.VISIBLE);
+                    positiveLayout.setVisibility(View.VISIBLE);
+                    positiveArrow.setVisibility(View.GONE);
+                    positive.setText("核查通过");
+                    negative.setText("核查退回");
+                    negative.setVisibility(View.VISIBLE);
+
+                    neutral.setVisibility(View.GONE);
+                    break;
+                //待协同 确定协同
+                case EventsReportedFFragment.SYNERGY:
+                    bottomLayout.setVisibility(View.VISIBLE);
+                    positiveLayout.setVisibility(View.VISIBLE);
+                    positiveArrow.setVisibility(View.GONE);
+                    positive.setText("确定协同");
+                    negative.setText("拒绝协同");
+                    negative.setVisibility(View.VISIBLE);
+                    neutral.setVisibility(View.GONE);
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 动态表单部分
      */
     private void initDynamicForm() {
@@ -224,41 +337,9 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
     private void initFlowRecyclerView() {
         try {
             List<String> list = new ArrayList<>();
-            list.addAll(Arrays.asList(EventsReportedBean.ListBean.stausArray));
-            Iterator<String> iterator = list.iterator();
-            int i = EventsReportedBean.ListBean.EventsReportedEnumBean.TS;
-            while (iterator.hasNext()) {
-                String next = iterator.next();
-                if (EventsReportedBean.ListBean.TS_S.equals(next)) {
-                    iterator.remove();
-                    i += 1;
-                    continue;
-                }
-                if (eventsReportedLookBean.getEnumOrderStatus() < EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
-                    if (i >= EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
-                        iterator.remove();
-                    } else {
-                        i += 1;
-                    }
-                } else if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
-                    if (i >= EventsReportedBean.ListBean.EventsReportedEnumBean.COMPLETE && i < EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
-                        iterator.remove();
-                    }
-                    if (i > EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
-                        iterator.remove();
-                    }
-                    i += 1;
-                } else if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.INVALID) {
-                    if (i >= EventsReportedBean.ListBean.EventsReportedEnumBean.COMPLETE &&
-                            i < EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
-                        iterator.remove();
-                    }
-                    i += 1;
-                }
-            }
+            list.addAll(Arrays.asList(EventsReportedBean.ListBean.EVENTS_REPORTED_ENUM_TEXT));
             ArmsUtils.configRecyclerView(flowRecycler,
-                    new GridLayoutManager(this, list.size(),
-                            RecyclerView.VERTICAL, false));
+                    new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
             flowRecycler.setAdapter(flowAdapter);
             flowAdapter.setNewData(list);
         } catch (Exception e) {
@@ -284,6 +365,8 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
             eventSortMemo.setOnClickListener(this);
             eventPriorityImage = inflate_head.findViewById(R.id.event_priority_image);
             eventPriority = inflate_head.findViewById(R.id.event_priority);
+            deadlineTime = inflate_head.findViewById(R.id.deadline_time);
+            upTime = inflate_head.findViewById(R.id.up_time);
             mapAddress = inflate_head.findViewById(R.id.map_address);
             standardAddress = inflate_head.findViewById(R.id.standard_address);
             selfHandle = inflate_head.findViewById(R.id.self_handle);
@@ -374,8 +457,7 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
     private void setFootRecyclerAdapter(RecyclerView recycler, String imgsInJson) {
         try {
             if (StringUtil.isNotNullString(imgsInJson)) {
-                List<String> list = gson.fromJson(imgsInJson, new TypeToken<List<String>>() {
-                }.getType());
+                List<String> list = gson.fromJson(imgsInJson, List.class);
                 if (list != null && list.size() > 0) {
                     recycler.setVisibility(View.VISIBLE);
                     List<InformationItemPictureBean> beans = new ArrayList<>();
@@ -476,6 +558,7 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
                 ArmsUtils.makeText("未查询到订单信息");
                 return;
             }
+
             ArrayList<InformationDynamicFormSelectBean.StructureInJsonBean> structureInJson =
                     dynamicFormSelectBean.getStructureInJson();
             if (structureInJson != null && structureInJson.size() > 0) {
@@ -505,6 +588,9 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
             eventPriorityImage.setImageResource(eventPriorityBean.getdrawableId());
             eventPriority.setTextColor(getResources().getColor(eventPriorityBean.getColorId()));
             eventPriority.setText(StringUtil.setText(eventPriorityBean.getPriority()));
+            //事件处置 截止时间
+            deadlineTime.setText(StringUtil.setText(eventsReportedLookBean.getDeadlineTime()));
+            upTime.setText(StringUtil.setText(eventsReportedLookBean.getCreateTime()));
             StandardAddressStairBean.PointsInJsonBean.PolygoysBean.PathBean pathBean =
                     gson.fromJson(eventsReportedLookBean.getPointsInJson(),
                             StandardAddressStairBean.PointsInJsonBean.PolygoysBean.PathBean.class);
@@ -538,137 +624,14 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
 
             informationAddPhotoAdapter.setNewData(commentList);
             initFlowRecyclerView();
-            if (eventsReportedLookBean.getEnumOrderStatus() ==
-                    EventsReportedBean.ListBean.EventsReportedEnumBean.TRANSACTION) {
-                flowAdapter.setOrderStatus(
-                        EventsReportedBean.ListBean.EventsReportedEnumBean.AUDIT);
-            } else {
-                flowAdapter.setOrderStatus(eventsReportedLookBean.getEnumOrderStatus());
-            }
-
-
-            //todo 有时间 就整理一下这里的逻辑
-            //协同
-            if (source.equals(RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT) && !listBean.isInCharge()) {
-                bottomLayout.setVisibility(View.VISIBLE);
-                submit.setVisibility(View.GONE);
-                sendBack.setVisibility(View.VISIBLE);
-                sendBack.setClickable(false);
-                sendBack.setText(ArmsUtils.getString(this, R.string.prove));
-                sendBack.setBackground(ArmsUtils.getDrawablebyResource(this, R.drawable.shape_b_lucency_c_19));
-                sendBack.setTextColor(ArmsUtils.getColor(this, R.color.gray_999));
-                //网格员上报事件列表 && 退回订单
-            } else if (source.equals(RouterHub.APP_EVENTSREPORTEDACTIVITY)
-                    && eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
-                bottomLayout.setVisibility(View.VISIBLE);
-                submit.setVisibility(View.VISIBLE);
-                sendBack.setVisibility(View.VISIBLE);
-                submit.setText(ArmsUtils.getString(this, R.string.dispose_agine));
-                sendBack.setText(ArmsUtils.getString(this, R.string.invalid));
-                //事件上报列表中进入
-            } else if (UserInfoUtil.getUserInfo().getEnumCommunityLevel() > StandardAddressStairBean.COMMUNITY
-                    && source.equals(RouterHub.APP_EVENTSREPORTEDACTIVITY)) {
-                bottomLayout.setVisibility(View.GONE);
-                submit.setVisibility(View.GONE);
-                sendBack.setVisibility(View.GONE);
-                //事件上报列表中进入
-            } else if (source.equals(RouterHub.APP_EVENTSREPORTEDACTIVITY)) {
-                if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.COMPLETE) {
-                    bottomLayout.setVisibility(View.VISIBLE);
-                    submit.setVisibility(View.VISIBLE);
-                    submit.setText(EventsReportedBean.ListBean.EVALUATE_S);
-                    sendBack.setVisibility(View.GONE);
-                } else if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.EVALUATE) {
-                    bottomLayout.setVisibility(View.VISIBLE);
-                    submit.setVisibility(View.VISIBLE);
-                    submit.setText(EventsReportedBean.ListBean.ARCHIVE_S);
-                    sendBack.setVisibility(View.GONE);
-                } else {
-                    bottomLayout.setVisibility(View.GONE);
-                    submit.setVisibility(View.GONE);
-                    sendBack.setVisibility(View.GONE);
-                }
-                //从综合执法进入
-            } else if (source.equals(RouterHub.APP_COMPREHENSIVE_LAW_ENFORCEMENT)) {
-                if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.COMPLETE) {
-                    bottomLayout.setVisibility(View.VISIBLE);
-                    submit.setVisibility(View.VISIBLE);
-                    submit.setText(EventsReportedBean.ListBean.EVALUATE_S);
-                    sendBack.setVisibility(View.GONE);
-                } else if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.EVALUATE) {
-                    bottomLayout.setVisibility(View.VISIBLE);
-                    submit.setVisibility(View.VISIBLE);
-                    submit.setText(EventsReportedBean.ListBean.ARCHIVE_S);
-                    sendBack.setVisibility(View.GONE);
-                } else {
-                    bottomLayout.setVisibility(View.GONE);
-                    submit.setVisibility(View.GONE);
-                    sendBack.setVisibility(View.GONE);
-                }
-                /*
-                   待处理 待归档  待评价  显示转案件
-                 */
-                if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.TRANSACTION
-                        || eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.COMPLETE ||
-                        eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.EVALUATE) {
-                    bottomLayout.setVisibility(View.VISIBLE);
-                    butTransformation.setVisibility(View.VISIBLE);
-
-                }
-
-
-                //从首页进入
-            } else {
-                if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.TS) {
-                    bottomLayout.setVisibility(View.VISIBLE);
-                    submit.setText(EventsReportedBean.ListBean.AUDIT_S);
-                    sendBack.setVisibility(View.VISIBLE);
-                }
-                if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.AUDIT) {
-                    bottomLayout.setVisibility(View.VISIBLE);
-                    submit.setText(EventsReportedBean.ListBean.TRANSACTION_S);
-                    sendBack.setVisibility(View.VISIBLE);
-                }
-                if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.TRANSACTION) {
-                    bottomLayout.setVisibility(View.VISIBLE);
-                    submit.setText(EventsReportedBean.ListBean.TRANSACTION_S);
-                    sendBack.setVisibility(View.VISIBLE);
-                }
-                if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.COMPLETE) {
-                    bottomLayout.setVisibility(View.VISIBLE);
-                    submit.setText(EventsReportedBean.ListBean.EVALUATE_S);
-                    sendBack.setVisibility(View.GONE);
-                }
-                if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.EVALUATE) {
-                    bottomLayout.setVisibility(View.VISIBLE);
-                    submit.setText(EventsReportedBean.ListBean.ARCHIVE_S);
-                    sendBack.setVisibility(View.GONE);
-                }
-                if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.ARCHIVE) {
-                    bottomLayout.setVisibility(View.GONE);
-                    submit.setVisibility(View.GONE);
-                    sendBack.setVisibility(View.GONE);
-                }
-
-            }
+            flowAdapter.setOrderStatus(eventsReportedLookBean.getEnumOrderStatus());
+            //处理按钮怎么显示
+            controllerButByTypeAndOrderState();
         } catch (JSONException e) {
             ArmsUtils.makeText("数据格式错误");
             e.printStackTrace();
         } catch (Exception e) {
             ArmsUtils.makeText("数据异常");
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 点击 办理 评论  归档 退回
-     */
-    @Override
-    public void next() {
-        try {
-            EventBus.getDefault().post(new EventBusBean(EventBusConstant.SELECT), source);
-            finish();
-        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -681,8 +644,6 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
     @Override
     public void setTransactList(List<EventProceedRecordBean> eventProceedRecordBeans) {
         try {
-
-
             ArmsUtils.configRecyclerView(agentRecycler, new LinearLayoutManager(this));
             agentRecycler.setAdapter(eventsReportedAgentAdapter);
             eventsReportedAgentAdapter.setNewData(eventProceedRecordBeans);
@@ -760,121 +721,233 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
                 });
     }
 
+    @Override
+    public void setUpLoadItem(List<InformationItemPictureBean> list) {
+        if (heatDialog != null && heatDialog.isShowing()) {
+            heatDialog.setNewImageUrl(list);
+        }
+    }
 
-    @OnClick({R.id.submit, R.id.send_back, R.id.but_transformation})
+    /**
+     * 更新个人信息
+     *
+     * @param eventBusBean eventBusBean
+     */
+    @Subscriber(tag = RouterHub.APP_EVENTSREPORTEDLOOKACTIVITY)
+    private void onEventCallBack(EventBusBean eventBusBean) {
+        try {
+            switch (eventBusBean.getCode()) {
+                case EventBusConstant.COMMON_UPDATE:
+                    if (eventsReportedLookBean != null) {
+                        if (eventsReportedLookBean.getEnumEventProcType() == 0) {
+                            cardView.setVisibility(View.GONE);
+                        } else {
+                            cardView.setVisibility(View.VISIBLE);
+                            assert mPresenter != null;
+                            mPresenter.getEventProceedRecord(listBean.getCustId(), listBean.getEventRecordId());
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @OnClick({R.id.positive_layout, R.id.negative, R.id.neutral})
     public void onViewClick(View v) {
         try {
             if (AppUtils.isFastClick()) {
                 return;
             }
-            View view = getLayoutInflater().inflate(R.layout.dialog_order_handle, null, false);
-            CommonDialogFragment dialogFragment = DialogFragmentHelper.showEvalutateDialog(view, true, null);
+            heatDialog = new HeatDialog(this);
             switch (v.getId()) {
-                case R.id.submit:
-                    /*
-                     *  事件上报 已上报列表   并且 状态等于回退
-                     */
-                    if (source.equals(RouterHub.APP_EVENTSREPORTEDACTIVITY) && eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
-                        ARouter.getInstance()
-                                .build(RouterHub.APP_EVENTSREPORTEDCRUDACTIVITY)
-                                .withString(ARouerConstant.ID, listBean.getEventRecordId())
-                                .withString(EventsReportedCrudActivity.CUST_ID, listBean.getCustId())
-                                .withInt(ARouerConstant.STATUS, EventBusConstant.ADD)
-                                .withString(MapActivity.POINTS_IN_JSON, pointsInJSON)
-                                .withBoolean(MapActivity.ADDRESS_CAN_CHANGED, addressCanChanged)
-                                .navigation();
-                        return;
-
-                    }
-
-                    if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.EVALUATE) {
-                        new CommonDialog.Builder(this).setTitle("提示")
-                                .setContent("归档后订单将被封存")
-                                .setPositiveButton("确定归档", (v1, commonDialog) -> {
-                                    assert mPresenter != null;
-                                    mPresenter.placeOnFile(eventsReportedLookBean.getId());
-                                }).create().show();
-                        return;
-                    }
-                    assert mPresenter != null;
-
-                    switch (eventsReportedLookBean.getEnumOrderStatus()) {
-                        /*
-                         * 主页面进入 并且 状态等于回退
-                         */
-                        case EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK:
-                            if (source.equals(RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT)) {
-
-                                mPresenter.initDialog(view, listBean.isJoint(), eventsReportedLookBean.getEnumOrderStatus(), eventsReportedLookBean.getId(), dialogFragment, 0);
+                //正向操作
+                case R.id.positive_layout:
+                    switch (type) {
+                        //我的上报 再次处理 作废
+                        case EventsReportedFFragment.MY:
+                            if (EventsReportedBean.ListBean.EventsReportedEnumNewBean.EXIT
+                                    == eventsReportedLookBean.getEnumOrderStatus()) {
+                                //我上上报 加 positive_layout 点击 = 再次上报
+                                ARouter.getInstance()
+                                        .build(RouterHub.APP_EVENTSREPORTEDCRUDACTIVITY)
+                                        .withString(ARouerConstant.ID, listBean.getEventRecordId())
+                                        .withString(EventsReportedCrudActivity.CUST_ID, listBean.getCustId())
+                                        .withInt(ARouerConstant.STATUS, EventBusConstant.ADD)
+                                        .withString(MapActivity.POINTS_IN_JSON, pointsInJSON)
+                                        .withBoolean(MapActivity.ADDRESS_CAN_CHANGED, addressCanChanged)
+                                        .navigation();
+                                //评价操作
+                            } else if (EventsReportedBean.ListBean.EventsReportedEnumNewBean.WAIT_EVALUATE
+                                    == eventsReportedLookBean.getEnumOrderStatus() ||
+                                    EventsReportedBean.ListBean.EventsReportedEnumNewBean.INSPECT_SUCCESS
+                                            == eventsReportedLookBean.getEnumOrderStatus()) {
+                                heatDialog.setRecyclerViewOnItemClick(4,
+                                        new HeatDialog.OnUploadImageListener() {
+                                            @Override
+                                            public void onnUploadImageClick(int max) {
+                                                mPresenter.getPermission(max);
+                                            }
+                                        });
+                                mPresenter.initDialog(
+                                        listBean.getEventRecordId(), heatDialog,
+                                        EventsReportedBean.ListBean.EventsReportedEnumNewBean.EVALUATE);
+                                heatDialog.show();
+                                return;
                             }
-
                             break;
-                        /*
-                         *   已审核上报 - 办理中  4 办理完成
-                         */
-                        case EventsReportedBean.ListBean.EventsReportedEnumBean.AUDIT:
-                            /*
-                             * 办理完成所有流程  -   完成
-                             */
-                        case EventsReportedBean.ListBean.EventsReportedEnumBean.TRANSACTION:
-                            mPresenter.initDialog(view, listBean.isJoint(), eventsReportedLookBean.getEnumOrderStatus(), listBean.getId(), dialogFragment, 4);
+                        //待处置 处置
+                        case EventsReportedFFragment.HANDLE:
+                            //弹出 处置选项
+                            if (adapter == null) {
+                                adapter = new CommonRecyclerPopupBothSidesAdapter<>();
+                            }
+                            commonRecyclerPopupWindow = new CommonRecyclerPopupWindow<>(
+                                    this, adapter,
+                                    (adapter, view1, position) -> {
+                                        switch (position) {
+                                            //处置
+                                            case 0:
+                                                heatDialog.setRecyclerViewOnItemClick(4,
+                                                        new HeatDialog.OnUploadImageListener() {
+                                                            @Override
+                                                            public void onnUploadImageClick(int max) {
+                                                                mPresenter.getPermission(max);
+                                                            }
+                                                        });
+                                                mPresenter.initDialog(
+                                                        listBean.getId(),
+                                                        heatDialog,
+                                                        EventsReportedBean.ListBean.EventsReportedEnumNewBean.DISPOSE_END);
+                                                heatDialog.show();
+                                                break;
+                                            //移交
+                                            case 1:
+                                                ARouter.getInstance().build(RouterHub.APP_EVENTTURNOVERACTIVITY)
+                                                        .withString(ARouerConstant.ID, listBean.getId())
+                                                        .withString(ARouerConstant.PORT, EventTurnOverActivity.TURN_OVER)
+                                                        .withString(ARouerConstant.SOURCE, RouterHub.APP_EVENTSREPORTEDLOOKACTIVITY)
+                                                        .navigation();
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        commonRecyclerPopupWindow.dismiss();
+                                        commonRecyclerPopupWindow.onDestroy();
+                                    });
+                            //设置数据
+                            List<NameAndIdBean> list = new ArrayList<>();
+                            list.add(new NameAndIdBean("事件完成处理登记", "处置"));
+                            list.add(new NameAndIdBean("流转、上报、下派到相关部门", "移交"));
+                            commonRecyclerPopupWindow.setNewData(list);
+                            commonRecyclerPopupWindow.setPopupGravityMode
+                                    (BasePopupWindow.GravityMode.RELATIVE_TO_ANCHOR,
+                                            BasePopupWindow.GravityMode.RELATIVE_TO_ANCHOR);
+                            commonRecyclerPopupWindow.setPopupGravity(Gravity.TOP);
+                            Animation showAnimation = AnimationHelper.asAnimation()
+                                    .withScale(ScaleConfig.CENTER)
+                                    .toShow();
+                            Animation dismissAnimation = AnimationHelper.asAnimation()
+                                    .withScale(ScaleConfig.CENTER)
+                                    .toDismiss();
+                            commonRecyclerPopupWindow.setShowAnimation(showAnimation);
+                            commonRecyclerPopupWindow.setDismissAnimation(dismissAnimation);
+//                                commonRecyclerPopupWindow.setBackgroundColor(ArmsUtils.getColor(this, R.color.transparent));
+                            commonRecyclerPopupWindow.showPopupWindow(bottomLayout);
                             break;
-                        /*
-                         *  完成 - 去去评价
-                         */
-                        case EventsReportedBean.ListBean.EventsReportedEnumBean.COMPLETE:
-                            mPresenter.initDialog(view, listBean.isJoint(), eventsReportedLookBean.getEnumOrderStatus(), eventsReportedLookBean.getId(), dialogFragment, 4);
+                        //退回
+                        case EventsReportedFFragment.ACCEPT:
+                            mPresenter.receivingOrder(listBean.getId(), 2, "");
+                            break;
+                        //核查退回
+                        case EventsReportedFFragment.INSPECT:
+                            mPresenter.eventRecordCheckOrder(listBean.getId(), 6, "");
+                            break;
+                        //确定协同
+                        case EventsReportedFFragment.SYNERGY:
+//                            ArmsUtils.makeText("确定协同");
+                            mPresenter.initDialog(
+                                    listBean.getId(),
+                                    heatDialog,
+                                    EventsReportedBean.ListBean.SYNCHRONIZE);
+                            heatDialog.show();
                             break;
                         default:
-
                             break;
                     }
-                    dialogFragment.show(getSupportFragmentManager(), EVALUTATE_TAG);
                     break;
-                case R.id.send_back:
-                    if (eventsReportedLookBean.getEnumOrderStatus() ==
-                            EventsReportedBean.ListBean.EventsReportedEnumBean.AUDIT ||
-                            eventsReportedLookBean.getEnumOrderStatus() ==
-                                    EventsReportedBean.ListBean.EventsReportedEnumBean.TRANSACTION) {
-                        assert mPresenter != null;
-                        mPresenter.initDialog(view, listBean.isJoint(), eventsReportedLookBean.getEnumOrderStatus(), listBean.getId(), dialogFragment, 1);
-                        dialogFragment.show(getSupportFragmentManager(), EVALUTATE_TAG);
-                    } else if (source.equals(RouterHub.APP_EVENTSREPORTEDACTIVITY)
-                            && eventsReportedLookBean.getEnumOrderStatus() ==
-                            EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
-                        new CommonDialog.Builder(EventsReportedLookActivity.this).setTitle("提示")
-                                .setContent("确定作废(" + eventsReportedLookBean.getName() + ")")
-                                .setPositiveButton("作废", (v1, commonDialog) -> mPresenter.invalid(eventsReportedLookBean.getId())).create().show();
-                        break;
+                case R.id.negative:
+                    switch (type) {
+                        //作废
+                        case EventsReportedFFragment.MY:
+//                            ArmsUtils.makeText("作废");
+                            new CommonDialog.Builder(this)
+                                    .setContent("作废后，将无法再处理该订单")
+                                    .setNegativeButton("作废", (view, commonDialog) -> {
+                                        mPresenter.invalid(listBean.getEventRecordId());
+                                    })
+                                    .setPositiveButton("取消", (view, commonDialog) -> {
+                                        super.onBackPressed();
+                                    }).create().show();
+
+                            break;
+                        //请求协同
+                        case EventsReportedFFragment.HANDLE:
+                            ARouter.getInstance().build(RouterHub.APP_EVENTTURNOVERACTIVITY)
+                                    .withString(ARouerConstant.ID, listBean.getId())
+                                    .withString(ARouerConstant.PORT, EventTurnOverActivity.SYNERGY)
+                                    .withString(ARouerConstant.SOURCE, RouterHub.APP_EVENTSREPORTEDLOOKACTIVITY)
+                                    .navigation();
+                            break;
+                        //退回
+                        case EventsReportedFFragment.ACCEPT:
+                            mPresenter.initDialog(
+
+                                    listBean.getId(),
+                                    heatDialog,
+                                    EventsReportedBean.ListBean.EventsReportedEnumNewBean.EXIT);
+                            heatDialog.show();
+                            break;
+                        //核查退回
+                        case EventsReportedFFragment.INSPECT:
+                            mPresenter.initDialog(
+
+                                    listBean.getId(),
+                                    heatDialog,
+                                    EventsReportedBean.ListBean.EventsReportedEnumNewBean.INSPECT_FAIL);
+                            heatDialog.show();
+                            break;
+                        //确定协同
+                        case EventsReportedFFragment.SYNERGY:
+//                            ArmsUtils.makeText("拒绝协同");
+                            mPresenter.initDialog(
+                                    listBean.getId(),
+                                    heatDialog,
+                                    EventsReportedBean.ListBean.REFUSED);
+                            heatDialog.show();
+                            break;
+                        default:
+                            break;
                     }
-                    /**
-                     *  事件转案件
-                     */
-                case R.id.but_transformation:
+                    break;
+                case R.id.neutral:
+                    switch (type) {
+                        //延期
+                        case EventsReportedFFragment.HANDLE:
+                            ARouter.getInstance().build(RouterHub.APP_EVENTTURNOVERACTIVITY)
+                                    .withString(ARouerConstant.ID, listBean.getId())
+                                    .withString(ARouerConstant.PORT, EventTurnOverActivity.POSTPONE)
+                                    .withString(ARouerConstant.SOURCE, RouterHub.APP_EVENTSREPORTEDLOOKACTIVITY)
+                                    .navigation();
+                            break;
+                        default:
+                            break;
+                    }
 
-                    /**
-                     *  地址
-                     */
-                    eventsReportedLookBean.getAddr();
-                    /**
-                     *  标题
-                     */
-                    eventsReportedLookBean.getName();
-                    /**
-                     *  事件详情
-                     */
-                    eventsReportedLookBean.getMemo();
-
-                    /**
-                     *  事件id
-                     */
-                    eventsReportedLookBean.getRecordId();
-
-
-                    ARouter.getInstance().build(RouterHub.APP_ENFORCELAWLAWADDACTIVITY)
-                            .withString(ARouerConstant.SOURCE, RouterHub.APP_EVENTSREPORTEDLOOKACTIVITY)
-                            .withParcelable(ARouerConstant.DATA_BEAN, eventsReportedLookBean)
-                            .navigation();
                     break;
                 default:
                     break;
@@ -1005,6 +1078,9 @@ public class EventsReportedLookActivity extends BaseActivity<EventsReportedLookP
     @Override
     protected void onDestroy() {
         try {
+
+            //手动切断InputMethodManager里的View引用链
+            MemoryLeakUtil.fixInputMethodMemoryLeak(this);
             if (player != null) {
                 player.release();
             }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.jess.arms.mvp.IModel;
 import com.jess.arms.mvp.IView;
+import com.weique.overhaul.v2.mvp.model.SearchProjectBean;
 import com.weique.overhaul.v2.mvp.model.entity.BaseBean;
 import com.weique.overhaul.v2.mvp.model.entity.BaseSearchPopupBean;
 import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
@@ -35,6 +36,8 @@ public interface StandardAddressOneNewContract {
         void showPopup(List<? extends BaseSearchPopupBean> listBeans, boolean isMore);
 
         void setNewData(StandardAddressStairBean standardAddressStairBean, boolean isLoadMore, int count);
+
+        void showTreePopup(List<SearchProjectBean.DepartmentsBean> departmentsBeans, boolean addChild);
     }
 
     /**
@@ -46,6 +49,8 @@ public interface StandardAddressOneNewContract {
          * @return
          */
         Observable<BaseBean<UserGideBean>> getGridList(int pageSize, int ignoreNumber, String keyWord);
+
+        Observable<BaseBean<List<SearchProjectBean.DepartmentsBean>>> getDepartments(String id);
 
         Observable<BaseBean<StandardAddressStairBean>> getDepartmenDownInfo(String departmentId, int pageSize, int ignoreNumber);
 

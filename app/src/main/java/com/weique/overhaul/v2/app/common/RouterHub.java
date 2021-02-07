@@ -39,6 +39,11 @@ public interface RouterHub {
      */
     String APP_COMMONWEBVIEWACTIVITY = APP + "/CommonWebViewActivity";
 
+    /**
+     * App
+     * 天地图
+     */
+    String TIANDITU_APP_COMMONWEBVIEWACTIVITY = APP + "/TianDITuWebViewActivity";
 
     /**
      * App
@@ -528,10 +533,35 @@ public interface RouterHub {
      * 新增事项
      */
     String APP_MATTERADDACTIVITY = APP + "/MatterAddActivity";
+    /**
+     * 资源审核列表
+     */
+    String APP_RESOURCEAUDITLISTACTIVITY = APP + "/ResourceAuditListActivity";
+
+    /**
+     * 资源核查上报
+     */
+    String APP_RESOURCEAUDITEDITACTIVITY = APP + "/ResourceAuditEditActivity";
+    /**
+     * 资源审核详情
+     */
+    String APP_RESOURCEAUDITDETAILACTIVITY = APP + "/ResourceAuditDetailActivity";
 
     /**
      * 个人工作日志
      */
     String APP_PERSONAL_ACTIVITY = APP + "/PersonalWorkActivity";
+
+    String APP_SPEECH_SETTING_ACTIVITY = APP + "/SpeechSettingActivity";
+    /**
+     *
+     */
+    String APP_TASKANDWORKLISTACTIVITY = APP + "/TaskAndWorkListActivity";
+    /**
+     *
+     */
+    String APP_EVENTTURNOVERACTIVITY = APP + "/EventTurnOverActivity";
+
+
 }
 

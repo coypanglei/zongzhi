@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.DeviceUtils;
 import com.weique.overhaul.v2.R;
-import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.mvp.model.entity.BaseSearchPopupBean;
 import com.weique.overhaul.v2.mvp.ui.adapter.SimpleTextAdapter;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
@@ -97,17 +96,10 @@ public class SearchPopup extends BasePopupWindow {
                         .build());
                 mAdapter.setEmptyView(R.layout.null_content_layout, recyclerView);
                 mAdapter.setOnItemClickListener((adapter, view, position) -> {
-                    try {
-                        if (AppUtils.isFastClick()) {
-                            return;
-                        }
-                        DeviceUtils.hideSoftKeyboard(getContext(), searchText);
-                        BaseSearchPopupBean item = (BaseSearchPopupBean) adapter.getItem(position);
-                        popupClickListener.onItemClick(item);
-                        dismiss();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    DeviceUtils.hideSoftKeyboard(getContext(), searchText);
+                    BaseSearchPopupBean item = (BaseSearchPopupBean) adapter.getItem(position);
+                    popupClickListener.onItemClick(item);
+                    dismiss();
                 });
                 if (needAddMore) {
                     mAdapter.setOnLoadMoreListener(() -> {

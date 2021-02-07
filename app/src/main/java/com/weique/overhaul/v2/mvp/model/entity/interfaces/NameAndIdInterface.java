@@ -21,10 +21,11 @@ public interface NameAndIdInterface {
     String getId2();
 
     /**
-     * 获取名称
+     * 值1
      *
      * @return String
      */
     String getName();
+
 
 }

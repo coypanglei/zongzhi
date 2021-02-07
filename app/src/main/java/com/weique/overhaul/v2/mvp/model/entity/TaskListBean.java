@@ -202,7 +202,6 @@ public class TaskListBean {
             public void setElementTypeId(String ElementTypeId) {
                 this.ElementTypeId = ElementTypeId;
             }
-
             @Override
             public String getId() {
                 return ElementTypeId;

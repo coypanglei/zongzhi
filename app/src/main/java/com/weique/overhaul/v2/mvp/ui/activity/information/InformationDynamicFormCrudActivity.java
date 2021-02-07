@@ -33,7 +33,6 @@ import com.bigkoo.pickerview.view.TimePickerView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.gyf.immersionbar.ImmersionBar;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
@@ -43,7 +42,6 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.listener.OnResultCallbackListener;
 import com.luck.picture.lib.tools.PictureFileUtils;
-import com.lxj.xpopup.XPopup;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.common.ARouerConstant;
 import com.weique.overhaul.v2.app.common.CommonDialogFragment;
@@ -59,6 +57,7 @@ import com.weique.overhaul.v2.app.utils.StringUtil;
 import com.weique.overhaul.v2.app.utils.UserInfoUtil;
 import com.weique.overhaul.v2.di.component.DaggerInformationDynamicFormAAComponent;
 import com.weique.overhaul.v2.mvp.contract.InformationDynamicFormACrudContract;
+import com.weique.overhaul.v2.mvp.model.SearchProjectBean;
 import com.weique.overhaul.v2.mvp.model.entity.DynamicFormOrmBean;
 import com.weique.overhaul.v2.mvp.model.entity.GridInformationBean;
 import com.weique.overhaul.v2.mvp.model.entity.InformationDetailBean;
@@ -71,7 +70,7 @@ import com.weique.overhaul.v2.mvp.presenter.InformationDynamicFormACrudPresenter
 import com.weique.overhaul.v2.mvp.ui.activity.map.MapActivity;
 import com.weique.overhaul.v2.mvp.ui.adapter.DynamicFormAdapter;
 import com.weique.overhaul.v2.mvp.ui.adapter.InformationTypeSecondAdapter;
-import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonCustomAdapterPopupWindow;
+import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonRecyclerPopupWindow;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.OptionPopup;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
@@ -138,6 +137,11 @@ public class InformationDynamicFormCrudActivity extends BaseActivity<Information
     @Autowired(name = INFORMATIONDETAILBEAN)
     InformationDetailBean informationDetailBean;
     /**
+     * 新增  资源时选择的网格 信息
+     */
+    @Autowired(name = ARouerConstant.DATA_BEAN)
+    SearchProjectBean.DepartmentsBean selectedObject;
+    /**
      * 上个界面
      */
     @Autowired(name = ARouerConstant.SOURCE)
@@ -173,6 +177,11 @@ public class InformationDynamicFormCrudActivity extends BaseActivity<Information
     private static final int REQUEST_CODE_CAMERA = 102;
     private TimePickerView timePickerView;
 
+
+    private CommonRecyclerPopupWindow<InformationTypeOneSecondBean.ElementListBean> popupWindow;
+    private InformationTypeSecondAdapter mAdapter;
+
+    private List<Object> targetList;
     /**
      * 动态映射中间层 成员变量
      */
@@ -188,7 +197,6 @@ public class InformationDynamicFormCrudActivity extends BaseActivity<Information
     private OCR OCRInstance;
     private CountDownTimer timer;
     private CommonDialogFragment commonDialogFragment;
-    private CommonCustomAdapterPopupWindow<InformationTypeOneSecondBean.ElementListBean> window;
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -293,8 +301,7 @@ public class InformationDynamicFormCrudActivity extends BaseActivity<Information
                                                     defaultValString = defaultValString.replace("\\", "");
                                                 }
                                                 if (defaultValString.contains("[")) {
-                                                    arrayList = gson.fromJson(defaultValString, new TypeToken<List<String>>() {
-                                                    }.getType());
+                                                    arrayList = gson.fromJson(defaultValString, ArrayList.class);
                                                 } else {
                                                     if (defaultValString.contains("\"")) {
                                                         arrayList.add(gson.fromJson(defaultValString, String.class));
@@ -443,6 +450,7 @@ public class InformationDynamicFormCrudActivity extends BaseActivity<Information
                         ARouter.getInstance().build(RouterHub.APP_STANDARDADDRESSONENEWACTIVITY)
                                 .withString(ARouerConstant.SOURCE, RouterHub.APP_INFORMATIONDYNAMICFORMAAACTIVITY)
                                 .withString(ARouerConstant.TITLE, "选择标准地址")
+                                .withParcelable(ARouerConstant.DATA_BEAN, selectedObject)
                                 .navigation());
             }
             if (StringUtil.isNullString(informationDetailBean.getStandardAddressFullPath())) {
@@ -551,6 +559,15 @@ public class InformationDynamicFormCrudActivity extends BaseActivity<Information
     @Override
     public void LoadingMore(boolean b) {
         try {
+            if (popupWindow != null && popupWindow.isShowing()) {
+                if (mAdapter != null) {
+                    if (b) {
+                        mAdapter.loadMoreEnd(true);
+                    } else {
+                        mAdapter.loadMoreComplete();
+                    }
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -662,6 +679,8 @@ public class InformationDynamicFormCrudActivity extends BaseActivity<Information
                 //这俩顺序别颠倒 更新上两级 界面中的列表/详情
                 EventBus.getDefault().post(new EventBusBean(EventBusConstant.ALERT, informationDetailBean), RouterHub.APP_INFORMATIONDYNAMICFORMSELECTACTIVITY);
                 EventBus.getDefault().post(new EventBusBean(EventBusConstant.ALERT, informationDynamicFormSelectBean), RouterHub.APP_INFORMATIONDYNAMICFORMSELECTACTIVITY);
+                //更新 审核 详情界面
+                EventBus.getDefault().post(new EventBusBean(EventBusConstant.ALERT, informationDetailBean), RouterHub.APP_RESOURCEAUDITDETAILACTIVITY);
                 EventBus.getDefault().post(new EventBusBean(EventBusConstant.ALERT, bean), RouterHub.APP_STANDARDADDRESSLOOKACTIVITY);
                 EventBus.getDefault().post(new EventBusBean(EventBusConstant.ALERT, bean), RouterHub.APP_INFORMATIONTYPESECONDACTIVITY);
             }
@@ -692,8 +711,7 @@ public class InformationDynamicFormCrudActivity extends BaseActivity<Information
                     if (StringUtil.isNotNullString(item.getDefaultVal())) {
                         String defaultVal = item.getDefaultVal();
                         if (defaultVal.contains("[")) {
-                            ArrayList<String> arrayList = gson.fromJson(defaultVal, new TypeToken<List<String>>() {
-                            }.getType());
+                            ArrayList<String> arrayList = gson.fromJson(defaultVal, ArrayList.class);
                             strings.addAll(arrayList);
                         }
                     }
@@ -835,44 +853,58 @@ public class InformationDynamicFormCrudActivity extends BaseActivity<Information
     @Override
     public void showMergeTargetListPopup(List<Map<String, Object>> list, boolean isLoadMore) {
         try {
+            if (isLoadMore) {
+                mList.addAll(list);
+            } else {
+                this.mList = list;
+            }
             List<InformationTypeOneSecondBean.ElementListBean> elementListBeans = new ArrayList<>();
             for (Object ss : list) {
                 InformationTypeOneSecondBean.ElementListBean listBean = gson.fromJson(gson.toJson(ss), InformationTypeOneSecondBean.ElementListBean.class);
                 elementListBeans.add(listBean);
             }
-            if (isLoadMore) {
-                if (window != null) {
-                    window.setMoreData(elementListBeans);
+            if (popupWindow == null) {
+                if (mAdapter == null) {
+                    mAdapter = new InformationTypeSecondAdapter();
                 }
-            } else {
-                window = new CommonCustomAdapterPopupWindow<>(getContext(),
-                        new InformationTypeSecondAdapter());
-                window.setLoadMoreListener(() ->
-                        mPresenter.getFormInfoBySearching(false, true,
-                                targetTypeFiredFieldName, mDynamicFormOrmBean.getTargetTypeId(), checkText));
-                window.setOnCustomAdapterPopupListener((popup, elementListBean, position) -> {
-                    try {
-                        Map<String, Object> o = mList.get(position);
-                        informationDetailBean = MapUtils.mapValueSetToObject(o, informationDetailBean);
-                        mDepartmentId = informationDetailBean.getDepartmentId();
-                        //这些是映射中 间成  没有的固定 参数
-                        elementListBean.setElementTypeId(mDynamicFormOrmBean.getTargetTypeId());
-                        mPresenter.getDataStructureInJson(elementListBean, o);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                mAdapter.setNewData(elementListBeans);
+                popupWindow = new CommonRecyclerPopupWindow<>(this, mAdapter,
+                        (BaseQuickAdapter.OnItemChildClickListener) (adapter, view, position) -> {
+                            try {
+                                switch (view.getId()) {
+                                    case R.id.input:
+                                        Map<String, Object> o = mList.get(position);
+                                        informationDetailBean = MapUtils.mapValueSetToObject(o, informationDetailBean);
+                                        mDepartmentId = informationDetailBean.getDepartmentId();
+                                        Object item = adapter.getItem(position);
+                                        if (item instanceof InformationTypeOneSecondBean.ElementListBean) {
+                                            InformationTypeOneSecondBean.ElementListBean listBean = (InformationTypeOneSecondBean.ElementListBean) item;
+                                            //这些是映射中 间成  没有的固定 参数
+                                            listBean.setElementTypeId(mDynamicFormOrmBean.getTargetTypeId());
+                                            mPresenter.getDataStructureInJson(listBean, o);
+                                        } else {
+                                            ArmsUtils.makeText("获取信息失败");
+                                        }
+                                        if (popupWindow != null && popupWindow.isShowing()) {
+                                            popupWindow.dismiss();
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }, (BaseQuickAdapter.RequestLoadMoreListener) () -> {
+                    mPresenter.getFormInfoBySearching(false, true, targetTypeFiredFieldName, mDynamicFormOrmBean.getTargetTypeId(), checkText);
                 });
-                window.setNewData(elementListBeans);
-                new XPopup.Builder(getContext())
-                        .moveUpToKeyboard(false)
-                        .enableDrag(false)
-                        .isDestroyOnDismiss(true)
-//                        .isThreeDrag(true)
-                        .asCustom(window)
-                        .show();
+            } else {
+                popupWindow.setNewData(elementListBeans, isLoadMore);
             }
-
-
+            if (!popupWindow.isShowing()) {
+                popupWindow.showPopupWindow();
+            }
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }

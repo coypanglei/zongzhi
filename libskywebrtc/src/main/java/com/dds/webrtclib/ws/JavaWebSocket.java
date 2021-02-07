@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.dds.webrtclib.bean.ConnectionInfoBean;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -22,6 +23,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
@@ -131,11 +133,13 @@ public class JavaWebSocket implements IWebSocket {
 
     //============================需要发送的=====================================
     @Override
-    public void joinRoom(String room) {
+    public void joinRoom(String room, String name, String headUrl) {
         Map<String, Object> map = new HashMap<>();
         map.put("eventName", "__join");
         Map<String, String> childMap = new HashMap<>();
         childMap.put("room", room);
+        childMap.put("headUrl", headUrl);
+        childMap.put("userName", name);
         map.put("data", childMap);
         JSONObject object = new JSONObject(map);
         final String jsonString = object.toString();
@@ -205,7 +209,9 @@ public class JavaWebSocket implements IWebSocket {
     public void handleMessage(String message) {
         Map map = JSON.parseObject(message, Map.class);
         String eventName = (String) map.get("eventName");
-        if (eventName == null) return;
+        if (eventName == null) {
+            return;
+        }
         if (eventName.equals("_peers")) {
             handleJoinToRoom(map);
         }
@@ -228,16 +234,44 @@ public class JavaWebSocket implements IWebSocket {
 
     // 自己进入房间
     private void handleJoinToRoom(Map map) {
-        Map data = (Map) map.get("data");
-        JSONArray arr;
-        if (data != null) {
-            arr = (JSONArray) data.get("connections");
-            String js = JSONObject.toJSONString(arr, SerializerFeature.WriteClassName);
-            ArrayList<String> connections = (ArrayList<String>) JSONObject.parseArray(js, String.class);
-            String myId = (String) data.get("you");
-            events.onJoinToRoom(connections, myId);//列表姓名
-        }
+        try {
+            Map data = (Map) map.get("data");
+            if (data != null) {
+                JSONArray arr;
+                arr = (JSONArray) data.get("connections");
+                String js = JSONObject.toJSONString(arr, SerializerFeature.WriteClassName);
+                ArrayList<String> connections = new ArrayList<>();
+                if (js != null && js.length() > 0) {
+                    connections = (ArrayList<String>) JSONObject.parseArray(js, String.class);
+                }
 
+                List<ConnectionInfoBean> beans = new ArrayList<>();
+                JSONArray other = (JSONArray) data.get("others");
+                if (other != null && other.size() > 0) {
+                    for (int i = 0; i < other.size(); i++) {
+                        JSONObject object = (JSONObject) other.get(i);
+                        ConnectionInfoBean bean = new ConnectionInfoBean(object.getString("socketId"),
+                                object.getString("userName"),
+                                object.getString("headUrl"));
+                        beans.add(bean);
+                    }
+                }
+                List<ConnectionInfoBean> tempBeans = new ArrayList<>();
+                for (String i : connections) {
+                    for (ConnectionInfoBean bean : beans) {
+                        if (i.equals(bean.getSocketId())) {
+                            tempBeans.add(bean);
+                        }
+                    }
+                }
+                String myId = (String) data.get("you");
+                String headUrl = (String) data.get("headUrl");
+                String name = (String) data.get("userName");
+                events.onJoinToRoom(tempBeans, myId, name, headUrl);//列表姓名
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // 自己已经在房间，有人进来
@@ -246,7 +280,9 @@ public class JavaWebSocket implements IWebSocket {
         String socketId;
         if (data != null) {
             socketId = (String) data.get("socketId");
-            events.onRemoteJoinToRoom(socketId);
+            String userName = (String) data.get("userName");
+            String headUrl = (String) data.get("headUrl");
+            events.onRemoteJoinToRoom(socketId, userName, headUrl);
         }
 
     }

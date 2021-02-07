@@ -24,7 +24,6 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.gyf.immersionbar.ImmersionBar;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
@@ -382,8 +381,7 @@ public class LawWorksOrderDetailActivity extends BaseActivity<LawWorksOrderDetai
             try {
                 if (StringUtil.isNotNullString(itemBean.getCODetail().getImgsInJson())) {
                     String photo = itemBean.getCODetail().getImgsInJson();
-                    List<String> tbList = gson.fromJson(photo,  new TypeToken<List<String>>() {
-                    }.getType());
+                    List<String> tbList = gson.fromJson(photo, List.class);
                     if (simplePhotoAdapter == null) {
                         simplePhotoAdapter = new SimplePhotoAdapter(tbList);
                         ArmsUtils.configRecyclerView(recyclerPhoto, new GridLayoutManager(this, 4));
@@ -415,8 +413,7 @@ public class LawWorksOrderDetailActivity extends BaseActivity<LawWorksOrderDetai
             try {
                 if (StringUtil.isNotNullString(itemBean.getCODetail().getRecordUrl())) {
                     String word = itemBean.getCODetail().getRecordUrl();
-                    List<String> tbList = gson.fromJson(word,  new TypeToken<List<String>>() {
-                    }.getType());
+                    List<String> tbList = gson.fromJson(word, List.class);
                     List<FileBean> fileBeans = new ArrayList<>();
                     FileBean fileBean;
                     for (String s : tbList) {
@@ -477,8 +474,7 @@ public class LawWorksOrderDetailActivity extends BaseActivity<LawWorksOrderDetai
 
                 if (StringUtil.isNotNullString(itemBean.getCORecord().getImgsInJson())) {
                     String photo = itemBean.getCORecord().getImgsInJson();
-                    List<String> tbList1 = gson.fromJson(photo,  new TypeToken<List<String>>() {
-                    }.getType());
+                    List<String> tbList1 = gson.fromJson(photo, List.class);
                     List<InformationItemPictureBean> list1 = new ArrayList<>();
 
                     for (String s : tbList1) {

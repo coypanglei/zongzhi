@@ -28,13 +28,6 @@
             android:textSize="@dimen/sp_14"
             tools:text="sssssss" />
 
-        <ImageView
-            android:id="@+id/arrow_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:src="@drawable/arrow_icon" />
-
         <Button
             android:id="@+id/input"
             android:layout_width="@dimen/dp_59"
@@ -42,8 +35,17 @@
             android:background="@drawable/shape_b_d3982f6_c_2"
             android:text="@string/select"
             android:textColor="@color/blue_3982f6"
-            android:textSize="@dimen/sp_12"
-            android:visibility="gone" />
+            android:textSize="@dimen/sp_12" />
+
+        <ImageView
+            android:id="@+id/arrow_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginStart="@dimen/dp_10"
+            android:src="@drawable/arrow_icon" />
+
+
     </LinearLayout>
 
     <include layout="@layout/view_line" />

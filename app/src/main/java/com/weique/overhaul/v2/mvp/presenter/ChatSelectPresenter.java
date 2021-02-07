@@ -2,22 +2,19 @@ package com.weique.overhaul.v2.mvp.presenter;
 
 import android.app.Application;
 
-import com.jess.arms.integration.AppManager;
 import com.jess.arms.di.scope.ActivityScope;
-import com.jess.arms.mvp.BasePresenter;
 import com.jess.arms.http.imageloader.ImageLoader;
-
-import me.jessyan.rxerrorhandler.core.RxErrorHandler;
-
-import javax.inject.Inject;
-
+import com.jess.arms.integration.AppManager;
 import com.weique.overhaul.v2.app.ReworkBasePresenter;
 import com.weique.overhaul.v2.app.common.Constant;
 import com.weique.overhaul.v2.app.utils.CommonPermissionUtil;
 import com.weique.overhaul.v2.mvp.contract.ChatSelectContract;
-import com.weique.overhaul.v2.mvp.model.entity.AddressBookListBean;
 
 import java.util.List;
+
+import javax.inject.Inject;
+
+import me.jessyan.rxerrorhandler.core.RxErrorHandler;
 
 
 /**
@@ -69,8 +66,8 @@ public class ChatSelectPresenter extends ReworkBasePresenter<ChatSelectContract.
         }
     }
 
-    public void setChatList(List<String> alreadyList, String toString) {
-        commonGetData(mModel.setChatList(pageSize, ignoreNumber, alreadyList, toString), mErrorHandler, itemBean -> {
+    public void setChatList(List<String> alreadyList, String toString,boolean videoEnable) {
+        commonGetData(mModel.setChatList(pageSize, ignoreNumber, alreadyList, toString,videoEnable), mErrorHandler, itemBean -> {
             mRootView.getChatResult(itemBean);
         });
     }
@@ -84,11 +81,5 @@ public class ChatSelectPresenter extends ReworkBasePresenter<ChatSelectContract.
                 mRootView.isOpen(), Constant.PERMISSIONS_LIST_READ_WRITE_CAMERA);
     }
 
-    /**
-     * 显示 隐藏 发起按钮
-     */
-    public void visableBtn() {
-        mRootView.visableBtn();
-    }
 
 }

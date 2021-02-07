@@ -16,7 +16,6 @@ import com.google.android.flexbox.JustifyContent;
 import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.customview.MyFlexboxLayoutManager;
-import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.mvp.model.entity.CommonEnumBean;
 import com.weique.overhaul.v2.mvp.model.entity.EventsReportedBean;
 import com.weique.overhaul.v2.mvp.ui.adapter.OrderSortPopupAdapter;
@@ -127,22 +126,15 @@ public class OrderSortPopup extends BasePopupWindow implements View.OnClickListe
             if (beans == null) {
                 beans = new ArrayList<>();
                 beans.add(new CommonEnumBean(ArmsUtils.getString(context, R.string.all), -2));
-                beans.add(new CommonEnumBean(EventsReportedBean.ListBean.TS_S, EventsReportedBean.ListBean.EventsReportedEnumBean.TS));
-                beans.add(new CommonEnumBean(EventsReportedBean.ListBean.TRANSACTION_S + "中", EventsReportedBean.ListBean.EventsReportedEnumBean.TRANSACTION));
-                beans.add(new CommonEnumBean("待" + EventsReportedBean.ListBean.EVALUATE_S, EventsReportedBean.ListBean.EventsReportedEnumBean.COMPLETE));
-                beans.add(new CommonEnumBean(EventsReportedBean.ListBean.ARCHIVE_S + "中", EventsReportedBean.ListBean.EventsReportedEnumBean.EVALUATE));
-                beans.add(new CommonEnumBean("已" + EventsReportedBean.ListBean.ARCHIVE_S, EventsReportedBean.ListBean.EventsReportedEnumBean.ARCHIVE));
-                beans.add(new CommonEnumBean("已" + EventsReportedBean.ListBean.SENDBACK_S, EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK));
-                beans.add(new CommonEnumBean("已" + EventsReportedBean.ListBean.INVALID_S, EventsReportedBean.ListBean.EventsReportedEnumBean.INVALID));
+                for (int i = 0; i < EventsReportedBean.ListBean.EVENTS_REPORTED_ENUM_TEXT.length; i++) {
+                    beans.add(new CommonEnumBean(EventsReportedBean.ListBean.EVENTS_REPORTED_ENUM_TEXT[i], i - 1));
+                }
             }
             itemAdapter = new OrderSortPopupAdapter(beans);
             recyclerView.setAdapter(itemAdapter);
             itemAdapter.setOnItemClickListener((adapter, view, position) -> {
                 //这里直接 已 position 对用 订单状态， -2是因为  后端定义订单状态 暂存是-1  加上全部占用了一个下标
                 try {
-                    if (AppUtils.isFastClick()) {
-                        return;
-                    }
                     mCheckPos = position;
                     Object item = adapter.getItem(position);
                     bean = (CommonEnumBean) item;

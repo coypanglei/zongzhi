@@ -23,7 +23,6 @@ import com.weique.overhaul.v2.app.common.ARouerConstant;
 import com.weique.overhaul.v2.app.common.Constant;
 import com.weique.overhaul.v2.app.common.RouterHub;
 import com.weique.overhaul.v2.app.utils.AccessControlUtil;
-import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.di.component.DaggerMatterListComponent;
 import com.weique.overhaul.v2.mvp.contract.MatterListContract;
 import com.weique.overhaul.v2.mvp.model.entity.BasicInformationBean;
@@ -187,20 +186,13 @@ public class MatterListFragment extends BaseLazyLoadFragment<MatterListPresenter
                 getMatterList(false, true);
             }, recyclerView);
             mAdapter.setOnItemClickListener((adapter, view, position) -> {
-                try {
-                    if (AppUtils.isFastClick()) {
-                        return;
-                    }
-                    MatterListBean.ListBean bean = (MatterListBean.ListBean) adapter.getItem(position);
-                    ARouter.getInstance().build(RouterHub.APP_MATTERDETAILACTIVITY)
-                            .withString(ARouerConstant.ID, bean.getId())
-                            .withString(ARouerConstant.ID2, bean.getEventRecordId())
-                            .withInt(ARouerConstant.STATUS, bean.getEnumOrderStatus())
-                            .withString(ARouerConstant.TYPE, type)
-                            .navigation();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                MatterListBean.ListBean bean = (MatterListBean.ListBean) adapter.getItem(position);
+                ARouter.getInstance().build(RouterHub.APP_MATTERDETAILACTIVITY)
+                        .withString(ARouerConstant.ID, bean.getId())
+                        .withString(ARouerConstant.ID2, bean.getEventRecordId())
+                        .withInt(ARouerConstant.STATUS, bean.getEnumOrderStatus())
+                        .withString(ARouerConstant.TYPE, type)
+                        .navigation();
             });
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,6 +4,7 @@ public class PushMessageBean {
     private String RoomId;
     private String who;
     private String HeadUrl;
+    private boolean videoEnable;
 
     public String getHeadUrl() {
         return HeadUrl;
@@ -27,5 +28,13 @@ public class PushMessageBean {
 
     public void setWho(String who) {
         this.who = who;
+    }
+
+    public boolean getVideoEnable() {
+        return videoEnable;
+    }
+
+    public void setVideoEnable(boolean videoEnable) {
+        this.videoEnable = videoEnable;
     }
 }

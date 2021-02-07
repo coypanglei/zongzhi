@@ -61,24 +61,6 @@ public class EventsReportedLookModel extends BaseModel implements EventsReported
         return mRepositoryManager.obtainRetrofitService(EventsReportedService.class).getEventRecordInfo(SignUtil.paramSign(map));
     }
 
-    /**
-     * 小流程节点处理
-     *
-     * @param content content
-     * @param status  status
-     * @return Observable
-     */
-    @Override
-    public Observable<BaseBean<Object>> setEventNodeHandle(String content, String id, int status, int synergyStatus) {
-        Map<String, Object> map = new HashMap<>(8);
-        map.put("memo", content);
-        map.put("Id", id);
-        map.put("status", status);
-        map.put("EnumIsInSite", synergyStatus);
-
-        return mRepositoryManager.obtainRetrofitService(EventsReportedService.class).setEventNodeHandle(SignUtil.paramSign(map));
-    }
-
 
     @Override
     public Observable<BaseBean<Object>> createEvaluation(String evaluation, String recordId,String images) {
@@ -89,13 +71,6 @@ public class EventsReportedLookModel extends BaseModel implements EventsReported
             map.put("Urls",images);
         }
         return mRepositoryManager.obtainRetrofitService(EventsReportedService.class).createEvaluation(SignUtil.paramSign(map));
-    }
-
-    @Override
-    public Observable<BaseBean<Object>> placeOnFile(String recordId) {
-        Map<String, Object> map = new HashMap<>(8);
-        map.put("RecordId", recordId);
-        return mRepositoryManager.obtainRetrofitService(EventsReportedService.class).placeOnFile(SignUtil.paramSign(map));
     }
 
     /**

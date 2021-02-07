@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.lihang.ShadowLayout
+        android:id="@+id/mShadowLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:hl_cornerRadius="8dp"
+        app:hl_shadowColor="@color/color_2a000000"
+        app:hl_shadowLimit="2dp">
+
+        <RelativeLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_view"
+                android:layout_width="match_parent"
+                android:layout_height="185dp"
+                app:lottie_autoPlay="false"
+                app:lottie_fileName="voice_high.json"
+                app:lottie_loop="true" />
+
+            <TextView
+                android:id="@+id/tv_load"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/lottie_view"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:paddingTop="@dimen/dp_5"
+                android:textSize="12dp"
+                android:text="倾听中"
+                android:textColor="@color/color_black" />
+
+            <com.lihang.ShadowLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/lottie_view"
+                android:layout_gravity="center_horizontal"
+                android:visibility="visible"
+                app:hl_cornerRadius_leftBottom="8dp"
+                app:hl_cornerRadius_rightBottom="8dp"
+                app:hl_layoutBackground="@color/color_6495ED">
+
+                <TextView
+                    android:id="@+id/tv_tack"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/lottie_view"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/dp_5"
+                    android:paddingBottom="@dimen/dp_5"
+                    android:text="开始识别"
+                    android:textColor="@color/color_white" />
+            </com.lihang.ShadowLayout>
+        </RelativeLayout>
+
+    </com.lihang.ShadowLayout>
+</LinearLayout>

@@ -53,7 +53,7 @@ public class MyReceiver extends BroadcastReceiver {
             Bundle bundle = intent.getExtras();
             Logger.d(TAG, "[MyReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
 
-             if (NetworkUtil.isNetworkAvailable(AppManager.getAppManager().getmApplication())) {
+            if (NetworkUtil.isNetworkAvailable(AppManager.getAppManager().getmApplication())) {
                 if (JPushInterface.ACTION_REGISTRATION_ID.equals(intent.getAction())) {
                     String regId = bundle.getString(JPushInterface.EXTRA_REGISTRATION_ID);
                     Logger.d(TAG, "[MyReceiver] 接收Registration Id : " + regId);
@@ -73,32 +73,43 @@ public class MyReceiver extends BroadcastReceiver {
                             if ("close".equals(isChat)) {
                                 JSONObject jsonExtra = new JSONObject(Objects.requireNonNull(bundle.getString(JPushInterface.EXTRA_EXTRA)));
                                 String who = String.valueOf(bundle.get(JPushInterface.EXTRA_ALERT));
-                                SingleCallActivity.openActivity(AppManager.getAppManager().getmApplication(), jsonExtra.getString("RoomId"),jsonExtra.getString("HeadUrl"), who);
+                                boolean videoEnable = false;
+                                try {
+                                    videoEnable = jsonExtra.getBoolean("videoEnable");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                SingleCallActivity.openActivity(AppManager.getAppManager().getmApplication(),
+                                        jsonExtra.getString("RoomId"), who
+                                        ,jsonExtra.getString("HeadUrl"), videoEnable);
                                 JPushInterface.clearNotificationById(AppManager.getAppManager().getmApplication(), notifactionId);
                                 wakeUpScreen(context);
-
                             }
                         } else {
                             SystemHelper.setTopApp(AppManager.getAppManager().getmApplication());
-
                             if ("close".equals(isChat)) {
-
                                 JSONObject jsonExtra = new JSONObject(Objects.requireNonNull(bundle.getString(JPushInterface.EXTRA_EXTRA)));
                                 String who = String.valueOf(bundle.get(JPushInterface.EXTRA_ALERT));
 //                                SingleCallActivity.openActivity(AppManager.getAppManager().getmApplication(), jsonExtra.getString("RoomId"), who);
 //                                JPushInterface.clearNotificationById(AppManager.getAppManager().getmApplication(), notifactionId);
-
                                 PushMessageBean listBean = new PushMessageBean();
                                 listBean.setRoomId(jsonExtra.getString("RoomId"));
                                 listBean.setHeadUrl(jsonExtra.getString("HeadUrl"));
                                 listBean.setWho(who);
+                                boolean videoEnable = false;
+                                try {
+                                    videoEnable = jsonExtra.getBoolean("videoEnable");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                listBean.setVideoEnable(videoEnable);
                                 EventBus.getDefault().post(new EventBusBean(ISRUNNINGFOREGROUND_NO, listBean), RouterHub.APP_MAINACTIVITY);
                                 wakeUpScreen(context);
 
 
                             }
                         }
-                    }else {
+                    } else {
                         JPushInterface.clearNotificationById(AppManager.getAppManager().getmApplication(), notifactionId);
                     }
 

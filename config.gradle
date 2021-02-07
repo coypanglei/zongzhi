@@ -53,6 +53,10 @@ ext {
             "paginate"                 : "com.github.markomilos:paginate:0.5.1",
             "vlayout"                  : "com.alibaba.android:vlayout:1.1.0@aar",
             "autosize"                 : "me.jessyan:autosize:1.2.1",
+            "basepopup"                :  "com.github.razerdp:BasePopup:2.2.10",
+            "lottie"                   :  "com.airbnb.android:lottie:3.4.4",
+            //阴影专用
+            "shadowLayout"             : "com.github.lihangleo2:ShadowLayout:3.1.4",
 
             //rx1
             "rxandroid"                : "io.reactivex:rxandroid:1.2.1",
@@ -92,9 +96,9 @@ ext {
             "progressmanager"          : "me.jessyan:progressmanager:1.5.0",
             "retrofit-url-manager"     : "me.jessyan:retrofit-url-manager:1.4.0",
             "lifecyclemodel"           : "me.jessyan:lifecyclemodel:1.0.1",
-            //阴影专用
-            "shadowLayout"             : "com.github.lihangleo2:ShadowLayout:3.1.4",
             //test
+            "utilcode"                 :'com.blankj:utilcodex:1.29.0',
+
             "junit"                    : "junit:junit:4.12",
             "androidJUnitRunner"       : "androidx.test.runner.AndroidJUnitRunner",
             "runner"                   : "com.android.support.test:runner:1.0.1",

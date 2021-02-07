@@ -1,48 +1,38 @@
 package com.weique.overhaul.v2.mvp.presenter;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.gson.Gson;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.http.imageloader.ImageLoader;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.integration.IRepositoryManager;
-import com.jess.arms.utils.ArmsUtils;
-import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.ReworkBasePresenter;
 import com.weique.overhaul.v2.app.common.CommonNetworkRequest;
 import com.weique.overhaul.v2.app.common.Constant;
+import com.weique.overhaul.v2.app.common.EventBusConstant;
 import com.weique.overhaul.v2.app.common.RouterHub;
-import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.app.utils.CommonPermissionUtil;
-import com.weique.overhaul.v2.app.utils.StringUtil;
+import com.weique.overhaul.v2.app.utils.SignUtil;
 import com.weique.overhaul.v2.mvp.contract.EventsReportedLookContract;
+import com.weique.overhaul.v2.mvp.model.api.service.EventsReportedService;
+import com.weique.overhaul.v2.mvp.model.entity.BaseBean;
 import com.weique.overhaul.v2.mvp.model.entity.InformationItemPictureBean;
 import com.weique.overhaul.v2.mvp.model.entity.UploadFileRsponseBean;
-import com.weique.overhaul.v2.mvp.ui.activity.information.PictureLookActivity;
-import com.weique.overhaul.v2.mvp.ui.adapter.DialogAddPhotoAdapter;
-import com.weique.overhaul.v2.mvp.ui.dialogFragment.CommonDialogFragment;
-import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
+import com.weique.overhaul.v2.mvp.model.entity.event.EventBusBean;
+import com.weique.overhaul.v2.mvp.ui.popupwindow.HeatDialog;
+
+import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
 
 import static com.weique.overhaul.v2.mvp.model.entity.EventsReportedBean.ListBean;
@@ -69,7 +59,7 @@ public class EventsReportedLookPresenter extends ReworkBasePresenter<EventsRepor
     @Inject
     Gson gson;
     @Inject
-    IRepositoryManager iRepositoryManager;
+    IRepositoryManager mRepositoryManager;
 
     @Inject
     public EventsReportedLookPresenter(EventsReportedLookContract.Model model, EventsReportedLookContract.View rootView) {
@@ -97,19 +87,6 @@ public class EventsReportedLookPresenter extends ReworkBasePresenter<EventsRepor
     }
 
     /**
-     * 退回
-     *
-     * @param content
-     * @param id
-     * @param status
-     */
-    public void submitHandlingSuggestion(String content, String id, int status, int synergyStatus) {
-        commonGetData(mModel.setEventNodeHandle(content, id, status, synergyStatus), mErrorHandler, o -> {
-            mRootView.next();
-        });
-    }
-
-    /**
      * 评价
      *
      * @param evaluation
@@ -117,18 +94,8 @@ public class EventsReportedLookPresenter extends ReworkBasePresenter<EventsRepor
      */
     public void createEvaluation(String evaluation, String recordId, String images) {
         commonGetData(mModel.createEvaluation(evaluation, recordId, images), mErrorHandler, o -> {
-            mRootView.next();
-        });
-    }
-
-    /**
-     * 归档
-     *
-     * @param recordId
-     */
-    public void placeOnFile(String recordId) {
-        commonGetData(mModel.placeOnFile(recordId), mErrorHandler, o -> {
-            mRootView.next();
+            EventBus.getDefault().post(new EventBusBean(EventBusConstant.SELECT), RouterHub.APP_EVENTSREPORTEDACTIVITY);
+            mRootView.killMyself();
         });
     }
 
@@ -150,17 +117,100 @@ public class EventsReportedLookPresenter extends ReworkBasePresenter<EventsRepor
     }
 
     /**
+     * 处置
+     *
+     * @param id           事件流程记录Id
+     * @param fileUrls     图片上传
+     * @param returnReason 处理内容
+     */
+    public void proceedingOrder(String id, String fileUrls, String returnReason) {
+        Map<String, Object> map = new HashMap<>(8);
+        map.put("Id", id);
+        map.put("FileUrls", fileUrls);
+        map.put("ReturnReason", returnReason);
+        Observable<BaseBean<Object>> observable = mRepositoryManager.obtainRetrofitService(EventsReportedService.class)
+                .proceedingOrder1(SignUtil.paramSign(map));
+        commonGetData(observable, mErrorHandler, o -> {
+            EventBus.getDefault().post(new EventBusBean(EventBusConstant.SELECT), RouterHub.APP_EVENTSREPORTEDACTIVITY);
+            mRootView.killMyself();
+        });
+    }
+
+    /**
+     * 同意 、 拒绝协同
+     *
+     * @param id           事件流程记录Id
+     * @param returnReason 处理内容
+     */
+    public void eventRecordCoopReceivingOrder(String id, int enumEventProceedStatus, String returnReason) {
+        Map<String, Object> map = new HashMap<>(8);
+        map.put("Id", id);
+        map.put("enumEventProceedStatus", enumEventProceedStatus);
+        map.put("ReturnReason", returnReason);
+        Observable<BaseBean<Object>> observable = mRepositoryManager.obtainRetrofitService(EventsReportedService.class)
+                .eventRecordCoopReceivingOrder(SignUtil.paramSign(map));
+        commonGetData(observable, mErrorHandler, o -> {
+            EventBus.getDefault().post(new EventBusBean(EventBusConstant.SELECT), RouterHub.APP_EVENTSREPORTEDACTIVITY);
+            mRootView.killMyself();
+        });
+    }
+
+    /**
+     * 受理 退回
+     *
+     * @param intEventProceedStatus
+     */
+    public void receivingOrder(String id, int intEventProceedStatus, String returnReason) {
+        Map<String, Object> map = new HashMap<>(8);
+        map.put("Id", id);
+        map.put("intEventProceedStatus", intEventProceedStatus);
+        map.put("ReturnReason", returnReason);
+        Observable<BaseBean<Object>> observable = mRepositoryManager.obtainRetrofitService(EventsReportedService.class)
+                .receivingOrder(SignUtil.paramSign(map));
+        commonGetData(observable, mErrorHandler, o -> {
+            EventBus.getDefault().post(new EventBusBean(EventBusConstant.SELECT), RouterHub.APP_EVENTSREPORTEDACTIVITY);
+            mRootView.killMyself();
+        });
+    }
+
+    /**
+     * 核查通过  退回
+     *
+     * @param id
+     * @param enumOrderStatus enumOrderStatus
+     * @param returnReason
+     */
+    public void eventRecordCheckOrder(String id, int enumOrderStatus, String returnReason) {
+        Map<String, Object> map = new HashMap<>(8);
+        map.put("Id", id);
+        map.put("enumOrderStatus", enumOrderStatus);
+        map.put("ReturnReason", returnReason);
+        Observable<BaseBean<Object>> observable = mRepositoryManager.obtainRetrofitService(EventsReportedService.class)
+                .EventRecordCheckOrder(SignUtil.paramSign(map));
+        commonGetData(observable, mErrorHandler, o -> {
+            EventBus.getDefault().post(new EventBusBean(EventBusConstant.SELECT), RouterHub.APP_EVENTSREPORTEDACTIVITY);
+            mRootView.killMyself();
+        });
+    }
+
+
+    /**
      * 作废
      *
      * @param id id
      */
     public void invalid(String id) {
-        commonGetData(mModel.invalid(id), mErrorHandler, o -> mRootView.next());
+        commonGetData(mModel.invalid(id), mErrorHandler, o -> {
+            EventBus.getDefault().post(new EventBusBean(EventBusConstant.SELECT), RouterHub.APP_EVENTSREPORTEDACTIVITY);
+            mRootView.killMyself();
+        });
     }
 
     public void getPermission(int max) {
-        CommonPermissionUtil.getPermission((Activity) mRootView.getActivity(), mErrorHandler, () -> mRootView.goToPhotoAlbum(max), Constant.PERMISSIONS_LIST_READ_WRITE_CAMERA);
+        CommonPermissionUtil.getPermission((Activity) mRootView.getActivity(), mErrorHandler,
+                () -> mRootView.goToPhotoAlbum(max), Constant.PERMISSIONS_LIST_READ_WRITE_CAMERA);
     }
+
 
     /**
      * 上传文件
@@ -170,14 +220,15 @@ public class EventsReportedLookPresenter extends ReworkBasePresenter<EventsRepor
     public void upLoadFile(String elementId, List<String> compressPaths) {
         try {
             CommonNetworkRequest.upLoadFile(elementId, compressPaths,
-                    mErrorHandler, mRootView, iRepositoryManager,
+                    mErrorHandler, mRootView, mRepositoryManager,
                     uploadFileRsponseBeans -> {
                         try {
+                            List<InformationItemPictureBean> list = new ArrayList<>();
                             for (UploadFileRsponseBean uploadFileRsponseBean : uploadFileRsponseBeans) {
                                 String path = uploadFileRsponseBean.getUrl();
-                                list.add(new InformationItemPictureBean((path)));
+                                list.add(new InformationItemPictureBean(path));
                             }
-                            informationAddPhotoAdapter.setNewData(list);
+                            mRootView.setUpLoadItem(list);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -187,188 +238,69 @@ public class EventsReportedLookPresenter extends ReworkBasePresenter<EventsRepor
         }
     }
 
-    /**
-     * 0无协同部门  1. 协同部门未道现场  2.  到现场
-     */
-    private int synergyStatus = 0;
-
-    private DialogAddPhotoAdapter informationAddPhotoAdapter;
-    private ArrayList<InformationItemPictureBean> list;
-
-    private void initAdapter(RecyclerView recyclerView) {
-        try {
-            list = new ArrayList<>();
-            list.add(0, new InformationItemPictureBean(R.drawable.picture));
-            informationAddPhotoAdapter = new DialogAddPhotoAdapter(list);
-            informationAddPhotoAdapter.setMaxItem(10);
-            recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(AppManager.getAppManager().getmApplication())
-                    .colorResId(R.color.white)
-                    .sizeResId(R.dimen.dp_5)
-                    .build());
-            ArmsUtils.configRecyclerView(recyclerView, new GridLayoutManager(AppManager.getAppManager().getmApplication(), 4, RecyclerView.VERTICAL, false));
-            recyclerView.setAdapter(informationAddPhotoAdapter);
-            informationAddPhotoAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-                try {
-                    if (AppUtils.isFastClick()) {
-                        return;
-                    }
-                    InformationItemPictureBean bean = (InformationItemPictureBean) adapter.getItem(position);
-                    if (view.getId() == R.id.image_) {
-                        assert bean != null;
-                        if (bean.getType() == InformationItemPictureBean.IS_DRAWABLE) {
-                            if (adapter.getData().size() >= 8) {
-                                ArmsUtils.makeText("最多上传7张图片");
-                                return;
-                            }
-                            //9  是加上了默认的加号 图标
-                            int max = 8 - adapter.getData().size();
-                            getPermission(max);
-                        } else {
-                            ARouter.getInstance()
-                                    .build(RouterHub.APP_PICTURELOOKACTIVITY)
-                                    .withString(PictureLookActivity.URL_, bean.getImageUrl())
-                                    .navigation();
-                        }
-                    } else if (view.getId() == R.id.remove_image) {
-                        adapter.remove(position);
-                        adapter.notifyItemChanged(position);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
     /**
      * 初始化dialog
+     *
+     * @param id     事件id
+     * @param dialog 弹框
+     * @param status 要操作到的 目标状态
      */
-    public void initDialog(View view, boolean hasSynergy, int getEnumOrderStatus, String id, CommonDialogFragment dialogFragment, int status) {
+    public void initDialog(String id, HeatDialog dialog, int status) {
         try {
-            TextView title = view.findViewById(R.id.title);
-            EditText editText = view.findViewById(R.id.content);
-            editText.setFocusable(true);
-            editText.setFocusableInTouchMode(true);
-            editText.requestFocus();
-            TextView impose = view.findViewById(R.id.impose);
-            Button confirm = view.findViewById(R.id.confirm);
-            LinearLayout synergyLayout = view.findViewById(R.id.synergy_layout);
-            if (hasSynergy) {
-                synergyLayout.setVisibility(View.VISIBLE);
-            } else {
-                synergyLayout.setVisibility(View.GONE);
+            if (status == ListBean.EventsReportedEnumNewBean.DISPOSE_END) {
+                dialog.setContentHint("请填写处置意见");
+                dialog.setConfirmBtnText("处置");
             }
-            if (ListBean.EventsReportedEnumBean.COMPLETE == getEnumOrderStatus) {
-                RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-                recyclerView.setVisibility(View.VISIBLE);
-                initAdapter(recyclerView);
+            if (status == ListBean.EventsReportedEnumNewBean.EXIT) {
+                dialog.setContentHint("请填写退回原因");
+                dialog.setConfirmBtnText("退回");
             }
-            RadioGroup radioGroup = view.findViewById(R.id.radio_group);
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                }
-
-                @SuppressLint("SetTextI18n")
-                @Override
-                public void afterTextChanged(Editable s) {
-                    impose.setText(s.toString().length() + "/150");
-                }
-            });
-            dialogFragment.setmCancelListener(new CommonDialogFragment.OnDialogCancelListener() {
-                @Override
-                public void onCancel() {
-
-                }
-
-                @Override
-                public void onDismiss() {
-                    if (!ArmsUtils.isEmpty(informationAddPhotoAdapter)) {
-                        informationAddPhotoAdapter = null;
-                    }
-                    if (!ArmsUtils.isEmpty(list)) {
-                        list = null;
-                    }
-                }
-            });
-            confirm.setOnClickListener(v -> {
+            if (status == ListBean.EventsReportedEnumNewBean.INSPECT_FAIL) {
+                dialog.setContentHint("请填写核查退回原因");
+                dialog.setConfirmBtnText("核查退回");
+            }
+            if (status == ListBean.EventsReportedEnumNewBean.EVALUATE) {
+                dialog.setContentHint("请填写评价信息");
+                dialog.setConfirmBtnText("评价");
+            }
+            if (status == ListBean.SYNCHRONIZE) {
+                dialog.setContentHint("请填写同意协同理由");
+                dialog.setConfirmBtnText("同意协同");
+            }
+            if (status == ListBean.REFUSED) {
+                dialog.setContentHint("请填写拒绝协同理由");
+                dialog.setConfirmBtnText("拒绝协同");
+            }
+            dialog.setOnConfirmClickListener((heatDialog, content) -> {
                 try {
-                    if (hasSynergy) {
-                        if (synergyStatus == 0) {
-                            ArmsUtils.makeText("请选择协同部门是否到达现场！");
-                            return;
-                        }
-                    }
-                    String content = editText.getText().toString();
-                    if (StringUtil.isNullString(editText.getText().toString())) {
-                        ArmsUtils.makeText(title.getText().toString());
-                        return;
-                    }
-                    switch (getEnumOrderStatus) {
-                        case ListBean.EventsReportedEnumBean.COMPLETE:
-                            ArrayList<String> strings = new ArrayList<>();
-                            for (InformationItemPictureBean bean : list) {
-                                if (StringUtil.isNotNullString(bean.getImageUrl())) {
-                                    strings.add(bean.getImageUrl());
-                                }
-                            }
-                            if (strings.size() == 0) {
-                                createEvaluation(content, id, "");
-                            } else {
-                                createEvaluation(content, id, gson.toJson(strings));
-                            }
-
+                    switch (status) {
+                        case ListBean.EventsReportedEnumNewBean.DISPOSE_END:
+                            proceedingOrder(id, dialog.getImageUrls(), content);
                             break;
-                        case ListBean.EventsReportedEnumBean.TRANSACTION:
-                        case ListBean.EventsReportedEnumBean.AUDIT:
-                            submitHandlingSuggestion(content, id, status, synergyStatus);
+                        case ListBean.EventsReportedEnumNewBean.EXIT:
+                            receivingOrder(id, 1, "");
                             break;
-                        case ListBean.EventsReportedEnumBean.SENDBACK:
-                            createEvaluation(content, id, "");
+                        case ListBean.EventsReportedEnumNewBean.INSPECT_FAIL:
+                            eventRecordCheckOrder(id, 7, "");
+                            break;
+                        case ListBean.EventsReportedEnumNewBean.EVALUATE:
+                            createEvaluation(content, id, dialog.getImageUrls());
+                            break;
+                        case ListBean.SYNCHRONIZE:
+                            eventRecordCoopReceivingOrder(id, 2, content);
+                            break;
+                        case ListBean.REFUSED:
+                            eventRecordCoopReceivingOrder(id, 3, content);
                             break;
                         default:
                             break;
                     }
-                    dialogFragment.dismiss();
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
-            if (getEnumOrderStatus == ListBean.EventsReportedEnumBean.AUDIT) {
-                title.setText("请填写办理意见或备注信息");
-                confirm.setText("办理");
-            }
-            if (getEnumOrderStatus == ListBean.EventsReportedEnumBean.TRANSACTION) {
-                title.setText("请填写办理意见或备注信息");
-                confirm.setText("办理");
-            }
-            if (getEnumOrderStatus == ListBean.EventsReportedEnumBean.COMPLETE) {
-                title.setText("请填写评价");
-                confirm.setText("评价");
-            }
-            if (getEnumOrderStatus == ListBean.EventsReportedEnumBean.SENDBACK) {
-                title.setText("请填写退回原因");
-                confirm.setText("退回");
-            }
-            radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-                switch (checkedId) {
-                    case R.id.no_:
-                        synergyStatus = 1;
-                        break;
-                    case R.id.yes_:
-                        synergyStatus = 2;
-                        break;
-                    default:
-                }
-            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }

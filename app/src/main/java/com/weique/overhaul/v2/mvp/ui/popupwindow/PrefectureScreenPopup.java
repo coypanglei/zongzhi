@@ -19,7 +19,6 @@ import com.jess.arms.mvp.IView;
 import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.customview.MyFlexboxLayoutManager;
-import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.app.utils.NetworkUtils;
 import com.weique.overhaul.v2.app.utils.SignUtil;
 import com.weique.overhaul.v2.app.utils.StringUtil;
@@ -120,17 +119,10 @@ public class PrefectureScreenPopup extends BasePopupWindow {
                 ArmsUtils.configRecyclerView(starters, new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
                 starters.setAdapter(startersAdapter);
                 startersAdapter.setOnItemClickListener((adapter, view, position) -> {
-                    try {
-                        if (AppUtils.isFastClick()) {
-                            return;
-                        }
-                        startersAdapter.setCheckedPos(position);
-                        InformationTypeOneSecondBean.ElementTypeListBean item =
-                                (InformationTypeOneSecondBean.ElementTypeListBean) adapter.getItem(position);
-                        getSecond(item);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    startersAdapter.setCheckedPos(position);
+                    InformationTypeOneSecondBean.ElementTypeListBean item =
+                            (InformationTypeOneSecondBean.ElementTypeListBean) adapter.getItem(position);
+                    getSecond(item);
                 });
             }
             startersAdapter.setNewData(elementTypeListBeans);
@@ -196,17 +188,10 @@ public class PrefectureScreenPopup extends BasePopupWindow {
             ArmsUtils.configRecyclerView(second, new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
             second.setAdapter(secondAdapter);
             secondAdapter.setOnItemClickListener((adapter, view, position) -> {
-                try {
-                    if (AppUtils.isFastClick()) {
-                        return;
-                    }
-                    InformationTypeOneSecondBean.ElementTypeListBean item =
-                            (InformationTypeOneSecondBean.ElementTypeListBean) adapter.getItem(position);
-                    secondAdapter.setCheckedPos(position);
-                    getThree(item);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                InformationTypeOneSecondBean.ElementTypeListBean item =
+                        (InformationTypeOneSecondBean.ElementTypeListBean) adapter.getItem(position);
+                secondAdapter.setCheckedPos(position);
+                getThree(item);
             });
         }
         if (elementTypeListBeans != null && elementTypeListBeans.size() > 0) {
@@ -253,47 +238,36 @@ public class PrefectureScreenPopup extends BasePopupWindow {
     }
 
     private void setThreeAdapter(List<InformationTypeOneSecondBean.ElementTypeListBean> beans) {
-        try {
-            if (threeAdapter == null) {
-                threeAdapter = new PrefectureScreenThreeAdapter();
-                //2，增加谷歌流式布局
-                MyFlexboxLayoutManager manager = new MyFlexboxLayoutManager(getContext());
-                //设置主轴排列方式
-                manager.setFlexDirection(FlexDirection.ROW);
-                //设置是否换行
-                manager.setFlexWrap(FlexWrap.WRAP);
-                manager.setAlignItems(AlignItems.STRETCH);
-                manager.setJustifyContent(JustifyContent.FLEX_START);
+        if (threeAdapter == null) {
+            threeAdapter = new PrefectureScreenThreeAdapter();
+            //2，增加谷歌流式布局
+            MyFlexboxLayoutManager manager = new MyFlexboxLayoutManager(getContext());
+            //设置主轴排列方式
+            manager.setFlexDirection(FlexDirection.ROW);
+            //设置是否换行
+            manager.setFlexWrap(FlexWrap.WRAP);
+            manager.setAlignItems(AlignItems.STRETCH);
+            manager.setJustifyContent(JustifyContent.FLEX_START);
 
-                ArmsUtils.configRecyclerView(three, manager);
-                threeAdapter.setEmptyView(R.layout.null_content_home_layout, three);
-                three.setAdapter(threeAdapter);
-                three.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext())
-                        .colorResId(R.color.transparent)
-                        .sizeResId(R.dimen.dp_10)
-                        .build());
-                three.addItemDecoration(new VerticalDividerItemDecoration.Builder(getContext())
-                        .colorResId(R.color.transparent)
-                        .sizeResId(R.dimen.dp_10)
-                        .build());
-                threeAdapter.setOnItemClickListener((adapter, view, position) -> {
-                    try {
-                        if (AppUtils.isFastClick()) {
-                            return;
-                        }
-                        threeAdapter.setCheckedPos(position);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
-            if (beans != null && beans.size() > 0) {
-                threeAdapter.setCheckedPos(0);
-            }
-            threeAdapter.setNewData(beans);
-        } catch (Exception e) {
-            e.printStackTrace();
+            ArmsUtils.configRecyclerView(three, manager);
+            threeAdapter.setEmptyView(R.layout.null_content_home_layout, three);
+            three.setAdapter(threeAdapter);
+            three.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext())
+                    .colorResId(R.color.transparent)
+                    .sizeResId(R.dimen.dp_10)
+                    .build());
+            three.addItemDecoration(new VerticalDividerItemDecoration.Builder(getContext())
+                    .colorResId(R.color.transparent)
+                    .sizeResId(R.dimen.dp_10)
+                    .build());
+            threeAdapter.setOnItemClickListener((adapter, view, position) -> {
+                threeAdapter.setCheckedPos(position);
+            });
         }
+        if (beans != null && beans.size() > 0) {
+            threeAdapter.setCheckedPos(0);
+        }
+        threeAdapter.setNewData(beans);
     }
 
     /**

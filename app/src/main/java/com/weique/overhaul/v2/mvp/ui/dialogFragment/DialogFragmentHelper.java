@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.weique.overhaul.v2.R;
@@ -113,10 +114,17 @@ public class DialogFragmentHelper {
 
     public static CommonDialogFragment showEvalutateDialog(View view
             , boolean cancelable, CommonDialogFragment.OnDialogCancelListener cancelListener) {
-        CommonDialogFragment dialogFragment = CommonDialogFragment.newInstance(context -> {
-            Dialog dialog = new Dialog(context, EVALUTATE_THEME);
-            dialog.setContentView(view);
-            return dialog;
+        CommonDialogFragment dialogFragment = CommonDialogFragment.newInstance(new CommonDialogFragment.OnCallDialog() {
+            @Override
+            public Dialog getDialog(FragmentActivity context) {
+                    Dialog dialog = new Dialog(context, EVALUTATE_THEME);
+                try {
+                    dialog.setContentView(view);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return dialog;
+            }
         }, cancelable, cancelListener);
 
         return dialogFragment;

@@ -3,24 +3,20 @@ package com.weique.overhaul.v2.mvp.model;
 import android.app.Application;
 
 import com.google.gson.Gson;
+import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.integration.IRepositoryManager;
 import com.jess.arms.mvp.BaseModel;
-
-import com.jess.arms.di.scope.ActivityScope;
-
-import javax.inject.Inject;
-
 import com.weique.overhaul.v2.app.utils.SignUtil;
-import com.weique.overhaul.v2.app.utils.StringUtil;
 import com.weique.overhaul.v2.mvp.contract.ChatSelectContract;
 import com.weique.overhaul.v2.mvp.model.api.service.AddressLookService;
-import com.weique.overhaul.v2.mvp.model.entity.AddressBookItemBean;
 import com.weique.overhaul.v2.mvp.model.entity.AddressBookListBean;
 import com.weique.overhaul.v2.mvp.model.entity.BaseBean;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import io.reactivex.Observable;
 
@@ -57,7 +53,7 @@ public class ChatSelectModel extends BaseModel implements ChatSelectContract.Mod
     }
 
     @Override
-    public Observable<BaseBean<AddressBookListBean>> getAllAddressBookListData(int pageSize, int ignoreNumber, String name,String departmentId) {
+    public Observable<BaseBean<AddressBookListBean>> getAllAddressBookListData(int pageSize, int ignoreNumber, String name, String departmentId) {
         Map<String, Object> map = new HashMap<>(8);
         map.put("PageSize", pageSize);
         map.put("IgnoreNumber", ignoreNumber);
@@ -69,8 +65,10 @@ public class ChatSelectModel extends BaseModel implements ChatSelectContract.Mod
     }
 
     @Override
-    public Observable<BaseBean<String>> setChatList(int pageSize, int ignoreNumber, List<String> alreadyList, String toString) {
+    public Observable<BaseBean<String>> setChatList(int pageSize, int ignoreNumber,
+                                                    List<String> alreadyList, String toString, boolean videoEnable) {
         Map<String, Object> map = new HashMap<>(8);
+        map.put("videoEnable", videoEnable);
         map.put("Ids", alreadyList);
         map.put("RoomId", toString);
         return mRepositoryManager

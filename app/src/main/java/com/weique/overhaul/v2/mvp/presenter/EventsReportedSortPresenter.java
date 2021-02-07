@@ -55,18 +55,18 @@ public class EventsReportedSortPresenter extends ReworkBasePresenter<EventsRepor
      * @param typeId typeId 上级id
      * @param source 上级跳转界面
      */
-    public void getEvents(String typeId, boolean needAdd, String source) {
-        commonGetData(mModel.getEvents(typeId), mErrorHandler, bean -> {
+    public void getEvents(String typeId, boolean needAdd, String source, String keyword, int limit) {
+        commonGetData(mModel.getEvents(typeId, keyword, limit), mErrorHandler, bean -> {
             try {
                 if (bean == null || bean.getListBean() == null || bean.getListBean().size() <= 0) {
                     ArmsUtils.makeText("无资源信息");
                     return;
                 }
                 //添加需要全部
-                if (!needAdd && RouterHub.APP_EVENTSREPORTEDACTIVITY .equals(source)) {
+                if (!needAdd && RouterHub.APP_EVENTSREPORTEDACTIVITY.equals(source)) {
                     EventsReportedSortBean.ListBean listBean =
                             new EventsReportedSortBean.ListBean("", "全部", "QUANBU",
-                                    "0", "", "", "", true, 2,"");
+                                    "0", "", "", "", true, 2, "");
                     bean.getListBean().add(0, listBean);
                 }
                 mRootView.setData(bean.getListBean(), needAdd);

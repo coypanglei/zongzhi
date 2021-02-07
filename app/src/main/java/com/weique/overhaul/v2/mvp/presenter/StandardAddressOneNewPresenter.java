@@ -5,6 +5,7 @@ import android.app.Application;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.http.imageloader.ImageLoader;
 import com.jess.arms.integration.AppManager;
+import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.ReworkBasePresenter;
 import com.weique.overhaul.v2.mvp.contract.StandardAddressOneNewContract;
@@ -71,6 +72,16 @@ public class StandardAddressOneNewPresenter extends ReworkBasePresenter<Standard
     }
 
     /**
+     * 获取用户可以访问的 网格列表
+     */
+    public void getDepartments(String id, boolean addChild) {
+        commonGetData(mModel.getDepartments(id), mErrorHandler, departmentsBeans -> {
+            mRootView.showTreePopup(departmentsBeans, addChild);
+        });
+
+    }
+
+    /**
      * @param pullToRefresh pullToRefresh
      * @param isLoadMore    isLoadMore
      * @param departmentId  departmentId
@@ -78,13 +89,21 @@ public class StandardAddressOneNewPresenter extends ReworkBasePresenter<Standard
     public void getDepartmentDownInfo(boolean pullToRefresh, boolean isLoadMore, String departmentId) {
         handlePaging(pullToRefresh, isLoadMore);
         commonGetData(mModel.getDepartmenDownInfo(departmentId, pageSize, ignoreNumber), mErrorHandler, standardAddressStairBean -> {
-            List<StandardAddressStairBean.AddressTypeBean> addressType = standardAddressStairBean.getAddressType();
-            StandardAddressStairBean.AddressTypeBean addressTypeBean = new StandardAddressStairBean.AddressTypeBean();
-            addressTypeBean.setId("");
-            addressTypeBean.setName(mRootView.getContext().getString(R.string.all));
-            addressType.add(0, addressTypeBean);
-            mRootView.showPopup(addressType, isLoadMore);
-            handlePaginLoadMore(standardAddressStairBean == null || standardAddressStairBean.getAddressType() == null ? 0 : standardAddressStairBean.getAddressType().size());
+            try {
+                List<StandardAddressStairBean.AddressTypeBean> addressType = standardAddressStairBean.getAddressType();
+                if (addressType == null) {
+                    ArmsUtils.makeText("未获取到层级信息");
+                    return;
+                }
+                StandardAddressStairBean.AddressTypeBean addressTypeBean = new StandardAddressStairBean.AddressTypeBean();
+                addressTypeBean.setId("");
+                addressTypeBean.setName(mRootView.getContext().getString(R.string.all));
+                addressType.add(0, addressTypeBean);
+                mRootView.showPopup(addressType, isLoadMore);
+                handlePaginLoadMore(standardAddressStairBean == null || standardAddressStairBean.getAddressType() == null ? 0 : standardAddressStairBean.getAddressType().size());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -103,7 +122,7 @@ public class StandardAddressOneNewPresenter extends ReworkBasePresenter<Standard
             commonGetData(mModel.getGriddingFourRace(dId, gridId, name, pageSize, ignoreNumber), mErrorHandler, standardAddressStairBean -> {
                 try {
                     mRootView.setNewData(standardAddressStairBean, isLoadMore, standardAddressStairBean.getCount());
-                    handlePaginLoadMore((standardAddressStairBean == null || standardAddressStairBean.getStandardAddress() == null)
+                    handlePaginLoadMore(standardAddressStairBean.getStandardAddress() == null
                             ? 0 : standardAddressStairBean.getStandardAddress().size());
                 } catch (Exception e) {
                     e.printStackTrace();

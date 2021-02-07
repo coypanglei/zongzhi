@@ -1,34 +1,56 @@
 package com.weique.overhaul.v2.mvp.ui.activity.information;
 
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.android.arouter.launcher.ARouter;
+import com.baidu.location.BDLocation;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.ObjectUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.diff.BaseQuickDiffCallback;
 import com.google.gson.Gson;
-import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.core.BottomPopupView;
+import com.shehuan.nicedialog.BaseNiceDialog;
+import com.shehuan.nicedialog.NiceDialog;
+import com.shehuan.nicedialog.Utils;
+import com.shehuan.nicedialog.ViewHolder;
 import com.weique.overhaul.v2.R;
+import com.weique.overhaul.v2.app.common.ARouerConstant;
+import com.weique.overhaul.v2.app.common.CommonNetworkRequest;
 import com.weique.overhaul.v2.app.common.Constant;
+import com.weique.overhaul.v2.app.common.RouterHub;
+import com.weique.overhaul.v2.app.service.localtion.LocSdkClient;
+import com.weique.overhaul.v2.app.utils.KeybordUtil;
 import com.weique.overhaul.v2.app.utils.PickerViewUtil;
 import com.weique.overhaul.v2.mvp.model.entity.BasicInformationBean;
 import com.weique.overhaul.v2.mvp.model.entity.CommonCollectBean;
+import com.weique.overhaul.v2.mvp.model.entity.CommonTitleBean;
 import com.weique.overhaul.v2.mvp.model.entity.NameAndIdBean;
 import com.weique.overhaul.v2.mvp.model.entity.TimeSelectBean;
+import com.weique.overhaul.v2.mvp.model.entity.TourVistLonAndLatBean;
+import com.weique.overhaul.v2.mvp.model.entity.event.EventBusBean;
 import com.weique.overhaul.v2.mvp.ui.adapter.CommonRecyclerPopupAdapter;
 import com.weique.overhaul.v2.mvp.ui.adapter.SearchCurrencyAdapter;
-import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonCustomAdapterPopupWindow;
+import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonRecyclerPopupWindow;
+
+import org.simple.eventbus.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,7 +68,7 @@ import static com.weique.overhaul.v2.app.common.Constant.SELECT_ITEM;
 /**
  * 高级搜索弹窗
  */
-public class SearchDialogPopup extends BottomPopupView {
+public class SearchDialogFragment extends NiceDialog {
 
     /**
      * 通用 选择弹框
@@ -54,15 +76,8 @@ public class SearchDialogPopup extends BottomPopupView {
     private SearchCurrencyAdapter searchCurrencyAdapter;
 
     private CommonCollectBean commonCollectBean;
-    private RecyclerView recyclerView;
-    private RelativeLayout relativeLayout;
-    private TextView reset;
-    private TextView sumbit;
-
-    public SearchDialogPopup(@NonNull Context context, CommonCollectBean commonCollectBean) {
-        super(context);
-        this.commonCollectBean = commonCollectBean;
-    }
+    RecyclerView recyclerView;
+    RelativeLayout relativeLayout;
 
     public OnDataClickListener getConfirmBtnClick() {
         return confirmBtnClick;
@@ -89,26 +104,41 @@ public class SearchDialogPopup extends BottomPopupView {
     private CommonRecyclerPopupAdapter commonRecyclerPopupAdapter;
     private Gson gson;
 
-    @Override
-    protected int getImplLayoutId() {
-        return R.layout.search_dialog;
+    public static SearchDialogFragment newInstance(CommonCollectBean commonCollectBean) {
+        Bundle args = new Bundle();
+        args.putParcelable(Constant.COMMON_COLLECTION_KEY, commonCollectBean);
+        SearchDialogFragment fragment = new SearchDialogFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
 
     @Override
-    protected void onCreate() {
-        super.onCreate();
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            commonCollectBean = bundle.getParcelable(Constant.COMMON_COLLECTION_KEY);
+        }
+    }
+
+
+    @Override
+    public int intLayoutId() {
+        return R.layout.search_dialog;
+    }
+
+    @Override
+    public void convertView(ViewHolder holder, BaseNiceDialog dialog) {
         try {
             gson = new Gson();
             searchCurrencyAdapter = new SearchCurrencyAdapter();
             searchCurrencyAdapter.setNewData(commonCollectBean.getList());
-            recyclerView = findViewById(R.id.rv_content);
-            relativeLayout = findViewById(R.id.rl_all);
-            reset = findViewById(R.id.reset);
-            sumbit = findViewById(R.id.sumbit);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            recyclerView = holder.getView(R.id.rv_content);
+            relativeLayout = holder.getView(R.id.rl_all);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             recyclerView.setAdapter(searchCurrencyAdapter);
-            reset.setOnClickListener(v -> {
+            holder.setOnClickListener(R.id.reset, v -> {
                 for (BasicInformationBean.RecordsBean bean : searchCurrencyAdapter.getData()) {
                     /*
                        清空
@@ -123,9 +153,9 @@ public class SearchDialogPopup extends BottomPopupView {
                 confirmBtnClick.onClick(null, searchCurrencyAdapter.getData());
 
             });
-            sumbit.setOnClickListener(v -> {
+            holder.setOnClickListener(R.id.sumbit, v -> {
                 if (ObjectUtils.isNotEmpty(confirmBtnClick)) {
-                    KeyboardUtils.hideSoftInput(this.getRootView());
+                    KeyboardUtils.hideSoftInput(this.getView());
                     /*
                      * 动态传给后台json
                      */
@@ -148,6 +178,12 @@ public class SearchDialogPopup extends BottomPopupView {
                                 }
                             }
                         }
+//                        } else {
+//                            if (bean.getRequire()) {
+//                                ToastUtils.showLong(bean.getTitile() + "此项为必填");
+//                                return;
+//                            }
+//                        }
                     }
                     Gson gson = new Gson();
                     map.put("QueryInJson", gson.toJson(nameAndIdBeanList));
@@ -166,7 +202,7 @@ public class SearchDialogPopup extends BottomPopupView {
                      */
                     case R.id.et_name:
                     case R.id.iv_address:
-                        KeyboardUtils.hideSoftInput(this.getRootView());
+                        KeyboardUtils.hideSoftInput(this.getView());
                         try {
 
                             switch (bean.getParamtype()) {
@@ -195,36 +231,51 @@ public class SearchDialogPopup extends BottomPopupView {
             e.printStackTrace();
         }
     }
-
-
+    /**
+     * 选择框
+     */
+    CommonRecyclerPopupWindow<NameAndIdBean>  commonRecyclerPopupWindow;
     private void initSelectAll(final BasicInformationBean.RecordsBean bean) {
         try {
-            CommonCustomAdapterPopupWindow<NameAndIdBean> window =
-                    new CommonCustomAdapterPopupWindow<>(getContext(),
-                            new CommonRecyclerPopupAdapter<>());
-            window.setOnCustomAdapterPopupListener((popup, elementListBean, position) -> {
-                try {
-                    if (ObjectUtils.isNotEmpty(elementListBean)) {
-                        bean.setValue(elementListBean.getName());
-                        bean.setSelectValue(elementListBean.getId());
+            if (commonRecyclerPopupAdapter == null) {
+                commonRecyclerPopupAdapter = new CommonRecyclerPopupAdapter<NameAndIdBean>();
+            }
+
+            commonRecyclerPopupWindow= new CommonRecyclerPopupWindow<>(getContext(),
+                        commonRecyclerPopupAdapter,this);
+            commonRecyclerPopupAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+                @Override
+                public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                    Timber.e(view.getId() + "");
+                    NameAndIdBean nameAndIdBean = (NameAndIdBean) adapter.getItem(position);
+                    /*
+                      更新數據
+                     */
+                    if (ObjectUtils.isNotEmpty(nameAndIdBean)) {
+                        bean.setValue(nameAndIdBean.getName());
+                        bean.setSelectValue(nameAndIdBean.getId());
                         searchCurrencyAdapter.setNewData(searchCurrencyAdapter.getData());
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    /*
+                      关闭选择框
+                     */
+                    try {
+                        commonRecyclerPopupWindow.dismissWithOutAnimate();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
-            window.setNewData(bean.getOptionlist());
-            new XPopup.Builder(getContext())
-                    .moveUpToKeyboard(false)
-                    .enableDrag(false)
-                    .isDestroyOnDismiss(true)
-//                        .isThreeDrag(true)
-                    .asCustom(window)
-                    .show();
+                if (!commonRecyclerPopupWindow.isShowing()) {
+                    commonRecyclerPopupWindow.showPopupWindow();
+                }
+
+                commonRecyclerPopupWindow.setNewData(bean.getOptionlist());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
 
     /**
@@ -234,7 +285,7 @@ public class SearchDialogPopup extends BottomPopupView {
         try {
             TimeSelectBean timeSelectBean;
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    getScreenWidth(getContext()),
+                    getScreenWidth(getActivity()),//这块写成获取到的屏幕的宽就ok
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     Gravity.CENTER);
             params.leftMargin = 0;
@@ -255,17 +306,16 @@ public class SearchDialogPopup extends BottomPopupView {
                 startDate.set(year - timeSelectBean.getYear(), 0, 1);
                 endDate.set(year + timeSelectBean.getYear(), month, dayOfMonth);
 
-                TimePickerView timePickerdialog =
-                        PickerViewUtil.selectPickerTimeWithStartEndDialogTrue(getContext(), timeSelectBean.getPrecision(),
-                                selectedDate, startDate, endDate,
-                                (date, v) -> {
-                                    SimpleDateFormat format = new SimpleDateFormat(Constant.YM, Locale.CHINA);
-                                    /**
-                                     * 更新数据 ，不会破坏原有的布局
-                                     */
-                                    bean.setValue(format.format(date));
-                                    searchCurrencyAdapter.setNewData(searchCurrencyAdapter.getData());
-                                });
+                TimePickerView  timePickerdialog = PickerViewUtil.selectPickerTimeWithStartEndDialogTrue((ViewGroup)getDialog().getWindow().getDecorView(),getActivity(), timeSelectBean.getPrecision(),
+                        selectedDate, startDate, endDate,
+                        (date, v) -> {
+                            SimpleDateFormat format = new SimpleDateFormat(Constant.YM, Locale.CHINA);
+                            /**
+                             * 更新数据 ，不会破坏原有的布局
+                             */
+                            bean.setValue(format.format(date));
+                            searchCurrencyAdapter.setNewData(searchCurrencyAdapter.getData());
+                  });
                 timePickerdialog.getDialogContainerLayout().setLayoutParams(params);
                 timePickerdialog.show();
             } else {
@@ -278,18 +328,16 @@ public class SearchDialogPopup extends BottomPopupView {
                 int dayOfMonth = selectedDate.get(Calendar.DAY_OF_MONTH);
                 startDate.set(year - 100, 0, 1);
                 endDate.set(year + 10, month, dayOfMonth);
-                TimePickerView timePickerdialogTwo = PickerViewUtil.
-                        selectPickerTimeWithStartEndDialogTrue(
-                                getContext(), Constant.YMD,
-                                selectedDate, startDate, endDate,
-                                (date, v) -> {
-                                    SimpleDateFormat format = new SimpleDateFormat(Constant.YMD1, Locale.CHINA);
-                                    /**
-                                     * 更新数据 ，不会破坏原有的布局
-                                     */
-                                    bean.setValue(format.format(date));
-                                    searchCurrencyAdapter.setNewData(searchCurrencyAdapter.getData());
-                                });
+                TimePickerView  timePickerdialogTwo =  PickerViewUtil.selectPickerTimeWithStartEndDialogTrue((ViewGroup)getDialog().getWindow().getDecorView(),getActivity(), Constant.YMD,
+                        selectedDate, startDate, endDate,
+                        (date, v) -> {
+                            SimpleDateFormat format = new SimpleDateFormat(Constant.YMD1, Locale.CHINA);
+                            /**
+                             * 更新数据 ，不会破坏原有的布局
+                             */
+                            bean.setValue(format.format(date));
+                            searchCurrencyAdapter.setNewData(searchCurrencyAdapter.getData());
+                        });
                 timePickerdialogTwo.getDialogContainerLayout().setLayoutParams(params);
                 timePickerdialogTwo.show();
             }
@@ -298,7 +346,7 @@ public class SearchDialogPopup extends BottomPopupView {
         }
     }
 
-    public static int getScreenWidth(Context context) {
+    public static int getScreenWidth(Context context){
         Resources resources = context.getResources();
         DisplayMetrics dm = resources.getDisplayMetrics();
         int width = dm.widthPixels;

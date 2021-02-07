@@ -11,6 +11,8 @@ import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
 
 import razerdp.basepopup.BasePopupWindow;
+import razerdp.util.animation.AnimationHelper;
+import razerdp.util.animation.ScaleConfig;
 
 /**
  * @author GK
@@ -27,8 +29,8 @@ public class ScreeningPopup extends BasePopupWindow implements View.OnClickListe
             setPopupGravity(Gravity.BOTTOM);
 //        setBlurBackgroundEnable(true);
             setAlignBackground(true);
-//            setSoftInputMode(PopupWindow.INPUT_METHOD_NEEDED);
-//            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            setSoftInputMode(PopupWindow.INPUT_METHOD_NEEDED);
+            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 //        setOutSideTouchable(true);
             setBackgroundColor(ArmsUtils.getColor(context, R.color.white));
             setOutSideDismiss(true);
@@ -42,13 +44,16 @@ public class ScreeningPopup extends BasePopupWindow implements View.OnClickListe
     // 返回作用于PopupWindow的show和dismiss动画，本库提供了默认的几款动画，这里可以自由实现
     @Override
     protected Animation onCreateShowAnimation() {
-        return getDefaultScaleAnimation(true);
+        return AnimationHelper.asAnimation()
+                .withScale(ScaleConfig.CENTER)
+                .toShow();
     }
-
 
     @Override
     protected Animation onCreateDismissAnimation() {
-        return getDefaultScaleAnimation(false);
+        return AnimationHelper.asAnimation()
+                .withScale(ScaleConfig.CENTER)
+                .toDismiss();
     }
 
     @Override

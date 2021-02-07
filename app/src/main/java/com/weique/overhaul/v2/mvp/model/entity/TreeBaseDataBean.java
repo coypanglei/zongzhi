@@ -1,5 +1,8 @@
 package com.weique.overhaul.v2.mvp.model.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.chad.library.adapter.base.entity.AbstractExpandableItem;
 import com.google.gson.annotations.SerializedName;
 import com.weique.overhaul.v2.mvp.model.entity.interfaces.TreeDataInterface;
@@ -11,14 +14,39 @@ import java.util.List;
  * @description:
  * @date :2020/8/10 17:39
  */
-public class TreeBaseDataBean<T extends TreeDataInterface> extends AbstractExpandableItem<T> implements TreeDataInterface<T> {
+public class TreeBaseDataBean<T extends TreeDataInterface<T>>
+        extends AbstractExpandableItem<T>
+        implements TreeDataInterface<T>, Parcelable {
 
     @SerializedName(value = "id", alternate = {"Id"})
     private String id;
     @SerializedName(value = "name", alternate = {"Name"})
     private String name;
+    @SerializedName(value = "level", alternate = {"Level"})
     private int level;
     private boolean isLeaf = true;
+
+    protected TreeBaseDataBean(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        level = in.readInt();
+        isLeaf = in.readByte() != 0;
+    }
+
+    protected TreeBaseDataBean() {
+    }
+
+    public static final Creator<TreeBaseDataBean> CREATOR = new Creator<TreeBaseDataBean>() {
+        @Override
+        public TreeBaseDataBean createFromParcel(Parcel in) {
+            return new TreeBaseDataBean(in);
+        }
+
+        @Override
+        public TreeBaseDataBean[] newArray(int size) {
+            return new TreeBaseDataBean[size];
+        }
+    };
 
     public void setId(String id) {
         this.id = id;
@@ -69,5 +97,18 @@ public class TreeBaseDataBean<T extends TreeDataInterface> extends AbstractExpan
     @Override
     public boolean isLeaf() {
         return isLeaf;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeInt(level);
+        dest.writeByte((byte) (isLeaf ? 1 : 0));
     }
 }

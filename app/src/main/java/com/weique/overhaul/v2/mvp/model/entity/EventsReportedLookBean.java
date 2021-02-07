@@ -42,6 +42,7 @@ public class EventsReportedLookBean implements Parcelable {
     private String CreateUserId;
     private String UserId;
     private String UpdateTime;
+    private String DeadlineTime;
     private String UpdateUserId;
     private String DeleteDate;
     private String ElementTypeId;
@@ -69,6 +70,9 @@ public class EventsReportedLookBean implements Parcelable {
     private boolean isSaveSubmit = true;
     private String EventAddress;
     private String EventMemo;
+    private String CreateEmName;
+    private String CreateEmTel;
+    private String CreateEmSID;
     /**
      * 处理前的录音
      */
@@ -112,6 +116,7 @@ public class EventsReportedLookBean implements Parcelable {
         RecordId = in.readString();
         OldId = in.readString();
         CreateTime = in.readString();
+        DeadlineTime = in.readString();
         CreateUserId = in.readString();
         UserId = in.readString();
         UpdateTime = in.readString();
@@ -150,6 +155,9 @@ public class EventsReportedLookBean implements Parcelable {
         AfterProceedImgsInJson = in.readString();
         AfterProceedRecordUrl = in.readString();
         AfterProceedVideoUrl = in.readString();
+        CreateEmName = in.readString();
+        CreateEmTel = in.readString();
+        CreateEmSID = in.readString();
     }
 
     public static final Creator<EventsReportedLookBean> CREATOR = new Creator<EventsReportedLookBean>() {
@@ -500,6 +508,39 @@ public class EventsReportedLookBean implements Parcelable {
         AfterProceedVideoUrl = afterProceedVideoUrl;
     }
 
+
+    public String getCreateEmName() {
+        return CreateEmName;
+    }
+
+    public void setCreateEmName(String createEmName) {
+        CreateEmName = createEmName;
+    }
+
+    public String getCreateEmTel() {
+        return CreateEmTel;
+    }
+
+    public void setCreateEmTel(String createEmTel) {
+        CreateEmTel = createEmTel;
+    }
+
+    public String getCreateEmSID() {
+        return CreateEmSID;
+    }
+
+    public void setCreateEmSID(String createEmSID) {
+        CreateEmSID = createEmSID;
+    }
+
+    public String getDeadlineTime() {
+        return DeadlineTime;
+    }
+
+    public void setDeadlineTime(String deadlineTime) {
+        DeadlineTime = deadlineTime;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -511,6 +552,7 @@ public class EventsReportedLookBean implements Parcelable {
         dest.writeString(RecordId);
         dest.writeString(OldId);
         dest.writeString(CreateTime);
+        dest.writeString(DeadlineTime);
         dest.writeString(CreateUserId);
         dest.writeString(UserId);
         dest.writeString(UpdateTime);
@@ -549,6 +591,9 @@ public class EventsReportedLookBean implements Parcelable {
         dest.writeString(AfterProceedImgsInJson);
         dest.writeString(AfterProceedRecordUrl);
         dest.writeString(AfterProceedVideoUrl);
+        dest.writeString(CreateEmName);
+        dest.writeString(CreateEmTel);
+        dest.writeString(CreateEmSID);
     }
 
 
@@ -559,6 +604,7 @@ public class EventsReportedLookBean implements Parcelable {
                 ", RecordId='" + RecordId + '\'' +
                 ", OldId='" + OldId + '\'' +
                 ", CreateTime='" + CreateTime + '\'' +
+                ", DeadlineTime='" + DeadlineTime + '\'' +
                 ", CreateUserId='" + CreateUserId + '\'' +
                 ", UserId='" + UserId + '\'' +
                 ", UpdateTime='" + UpdateTime + '\'' +
@@ -597,6 +643,9 @@ public class EventsReportedLookBean implements Parcelable {
                 ", AfterProceedImgsInJson='" + AfterProceedImgsInJson + '\'' +
                 ", AfterProceedRecordUrl='" + AfterProceedRecordUrl + '\'' +
                 ", AfterProceedVideoUrl='" + AfterProceedVideoUrl + '\'' +
+                ", CreateEmName='" + CreateEmName + '\'' +
+                ", CreateEmTel='" + CreateEmTel + '\'' +
+                ", CreateEmSID='" + CreateEmSID + '\'' +
                 '}';
     }
 }

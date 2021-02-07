@@ -135,6 +135,7 @@ public class PersonalWorkPresenter extends ReworkBasePresenter<PersonalWorkContr
                                  */
                                 if (pullToRefresh) {
                                     Objects.requireNonNull(mRootView.getBinderAdapter().getEmptyLayout()).setVisibility(View.VISIBLE);
+                                    mRootView.getBinderAdapter().setList(null);
                                 }
                             }
                             handlePaginLoadMore((beans == null || beans.getList() == null) ? 0 : beans.getList().size());

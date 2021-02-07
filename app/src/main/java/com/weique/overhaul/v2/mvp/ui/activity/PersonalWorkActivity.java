@@ -62,7 +62,7 @@ public class PersonalWorkActivity extends BaseActivity<PersonalWorkPresenter> im
     CommonCollectBean commonCollectBean;
     @BindView(R.id.swipe_refresh)
     VerticalSwipeRefreshLayout swipeRefresh;
-    @BindView(R.id.rv)
+    @BindView(R.id.rv_work)
     RecyclerView rv;
     @BindView(R.id.tv_collection)
     TextView tvCollection;

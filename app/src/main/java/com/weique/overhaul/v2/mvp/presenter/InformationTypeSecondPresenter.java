@@ -108,6 +108,15 @@ public class InformationTypeSecondPresenter extends ReworkBasePresenter<Informat
             handlePaginLoadMore((userGideBean == null || userGideBean.getList() == null) ? 0 : userGideBean.getList().size());
         });
     }
+    /**
+     * 获取用户可以访问的 网格列表
+     */
+    public void getDepartments(String id, boolean addChild) {
+        commonGetData(mModel.getDepartments(id), mErrorHandler, departmentsBeans -> {
+            mRootView.showTreePopup(departmentsBeans,addChild);
+        });
+
+    }
 
     /**
      * getStandardAddressByGridId

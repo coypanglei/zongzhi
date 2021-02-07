@@ -243,7 +243,7 @@ public class SignInActivity extends BaseActivity<SignInPresenter> implements Sig
             option.setIgnoreKillProcess(true);
             //可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
             option.SetIgnoreCacheException(false);//可选，默认false，设置是否收集CRASH信息，默认收集
-            option.setEnableSimulateGps(false);//可选，默认false，设置是否需要过滤GPS仿真结果，默认需要
+            option.setEnableSimulateGps(false);//可选，默认false，设置是否需要过滤GPS仿真结果，默认需要l
             mLocationClient.setLocOption(option);
         } catch (Exception e) {
             e.printStackTrace();

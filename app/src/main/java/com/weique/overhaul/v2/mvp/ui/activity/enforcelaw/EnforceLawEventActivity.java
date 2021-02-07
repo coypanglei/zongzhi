@@ -325,7 +325,7 @@ public class EnforceLawEventActivity extends BaseActivity<EnforceLawEventPresent
                 ArmsUtils.makeText("您不在负责区域内，无法上报事件");
             } else {
                 EventsReportedLookBean bean = new EventsReportedLookBean();
-                bean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumBean.TS);
+                bean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumNewBean.TS);
                 ARouter.getInstance().build(RouterHub.APP_EVENTSREPORTEDCRUDACTIVITY)
                         .withParcelable(EventsReportedCrudActivity.EVENTSREPORTEDLOOKBEAN, bean)
                         .withInt(ARouerConstant.STATUS, EventBusConstant.ADD)

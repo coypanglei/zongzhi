@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.utils.AppUtils;
@@ -40,8 +39,7 @@ public class LawDetailProcessesAdapter extends BaseQuickAdapter<LawDetailBean.Pr
 
             RecyclerView recordList = helper.getView(R.id.file_list);
             if (StringUtil.isNotNullString(item.getEnclosure())) {
-                List<String> list = new Gson().fromJson(item.getEnclosure(), new TypeToken<List<String>>() {
-                }.getType());
+                List list = new Gson().fromJson(item.getEnclosure(), List.class);
                 if (list != null && list.size() > 0) {
                     helper.setGone(R.id.attachment_layout, true);
                     SimplePhotoAdapter simplePhotoAdapter = new SimplePhotoAdapter(list);

@@ -24,6 +24,7 @@ import com.weique.overhaul.v2.mvp.ui.adapter.CommonTreeListAdapter;
 import java.util.List;
 
 import razerdp.basepopup.BasePopupWindow;
+import timber.log.Timber;
 
 /**
  * @author : GreatKing
@@ -32,19 +33,20 @@ import razerdp.basepopup.BasePopupWindow;
  * desc   : 通用 树形 列表popup
  * version:
  */
-public class CommonTreeListPopup<T extends TreeDataInterface> extends BasePopupWindow {
+public class CommonTreeListPopup<T extends TreeDataInterface<T>> extends BasePopupWindow {
     private RecyclerView recyclerView;
     private LinearLayout searchLayout;
     private EditText searchContent;
     private ImageView close;
     private CommonTreeListAdapter<T> mAdapter;
     private int mPosition;
-    private CommonTreeListPopupListener listener;
+    private CommonTreeListPopupListener<T> listener;
+    private boolean allOk = false;
 
     /**
      * 监听
      */
-    public interface CommonTreeListPopupListener<T extends TreeDataInterface> {
+    public interface CommonTreeListPopupListener<T extends TreeDataInterface<T>> {
         /**
          * 点击item  获取 子集数据
          *
@@ -72,43 +74,61 @@ public class CommonTreeListPopup<T extends TreeDataInterface> extends BasePopupW
         void onLoadMore();
     }
 
-    public void setListener(CommonTreeListPopupListener listener) {
-        this.listener = listener;
-        if (isShowing()) {
-            searchContent.setOnEditorActionListener((v, actionId, event) -> {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    if (StringUtil.isNullString(searchContent.getText().toString())) {
-                        ArmsUtils.makeText("请输入检索内容");
-                        return false;
+    public void setListener(CommonTreeListPopupListener<T> listener) {
+        try {
+            this.listener = listener;
+            if (isShowing()) {
+                searchContent.setOnEditorActionListener((v, actionId, event) -> {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        if (StringUtil.isNullString(searchContent.getText().toString())) {
+                            ArmsUtils.makeText("请输入检索内容");
+                            return false;
+                        }
+                        listener.onSearchByKeyword(searchContent.getText().toString());
                     }
-                    listener.onSearchByKeyword(searchContent.getText().toString());
-                }
-                return false;
-            });
-            mAdapter.setOnLoadMoreListener(() -> {
-                listener.onLoadMore();
-            }, recyclerView);
+                    return false;
+                });
+                mAdapter.setOnLoadMoreListener(() -> {
+                    listener.onLoadMore();
+                }, recyclerView);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public CommonTreeListPopup(Context context) {
         super(context);
         try {
-            setPopupGravity(Gravity.BOTTOM);
-            setBackgroundColor(ArmsUtils.getColor(getContext(), R.color.transparent48));
-            setOutSideDismiss(true);
-            setSoftInputMode(PopupWindow.INPUT_METHOD_NEEDED);
-            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-            recyclerView = findViewById(R.id.recycler_view);
-            searchLayout = findViewById(R.id.search_layout);
-            searchContent = findViewById(R.id.search_content);
-            close = findViewById(R.id.close);
-            close.setOnClickListener(v -> {
-                dismiss();
-            });
+            initView();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public CommonTreeListPopup(Context context, boolean allOk) {
+        super(context);
+        try {
+            this.allOk = allOk;
+            initView();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initView() throws Exception {
+        setPopupGravity(Gravity.BOTTOM);
+        setBackgroundColor(ArmsUtils.getColor(getContext(), R.color.transparent48));
+        setOutSideDismiss(true);
+        setSoftInputMode(PopupWindow.INPUT_METHOD_NEEDED);
+        setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        recyclerView = findViewById(R.id.recycler_view);
+        searchLayout = findViewById(R.id.search_layout);
+        searchContent = findViewById(R.id.search_content);
+        close = findViewById(R.id.close);
+        close.setOnClickListener(v -> {
+            dismiss();
+        });
     }
 
     /**
@@ -119,7 +139,7 @@ public class CommonTreeListPopup<T extends TreeDataInterface> extends BasePopupW
     public void setData(List<T> data, boolean isLoadMore) {
         try {
             if (mAdapter == null) {
-                mAdapter = new CommonTreeListAdapter<T>(data);
+                mAdapter = new CommonTreeListAdapter<>(data, allOk);
                 mAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
                 ArmsUtils.configRecyclerView(recyclerView, new LinearLayoutManager(getContext()));
                 recyclerView.setAdapter(mAdapter);
@@ -135,10 +155,17 @@ public class CommonTreeListPopup<T extends TreeDataInterface> extends BasePopupW
                             return;
                         }
                         if (view.getId() == R.id.input) {
-                            if (item.isLeaf()) {
+                            //是否所有item 都可以点击
+                            if (allOk) {
                                 listener.onItemClickInput(item);
+                            } else {
+                                if (item.isLeaf()) {
+                                    listener.onItemClickInput(item);
+                                }
                             }
-                        } else if (view.getId() == R.id.all_item) {
+
+                        } else if (view.getId() == R.id.arrow_icon
+                                || view.getId() == R.id.all_item) {
                             if (item.isExpand()) {
                                 adapter.collapse(position, true);
                                 mAdapter.notifyItemChanged(position);
@@ -148,6 +175,7 @@ public class CommonTreeListPopup<T extends TreeDataInterface> extends BasePopupW
                                     if (item.getList() == null || item.getList().size() <= 0) {
                                         listener.onItemClickGetSubset(item.getId());
                                     } else {
+                                        adapter.expand(mPosition);
                                         notifyAndScroll(position);
                                     }
                                 }
@@ -160,6 +188,8 @@ public class CommonTreeListPopup<T extends TreeDataInterface> extends BasePopupW
             }
             if (isLoadMore) {
                 mAdapter.addData(data);
+            } else {
+                mAdapter.setNewData(data);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,9 +218,13 @@ public class CommonTreeListPopup<T extends TreeDataInterface> extends BasePopupW
      *
      * @param dataTrees dataTrees
      */
-    public void setDataTree(List<? extends TreeDataInterface> dataTrees) {
+    public void setDataTree(List<T> dataTrees) {
         try {
             T item = mAdapter.getItem(mPosition);
+            if (item == null) {
+                Timber.i("setDataTree mAdapter.getItem is null");
+                return;
+            }
             item.setList(dataTrees);
             mAdapter.expand(mPosition);
             mAdapter.notifyItemChanged(mPosition);

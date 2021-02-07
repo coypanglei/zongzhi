@@ -11,12 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.jess.arms.base.BaseFragment;
+import com.jess.arms.base.BaseLazyLoadFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
@@ -72,7 +73,7 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  *
  * @author GreatKing
  */
-public class TaskListHomeFragment extends BaseFragment<TaskListHomePresenter> implements TaskListHomeContract.View {
+public class TaskListHomeFragment extends BaseLazyLoadFragment<TaskListHomePresenter> implements TaskListHomeContract.View {
     @Inject
     TaskListAdapter taskListAdapter;
     @Inject
@@ -87,6 +88,8 @@ public class TaskListHomeFragment extends BaseFragment<TaskListHomePresenter> im
 
     @BindView(R.id.recycler)
     RecyclerView recycler;
+    @BindView(R.id.sw)
+    SwipeRefreshLayout sw;
     private CommonRecyclerPopupAdapter commonRecyclerPopupAdapter;
     private CommonRecyclerPopupWindow commonRecyclerPopupWindow;
 
@@ -116,19 +119,16 @@ public class TaskListHomeFragment extends BaseFragment<TaskListHomePresenter> im
         return inflater.inflate(R.layout.fragment_task_list_home, container, false);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mPresenter.getTaskList(true, false);
-    }
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         try {
             assert mPresenter != null;
-
             initAdapter();
-            mPresenter.GetDepartment();
+            sw.setOnRefreshListener(() -> {
+                mPresenter.GetDepartment();
+                mPresenter.getTaskList(true, false);
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -217,6 +217,7 @@ public class TaskListHomeFragment extends BaseFragment<TaskListHomePresenter> im
      */
     private void skip(TaskListBean.ListBean item) {
         try {
+            assert mPresenter != null;
             switch (item.getEnumMissionType()) {
                 //信息采集
                 case 0:
@@ -264,12 +265,12 @@ public class TaskListHomeFragment extends BaseFragment<TaskListHomePresenter> im
 
     @Override
     public void showLoading() {
-
+        sw.setRefreshing(true);
     }
 
     @Override
     public void hideLoading() {
-
+        sw.setRefreshing(false);
     }
 
     @Override
@@ -425,39 +426,49 @@ public class TaskListHomeFragment extends BaseFragment<TaskListHomePresenter> im
                                 .withString(ARouerConstant.TITLE, "新增走访记录")
                                 .navigation();
                     } else if (item.getEnumMissionType() == InformationCollectionActivity.INSPECTION) {
-                            ARouter.getInstance().build(RouterHub.APP_INSPECTIONMAPACTIVITY)
-                                    //设置来源（从哪个界面跳转过去的）  根据这个判断是 干啥的
-                                    .withString(ARouerConstant.SOURCE, RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT_TASKLISTHOMEFRAGMENT)
-                                    .withString(TourVisitActivity.TYPE, "")
-                                    .withParcelable("MissionConditionsBean", mMissionConditionsBean)
-                                    .withParcelable("ElementListBean", data)
-                                    .withString(InspectionMapActivity.POINTS_IN_JSON, bean.getPointsInJSON())
-                                    .withString(InspectionMapActivity.IS_NEW_POINT, InspectionAddActivity.MINE_TASK)
-                                    .withString(ARouerConstant.TITLE, "巡检记录详情")
-                                    .navigation();
-                        }
-                        break;
-                        default:
+                        ARouter.getInstance().build(RouterHub.APP_INSPECTIONMAPACTIVITY)
+                                //设置来源（从哪个界面跳转过去的）  根据这个判断是 干啥的
+                                .withString(ARouerConstant.SOURCE, RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT_TASKLISTHOMEFRAGMENT)
+                                .withString(TourVisitActivity.TYPE, "")
+                                .withParcelable("MissionConditionsBean", mMissionConditionsBean)
+                                .withParcelable("ElementListBean", data)
+                                .withString(InspectionMapActivity.POINTS_IN_JSON, bean.getPointsInJSON())
+                                .withString(InspectionMapActivity.IS_NEW_POINT, InspectionAddActivity.MINE_TASK)
+                                .withString(ARouerConstant.TITLE, "巡检记录详情")
+                                .navigation();
                     }
-            } catch(Exception e){
-                e.printStackTrace();
+                    break;
+                default:
             }
-        }
-
-
-        @Subscriber(tag = RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT_PATROLSFRAGMENT)
-        private void eventBusCallback (EventBusBean eventBusBean){
-            try {
-                switch (eventBusBean.getCode()) {
-                    case EventBusConstant.IS_REFRESH:
-                        assert mPresenter != null;
-                        mPresenter.getTaskList(true, false);
-                        break;
-
-                    default:
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
+
+    @Subscriber(tag = RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT_PATROLSFRAGMENT)
+    private void eventBusCallback(EventBusBean eventBusBean) {
+        try {
+            switch (eventBusBean.getCode()) {
+                case EventBusConstant.IS_REFRESH:
+                    assert mPresenter != null;
+                    mPresenter.getTaskList(true, false);
+                    break;
+
+                default:
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void lazyLoadData() {
+        try {
+            mPresenter.GetDepartment();
+            mPresenter.getTaskList(true, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

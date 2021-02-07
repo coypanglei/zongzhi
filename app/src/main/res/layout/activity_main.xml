@@ -14,7 +14,8 @@
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/bottom_navigation" />
+            android:layout_above="@+id/bottom_navigation"
+            android:layout_marginBottom="-3dp" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
@@ -28,15 +29,6 @@
             app:menu="@menu/navigation" />
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/urgency"
-        android:layout_width="@dimen/dp_58"
-        android:layout_height="@dimen/dp_58"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/dp_20"
-        android:src="@drawable/icon_jinji"
-        android:visibility="gone" />
 
 
     <include layout="@layout/include_title_main_white" />

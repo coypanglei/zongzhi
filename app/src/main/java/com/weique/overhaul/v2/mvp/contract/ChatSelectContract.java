@@ -41,9 +41,14 @@ public interface ChatSelectContract {
 
 
     interface Model extends IModel {
-        Observable<BaseBean<AddressBookListBean>> getAllAddressBookListData(int pageSize, int ignoreNumber, String name, String departmentId);
+        Observable<BaseBean<AddressBookListBean>> getAllAddressBookListData(int pageSize,
+                                                                            int ignoreNumber,
+                                                                            String name,
+                                                                            String departmentId);
 
 
-        Observable<BaseBean<String>> setChatList(int pageSize, int ignoreNumber, List<String> alreadyList, String toString);
+        Observable<BaseBean<String>> setChatList(int pageSize, int ignoreNumber,
+                                                 List<String> alreadyList,
+                                                 String toString, boolean videoEnable);
     }
 }

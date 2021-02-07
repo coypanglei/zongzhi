@@ -14,7 +14,6 @@ import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
@@ -143,8 +142,7 @@ public class EnterpriseIssueSeeActivity extends BaseActivity<EnterpriseIssueSeeP
             issueContent.setText((bean.getDesc()));
             if (StringUtil.isNotNullString(bean.getPhoto())) {
                 String photo = bean.getPhoto();
-                List<String> tbList = gson.fromJson(photo,  new TypeToken<List<String>>() {
-                }.getType());
+                List<String> tbList = gson.fromJson(photo, List.class);
                 if (simplePhotoAdapter == null) {
                     simplePhotoAdapter = new SimplePhotoAdapter(tbList);
                     ArmsUtils.configRecyclerView(issuePhotoList, new GridLayoutManager(this, 5));

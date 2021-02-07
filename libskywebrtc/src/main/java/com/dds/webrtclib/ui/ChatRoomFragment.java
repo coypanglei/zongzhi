@@ -25,6 +25,13 @@ import com.jess.arms.utils.ArmsUtils;
  */
 public class ChatRoomFragment extends Fragment {
 
+    public ChatRoomFragment(boolean videoEnable) {
+        this.enableCamera = videoEnable;
+    }
+
+    public ChatRoomFragment() {
+    }
+
     public View rootView;
     private TextView wr_switch_mute;
     private TextView wr_switch_hang_up;
@@ -55,12 +62,17 @@ public class ChatRoomFragment extends Fragment {
             if (durationTextView != null) {
                 durationTextView.setVisibility(View.VISIBLE);
                 durationTextView.setBase(SystemClock.elapsedRealtime());
-                durationTextView.start();
             }
+            toggleOpenCamera(enableCamera);
         }
         return rootView;
     }
 
+    public void startDuration() {
+        if (durationTextView != null) {
+            durationTextView.start();
+        }
+    }
 
     private View onInitloadView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.wr_fragment_room_control, container, false);
@@ -73,7 +85,7 @@ public class ChatRoomFragment extends Fragment {
         wr_hand_free = rootView.findViewById(R.id.wr_hand_free);
         wr_open_camera = rootView.findViewById(R.id.wr_open_camera);
         durationTextView = rootView.findViewById(R.id.durationTextView);
-
+        toggleOpenCamera(enableCamera);
     }
 
     private void initListener() {
@@ -145,7 +157,7 @@ public class ChatRoomFragment extends Fragment {
             }
             wr_open_camera.setCompoundDrawables(null, drawable, null, null);
             wr_open_camera.setText(R.string.webrtc_open_camera);
-            wr_switch_camera.setVisibility(View.GONE);
+            wr_switch_camera.setVisibility(View.INVISIBLE);
         }
     }
 

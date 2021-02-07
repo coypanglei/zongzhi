@@ -42,7 +42,6 @@ import com.baidu.mapapi.model.LatLng;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.gyf.immersionbar.ImmersionBar;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
@@ -984,8 +983,7 @@ public class ContradictionAddActivity extends BaseActivity<ContradictionAddPrese
 
                 if (StringUtil.isNotNullString(item.getCAEventOrder().getPicPath())) {
                     String photo = item.getCAEventOrder().getPicPath();
-                    List<String> tbList1 = gson.fromJson(photo,  new TypeToken<List<String>>() {
-                    }.getType());
+                    List<String> tbList1 = gson.fromJson(photo, List.class);
                     List<InformationItemPictureBean> list1 = new ArrayList<>();
 
 

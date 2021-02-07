@@ -3,12 +3,13 @@ package com.weique.overhaul.v2.mvp.model.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.SerializedName;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * @author GreatKing
  */
-public class InformationDetailBean implements Parcelable {
+public class InformationDetailBean implements Parcelable, Cloneable {
 
     /**
      * Id : d5b0fa2f-917a-40bb-8d00-6324cde63735
@@ -51,10 +52,15 @@ public class InformationDetailBean implements Parcelable {
     private String StandardAddressFullPath;
     private String DepartmentFullPath;
     private String FullPath;
+    /**
+     * 0：不显示，1：显示
+     */
+    private boolean IsAppChecked;
 
     public InformationDetailBean() {
 
     }
+
 
     protected InformationDetailBean(Parcel in) {
         Id = in.readString();
@@ -78,6 +84,33 @@ public class InformationDetailBean implements Parcelable {
         StandardAddressFullPath = in.readString();
         DepartmentFullPath = in.readString();
         FullPath = in.readString();
+        IsAppChecked = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(Id);
+        dest.writeString(ElementId);
+        dest.writeString(CreateTime);
+        dest.writeString(CreateUserId);
+        dest.writeString(UpdateTime);
+        dest.writeString(UpdateUserId);
+        dest.writeString(UserId);
+        dest.writeString(DeleteDate);
+        dest.writeString(DepartmentId);
+        dest.writeInt(EnumElementDataSourceType);
+        dest.writeString(name);
+        dest.writeString(memo);
+        dest.writeString(address);
+        dest.writeString(Option3);
+        dest.writeString(PointsInJson);
+        dest.writeString(StructureInJsons);
+        dest.writeString(StandardAddressId);
+        dest.writeString(ElementTypeId);
+        dest.writeString(StandardAddressFullPath);
+        dest.writeString(DepartmentFullPath);
+        dest.writeString(FullPath);
+        dest.writeByte((byte) (IsAppChecked ? 1 : 0));
     }
 
     public static final Creator<InformationDetailBean> CREATOR = new Creator<InformationDetailBean>() {
@@ -252,6 +285,14 @@ public class InformationDetailBean implements Parcelable {
         this.StandardAddressFullPath = StandardAddressFullPath;
     }
 
+    public boolean getIsAppChecked() {
+        return IsAppChecked;
+    }
+
+    public void setIsAppChecked(boolean isAppChecked) {
+        IsAppChecked = isAppChecked;
+    }
+
     public String getDepartmentFullPath() {
         return DepartmentFullPath;
     }
@@ -275,35 +316,44 @@ public class InformationDetailBean implements Parcelable {
         return 0;
     }
 
-    /**
-     * Flatten this object in to a Parcel.
-     *
-     * @param dest  The Parcel in which the object should be written.
-     * @param flags Additional flags about how the object should be written.
-     *              May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
-     */
+
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(Id);
-        dest.writeString(ElementId);
-        dest.writeString(CreateTime);
-        dest.writeString(CreateUserId);
-        dest.writeString(UpdateTime);
-        dest.writeString(UpdateUserId);
-        dest.writeString(UserId);
-        dest.writeString(DeleteDate);
-        dest.writeString(DepartmentId);
-        dest.writeInt(EnumElementDataSourceType);
-        dest.writeString(name);
-        dest.writeString(memo);
-        dest.writeString(address);
-        dest.writeString(Option3);
-        dest.writeString(PointsInJson);
-        dest.writeString(StructureInJsons);
-        dest.writeString(StandardAddressId);
-        dest.writeString(ElementTypeId);
-        dest.writeString(StandardAddressFullPath);
-        dest.writeString(DepartmentFullPath);
-        dest.writeString(FullPath);
+    public boolean equals(@Nullable Object obj) {
+        return this.toString().replace("null", "").replace(" ", "")
+                .equals(obj.toString().replace("null", "").replace(" ", ""));
+    }
+
+    @NonNull
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @Override
+    public String toString() {
+        return "InformationDetailBean{" +
+                "Id='" + Id + '\'' +
+                ", ElementId='" + ElementId + '\'' +
+                ", CreateTime='" + CreateTime + '\'' +
+                ", CreateUserId='" + CreateUserId + '\'' +
+                ", UpdateTime='" + UpdateTime + '\'' +
+                ", UpdateUserId='" + UpdateUserId + '\'' +
+                ", UserId='" + UserId + '\'' +
+                ", DeleteDate='" + DeleteDate + '\'' +
+                ", DepartmentId='" + DepartmentId + '\'' +
+                ", EnumElementDataSourceType=" + EnumElementDataSourceType +
+                ", name='" + name + '\'' +
+                ", memo='" + memo + '\'' +
+                ", address='" + address + '\'' +
+                ", Option3='" + Option3 + '\'' +
+                ", PointsInJson='" + PointsInJson + '\'' +
+                ", StructureInJsons='" + StructureInJsons + '\'' +
+                ", StandardAddressId='" + StandardAddressId + '\'' +
+                ", ElementTypeId='" + ElementTypeId + '\'' +
+                ", StandardAddressFullPath='" + StandardAddressFullPath + '\'' +
+                ", DepartmentFullPath='" + DepartmentFullPath + '\'' +
+                ", FullPath='" + FullPath + '\'' +
+                ", IsAppChecked='" + IsAppChecked + '\'' +
+                '}';
     }
 }

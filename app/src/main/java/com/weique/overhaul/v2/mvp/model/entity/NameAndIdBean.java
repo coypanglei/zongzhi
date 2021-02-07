@@ -2,24 +2,39 @@ package com.weique.overhaul.v2.mvp.model.entity;
 
 import com.google.gson.annotations.SerializedName;
 import com.weique.overhaul.v2.mvp.model.entity.interfaces.NameAndIdInterface;
-import com.weique.overhaul.v2.mvp.model.entity.interfaces.NameIdCheckedInterface;
 
 /**
  * @author GK
  * @description:
  * @date :2020/8/9 16:39
  */
-public class NameAndIdBean implements NameAndIdInterface, NameIdCheckedInterface {
+public class NameAndIdBean implements NameAndIdInterface {
     @SerializedName(value = "id", alternate = {"Id"})
     private String id;
-    @SerializedName(value = "name", alternate = {"Name"})
+    @SerializedName(value = "name", alternate = {"Name", "text"})
     private String name;
     private String UserInfoId;
-    private boolean checked = false;
+
+    public NameAndIdBean() {
+    }
 
     public NameAndIdBean(String id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public NameAndIdBean(String id, String UserInfoId, String name) {
+        this.id = id;
+        this.UserInfoId = UserInfoId;
+        this.name = name;
+    }
+
+    public String getUserInfoId() {
+        return UserInfoId;
+    }
+
+    public void setUserInfoId(String userInfoId) {
+        UserInfoId = userInfoId;
     }
 
     public void setId(String id) {
@@ -29,6 +44,7 @@ public class NameAndIdBean implements NameAndIdInterface, NameIdCheckedInterface
     public void setName(String name) {
         this.name = name;
     }
+
 
     @Override
     public String getId() {
@@ -43,15 +59,5 @@ public class NameAndIdBean implements NameAndIdInterface, NameIdCheckedInterface
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public void setChecked(boolean checked) {
-        this.checked = checked;
-    }
-
-    @Override
-    public boolean getChecked() {
-        return checked;
     }
 }

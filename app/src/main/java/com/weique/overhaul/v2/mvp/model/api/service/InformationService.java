@@ -15,17 +15,18 @@
  */
 package com.weique.overhaul.v2.mvp.model.api.service;
 
+import com.weique.overhaul.v2.mvp.model.SearchProjectBean;
 import com.weique.overhaul.v2.mvp.model.entity.BaseBean;
 import com.weique.overhaul.v2.mvp.model.entity.GridInformationBean;
 import com.weique.overhaul.v2.mvp.model.entity.InformationTypeOneSecondBean;
 import com.weique.overhaul.v2.mvp.model.entity.PointsDetailBean;
-import com.weique.overhaul.v2.mvp.model.entity.PointsListBean;
+import com.weique.overhaul.v2.mvp.model.entity.ResourceAuditBean;
+import com.weique.overhaul.v2.mvp.model.entity.ResourceAuditDetailBean;
+import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
 import com.weique.overhaul.v2.mvp.model.entity.UserGideBean;
 
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.PostConstruct;
 
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
@@ -144,6 +145,14 @@ public interface InformationService {
      */
     @GET("APP/StandardAddress/GetGrid")
     Observable<BaseBean<UserGideBean>> getGridList(@QueryMap Map<String, Object> paramSign);
+    /**
+     * 根据用户id 获取其上下级信息
+     *
+     * @param map map
+     * @return Observable
+     */
+    @GET("app/StandardAddress/getDepartments")
+    Observable<BaseBean<List<SearchProjectBean.DepartmentsBean>>> getDepartments(@QueryMap Map<String, Object> map);
 
 
     /**
@@ -152,4 +161,57 @@ public interface InformationService {
      */
     @POST(path + "GetPointsInfo")
     Observable<BaseBean<List<PointsDetailBean>>> getPointsInfo(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 资源审核
+     *
+     * @param paramSign paramSign
+     * @return Observable
+     */
+    @POST("APP/CheckElementRecords/CreateCheckElementRecord")
+    Observable<BaseBean<Object>> resourceAudit(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 获取资源审核列表
+     *
+     * @param paramSign paramSign
+     */
+    @GET("APP/CheckElementRecords/GetCheckElementPage")
+    Observable<BaseBean<ResourceAuditBean>> getAuditList(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 获取详情
+     *
+     * @param paramSign paramSign
+     * @return getDetailById
+     */
+    @GET("APP/CheckElementRecords/GetCheckElementDetail")
+    Observable<BaseBean<ResourceAuditDetailBean>> getDetailById(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 处理 资源审核
+     *
+     * @param paramSign paramSign
+     * @return Observable
+     */
+    @POST("APP/CheckElementRecords/CheckElement")
+    Observable<BaseBean<Object>> handle(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 拒绝资源审核
+     *
+     * @param paramSign paramSign
+     * @return Observable
+     */
+    @POST("APP/CheckElementRecords/Reject")
+    Observable<BaseBean<Object>> reject(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 再上报
+     *
+     * @param paramSign paramSign
+     * @return Observable
+     */
+    @POST("APP/CheckElementRecords/SubmitCheckElementRecord")
+    Observable<BaseBean<Object>> submitCheckElementRecord(@QueryMap Map<String, Object> paramSign);
 }

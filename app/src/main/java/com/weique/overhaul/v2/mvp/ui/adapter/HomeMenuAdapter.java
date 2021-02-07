@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author  GK
  */
-public class HomeMenuGridAdapter extends BaseQuickAdapter<HomeMenuItemBean, BaseViewHolder> {
+public class HomeMenuAdapter extends BaseQuickAdapter<HomeMenuItemBean, BaseViewHolder> {
     /**
      * Same as QuickAdapter#QuickAdapter(Context,int) but with
      * some initialization data.
@@ -24,7 +24,7 @@ public class HomeMenuGridAdapter extends BaseQuickAdapter<HomeMenuItemBean, Base
      * @param layoutResId The layout resource id of each item.
      * @param data        A new list is created out of this one to avoid mutable list
      */
-    public HomeMenuGridAdapter(int layoutResId, @Nullable List<HomeMenuItemBean> data) {
+    public HomeMenuAdapter(int layoutResId, @Nullable List<HomeMenuItemBean> data) {
         super(layoutResId, data);
     }
 

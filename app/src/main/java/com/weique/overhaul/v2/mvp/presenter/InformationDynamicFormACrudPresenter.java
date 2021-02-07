@@ -3,7 +3,6 @@ package com.weique.overhaul.v2.mvp.presenter;
 import android.app.Application;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.http.imageloader.ImageLoader;
 import com.jess.arms.integration.AppManager;
@@ -189,8 +188,7 @@ public class InformationDynamicFormACrudPresenter extends ReworkBasePresenter<In
         map.put("IgnoreNumber", ignoreNumber);
         commonGetData(mModel.getFormInfoBySearching(map), mErrorHandler, s -> {
             try {
-                List<Map<String, Object>> list = gson.fromJson(s, new TypeToken<List<Map<String, Object>>>() {
-                }.getType());
+                List list = gson.fromJson(s, List.class);
                 if (list == null || list.size() <= 0) {
                     ArmsUtils.makeText("未查询到信息");
                 } else {

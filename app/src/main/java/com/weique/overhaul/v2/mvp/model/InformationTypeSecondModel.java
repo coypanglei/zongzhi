@@ -7,18 +7,18 @@ import com.google.gson.Gson;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.integration.IRepositoryManager;
 import com.jess.arms.mvp.BaseModel;
+import com.weique.overhaul.v2.app.common.Constant;
 import com.weique.overhaul.v2.app.utils.SignUtil;
-import com.weique.overhaul.v2.app.utils.UserInfoUtil;
 import com.weique.overhaul.v2.mvp.contract.InformationTypeSecondContract;
 import com.weique.overhaul.v2.mvp.model.api.service.InformationService;
 import com.weique.overhaul.v2.mvp.model.api.service.StandardAddressService;
 import com.weique.overhaul.v2.mvp.model.entity.BaseBean;
 import com.weique.overhaul.v2.mvp.model.entity.InformationTypeOneSecondBean;
-import com.weique.overhaul.v2.mvp.model.entity.StandardAddressBean;
 import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
 import com.weique.overhaul.v2.mvp.model.entity.UserGideBean;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -105,5 +105,13 @@ public class InformationTypeSecondModel extends BaseModel implements Information
         return mRepositoryManager
                 .obtainRetrofitService(StandardAddressService.class)
                 .getGridingFourRace(SignUtil.paramSign(map));
+    }
+
+    @Override
+    public Observable<BaseBean<List<SearchProjectBean.DepartmentsBean>>> getDepartments(String id) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(Constant.DEPARTMENT_ID, id);
+        return mRepositoryManager.obtainRetrofitService(InformationService.class).getDepartments(SignUtil.paramSign(map));
+
     }
 }

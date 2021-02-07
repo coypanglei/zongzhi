@@ -10,6 +10,7 @@ import com.weique.overhaul.v2.mvp.contract.HomeContract;
 
 import com.jess.arms.di.scope.FragmentScope;
 import com.weique.overhaul.v2.mvp.ui.fragment.HomeFragment;
+import com.weique.overhaul.v2.mvp.ui.fragment.AppFragment;
 
 
 /**
@@ -28,6 +29,7 @@ import com.weique.overhaul.v2.mvp.ui.fragment.HomeFragment;
 @Component(modules = HomeModule.class, dependencies = AppComponent.class)
 public interface HomeComponent {
     void inject(HomeFragment fragment);
+    void inject(AppFragment fragment);
 
     @Component.Builder
     interface Builder {

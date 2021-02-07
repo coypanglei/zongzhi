@@ -17,7 +17,6 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
@@ -122,8 +121,7 @@ public class MessageDetailActivity extends BaseActivity<MessageDetailPresenter> 
                 mPresenter.setMessageIsReading(listBean.getId());
             }
             if (StringUtil.isNotNullString(listBean.getURL())) {
-                List<String> list = gson.fromJson(listBean.getURL(),  new TypeToken<List<String>>() {
-                }.getType());
+                List<String> list = gson.fromJson(listBean.getURL(), List.class);
                 if (list == null || list.size() <= 0) {
                     accessoryLayoutl.setVisibility(View.GONE);
                     return;

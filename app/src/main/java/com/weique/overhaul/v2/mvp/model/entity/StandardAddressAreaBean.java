@@ -1,7 +1,6 @@
 package com.weique.overhaul.v2.mvp.model.entity;
 
-import com.chad.library.adapter.base.entity.AbstractExpandableItem;
-import com.weique.overhaul.v2.mvp.model.entity.interfaces.TreeDataInterface;
+import android.os.Parcel;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class StandardAddressAreaBean {
         this.department = department;
     }
 
-    public static class DepartmentBean<T extends TreeDataInterface> extends AbstractExpandableItem<T> implements TreeDataInterface<T> {
+    public static class DepartmentBean extends TreeBaseDataBean<DepartmentBean> {
         /**
          * Id : 84cdc58e-8491-4d67-b381-00b6737c4e71
          * PId : 65a18036-eaf6-48b8-ab43-e9ee188d3ade
@@ -33,21 +32,14 @@ public class StandardAddressAreaBean {
          * Level : 2
          */
 
-        private String Id;
         private String PId;
-        private String Name;
         private String Code;
         private String AddressCode;
-        private int Level;
 
-        @Override
-        public String getId() {
-            return Id;
+        protected DepartmentBean(Parcel in) {
+            super(in);
         }
 
-        public void setId(String Id) {
-            this.Id = Id;
-        }
 
         public String getPId() {
             return PId;
@@ -57,14 +49,6 @@ public class StandardAddressAreaBean {
             this.PId = PId;
         }
 
-        @Override
-        public String getName() {
-            return Name;
-        }
-
-        public void setName(String Name) {
-            this.Name = Name;
-        }
 
         public String getCode() {
             return Code;
@@ -82,34 +66,5 @@ public class StandardAddressAreaBean {
             this.AddressCode = AddressCode;
         }
 
-
-        @Override
-        public int getLevel() {
-            return Level;
-        }
-
-        @Override
-        public boolean isLeaf() {
-            return Level == 0;
-        }
-
-        @Override
-        public boolean isExpand() {
-            return super.isExpanded();
-        }
-
-        @Override
-        public List<T> getList() {
-            return super.getSubItems();
-        }
-
-        @Override
-        public void setList(List<T> list) {
-            super.setSubItems(list);
-        }
-
-        public void setLevel(int Level) {
-            this.Level = Level;
-        }
     }
 }

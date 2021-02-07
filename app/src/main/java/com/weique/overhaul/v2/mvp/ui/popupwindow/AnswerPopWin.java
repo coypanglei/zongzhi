@@ -16,6 +16,10 @@ import com.weique.overhaul.v2.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import razerdp.basepopup.BasePopupWindow;
+import razerdp.util.animation.AlphaConfig;
+import razerdp.util.animation.AnimationHelper;
+import razerdp.util.animation.ScaleConfig;
+import razerdp.util.animation.TranslationConfig;
 
 public class AnswerPopWin extends BasePopupWindow implements View.OnClickListener {
 
@@ -51,14 +55,19 @@ public class AnswerPopWin extends BasePopupWindow implements View.OnClickListene
         return createPopupById(R.layout.popup_answer);
     }
 
+
     @Override
     protected Animation onCreateShowAnimation() {
-        return getTranslateVerticalAnimation(1f, 0f, 500);
+        return AnimationHelper.asAnimation()
+                .withAlpha(AlphaConfig.IN)
+                .toShow();
     }
 
     @Override
     protected Animation onCreateDismissAnimation() {
-        return getTranslateVerticalAnimation(0f, 1f, 500);
+        return AnimationHelper.asAnimation()
+                .withAlpha(AlphaConfig.OUT)
+                .toDismiss();
     }
 
     @Override

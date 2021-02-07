@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="@string/select_grid"
+                android:text="@string/select_area"
                 android:textColor="@color/black_333"
                 android:textSize="@dimen/sp_14" />
 
@@ -125,8 +125,8 @@
         android:gravity="end|center_vertical"
         android:paddingStart="@dimen/dp_20"
         android:paddingEnd="@dimen/dp_20"
-        tools:text="共计XX条数据"
-        android:textColor="@color/black_333" />
+        android:textColor="@color/black_333"
+        tools:text="共计XX条数据" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -152,6 +152,7 @@
             android:id="@+id/add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
             android:layout_margin="25dp"
             android:padding="@dimen/dp_10"
             android:src="@drawable/add_icon_nor"

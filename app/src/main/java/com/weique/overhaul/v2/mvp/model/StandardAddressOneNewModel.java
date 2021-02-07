@@ -16,6 +16,7 @@ import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
 import com.weique.overhaul.v2.mvp.model.entity.UserGideBean;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -64,6 +65,16 @@ public class StandardAddressOneNewModel extends BaseModel implements StandardAdd
         map.put("PageSize", pageSize);
         map.put("IgnoreNumber", ignoreNumber);
         return mRepositoryManager.obtainRetrofitService(InformationService.class).getGridList(SignUtil.paramSign(map));
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Observable<BaseBean<List<SearchProjectBean.DepartmentsBean>>> getDepartments(String id) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(Constant.DEPARTMENT_ID, id);
+        return mRepositoryManager.obtainRetrofitService(InformationService.class).getDepartments(SignUtil.paramSign(map));
     }
 
     @Override

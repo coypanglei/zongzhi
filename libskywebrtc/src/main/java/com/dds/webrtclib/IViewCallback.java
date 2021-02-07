@@ -8,9 +8,9 @@ import org.webrtc.MediaStream;
 
 public interface IViewCallback {
 
-    void onSetLocalStream(MediaStream stream, String socketId);
+    void onSetLocalStream(MediaStream stream, String socketId,String name, String headUrl);
 
-    void onAddRemoteStream(MediaStream stream, String socketId);
+    void onAddRemoteStream(MediaStream stream, String socketId, String userName, String headUrl);
 
     void onCloseWithId(String socketId);
 

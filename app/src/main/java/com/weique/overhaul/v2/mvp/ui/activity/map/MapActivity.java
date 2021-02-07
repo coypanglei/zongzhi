@@ -64,6 +64,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
 
@@ -193,6 +194,23 @@ public class MapActivity extends BaseActivity<MapPresenter> implements MapContra
 
         // 释放检索对象
         try {
+            if (mLocationClient != null) {
+                mLocationClient.stop();
+                mLocationClient = null;
+            }
+            if (mBaiduMap != null) {
+                mBaiduMap.setMyLocationEnabled(false);
+                mBaiduMap.clear();
+                mBaiduMap = null;
+            }
+
+            myLocationListener = null;
+            if (map != null) {
+                map.onDestroy();
+                map = null;
+            }
+
+            mapVessel.removeAllViews();
             if (mSearch != null) {
                 mSearch.destroy();
                 mSearch = null;
@@ -205,19 +223,12 @@ public class MapActivity extends BaseActivity<MapPresenter> implements MapContra
             }
 
             // 释放地图资源
-            if (mBaiduMap != null) {
-                mBaiduMap.setMyLocationEnabled(false);
-                mBaiduMap.clear();
-                mBaiduMap = null;
-            }
+
             //在activity执行onDestroy时必须调用mMapView.onDestroy()
             if (map != null) {
                 map.onDestroy();
                 map = null;
             }
-            mLocationClient = null;
-            myLocationListener = null;
-            mapVessel.removeAllViews();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -309,6 +320,7 @@ public class MapActivity extends BaseActivity<MapPresenter> implements MapContra
             if (StringUtil.isNotNullString(lonAndLat)) {
                 StandardAddressStairBean.PointsInJsonBean.PolygoysBean.PathBean oldBathBean = null;
                 try {
+                    Timber.e(lonAndLat);
                     oldBathBean = gson.fromJson(lonAndLat, StandardAddressStairBean.PointsInJsonBean.PolygoysBean.PathBean.class);
                 } catch (JsonSyntaxException e) {
                     e.printStackTrace();
@@ -459,7 +471,7 @@ public class MapActivity extends BaseActivity<MapPresenter> implements MapContra
                 mCurrentPt = point;
                 updateMapState();
                 initAddress(mCurrentPt);
-            }else{
+            } else {
                 ArmsUtils.makeText("请点击网格内区域");
             }
         } catch (Exception e) {

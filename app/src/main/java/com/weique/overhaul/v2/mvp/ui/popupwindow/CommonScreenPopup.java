@@ -16,7 +16,6 @@ import com.google.android.flexbox.JustifyContent;
 import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.customview.MyFlexboxLayoutManager;
-import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.mvp.model.entity.CommonEnumBean;
 import com.weique.overhaul.v2.mvp.ui.adapter.OrderSortPopupAdapter;
 
@@ -121,9 +120,6 @@ public class CommonScreenPopup extends BasePopupWindow implements View.OnClickLi
                 itemAdapter.setOnItemClickListener((adapter, view, position) -> {
                     //这里直接 已 position 对用 订单状态， -2是因为  后端定义订单状态 暂存是-1  加上全部占用了一个下标
                     try {
-                        if (AppUtils.isFastClick()) {
-                            return;
-                        }
                         itemAdapter.setCheckPos(position);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -135,9 +131,13 @@ public class CommonScreenPopup extends BasePopupWindow implements View.OnClickLi
         }
     }
 
-    public void setBeans(List<CommonEnumBean> beans,int pos) {
+    public void setBeans(List<CommonEnumBean> beans, int pos) {
         this.beans = beans;
         itemAdapter.setNewData(beans);
+        itemAdapter.setCheckPos(pos);
+    }
+
+    public void setCheckPos(int pos) {
         itemAdapter.setCheckPos(pos);
     }
 

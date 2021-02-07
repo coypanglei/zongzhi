@@ -29,6 +29,8 @@ public class Constant {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.MODIFY_AUDIO_SETTINGS,
+            Manifest.permission.RECORD_AUDIO,
     };
     /**
      * 读写 相机 录音
@@ -40,7 +42,7 @@ public class Constant {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
 //            Manifest.permission.CAPTURE_VIDEO_OUTPUT,
-            Manifest.permission.CAMERA
+            Manifest.permission.CAMERA,
     };
 
     /**
@@ -245,8 +247,16 @@ public class Constant {
      * 选择框
      */
     public final static String SELECT_ITEM = "select_item";
-        public final static String CHAT_IP = "wss://121.40.168.83:4443/wss";
-//    public final static String CHAT_IP = "wss://157.0.243.115:4443/wss";
+
+    /**
+     * 视频会商 ip
+     */
+//    public final static String CHAT_IP = "wss://121.40.168.83:4443/wss";
+        public final static String CHAT_IP = "wss://157.0.243.115:4443/wss";
+    /**
+     * 视频会商 ip
+     */
+//    public final static String CHAT_HOST = "121.40.168.83";
     public final static String CHAT_HOST = "157.0.243.115";
 
     /**

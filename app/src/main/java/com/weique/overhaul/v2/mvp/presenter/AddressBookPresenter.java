@@ -102,8 +102,8 @@ public class AddressBookPresenter extends ReworkBasePresenter<AddressBookContrac
         }, mRxPermissions, mErrorHandler, Manifest.permission.CALL_PHONE);
     }
 
-    public void setChatList(List<String> alreadyList, String toString) {
-        commonGetData(mModel.setChatList(pageSize, ignoreNumber, alreadyList, toString), mErrorHandler, itemBean -> {
+    public void setChatList(List<String> alreadyList, String toString, boolean v) {
+        commonGetData(mModel.setChatList(pageSize, ignoreNumber, alreadyList, toString, v), mErrorHandler, itemBean -> {
             mRootView.getChatResult(itemBean);
         });
     }

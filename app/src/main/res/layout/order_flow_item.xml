@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="@dimen/dp_60"
     android:layout_height="wrap_content">
 
     <LinearLayout
@@ -14,9 +14,9 @@
         <View
             android:id="@+id/line0"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="@dimen/dp_1"
             android:layout_marginTop="@dimen/dp_6"
+            android:layout_weight="1"
             android:background="@color/lin2_a4d8ff" />
 
         <ImageView
@@ -29,9 +29,9 @@
         <View
             android:id="@+id/line"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="@dimen/dp_1"
             android:layout_marginTop="@dimen/dp_6"
+            android:layout_weight="1"
             android:background="@color/lin2_a4d8ff" />
 
     </LinearLayout>

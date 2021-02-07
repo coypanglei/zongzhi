@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.weique.overhaul.v2.app.customview.VerticalSwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/fill_line">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/screen"
+            tools:listitem="@layout/activity_events_reported_item" />
+
+    </com.weique.overhaul.v2.app.customview.VerticalSwipeRefreshLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:padding="@dimen/dp_10"
+        android:src="@drawable/add_icon_nor"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:layout_anchor="@id/recycler"
+        app:layout_anchorGravity="bottom|right|end"
+        app:layout_behavior="com.weique.overhaul.v2.app.behavior.FabScrollBehavior" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

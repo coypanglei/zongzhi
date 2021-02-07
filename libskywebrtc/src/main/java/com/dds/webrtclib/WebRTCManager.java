@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.dds.webrtclib.bean.ConnectionInfoBean;
 import com.dds.webrtclib.bean.MediaType;
 import com.dds.webrtclib.bean.MyIceServer;
 import com.dds.webrtclib.ws.IConnectEvent;
@@ -31,6 +32,8 @@ public class WebRTCManager implements ISignalingEvents {
     private PeerConnectionHelper _peerHelper;
 
     private String _roomId;
+    private String headUrl;
+    private String name;
     private int _mediaType;
     private boolean _videoEnable;
 
@@ -55,11 +58,13 @@ public class WebRTCManager implements ISignalingEvents {
     }
 
     // connect
-    public void connect(int mediaType, String roomId) {
+    public void connect(int mediaType, String roomId, String name, String headUrl) {
         if (_webSocket == null) {
             _mediaType = mediaType;
             _videoEnable = mediaType != MediaType.TYPE_AUDIO;
             _roomId = roomId;
+            this.headUrl = headUrl;
+            this.name = name;
             _webSocket = new JavaWebSocket(this);
             _webSocket.connect(_wss);
             _peerHelper = new PeerConnectionHelper(_webSocket, _iceServers);
@@ -85,7 +90,7 @@ public class WebRTCManager implements ISignalingEvents {
             _peerHelper.initContext(context, eglBase);
         }
         if (_webSocket != null) {
-            _webSocket.joinRoom(_roomId);
+            _webSocket.joinRoom(_roomId, name, headUrl);
         }
 
     }
@@ -142,10 +147,10 @@ public class WebRTCManager implements ISignalingEvents {
     }
 
     @Override
-    public void onJoinToRoom(ArrayList<String> connections, String myId) {
+    public void onJoinToRoom(List<ConnectionInfoBean> connections, String myId, String name, String headUrl) {
         handler.post(() -> {
             if (_peerHelper != null) {
-                _peerHelper.onJoinToRoom(connections, myId, _videoEnable, _mediaType);
+                _peerHelper.onJoinToRoom(connections, myId, _videoEnable, _mediaType, name, headUrl);
                 if (_mediaType == MediaType.TYPE_VIDEO || _mediaType == MediaType.TYPE_MEETING) {
                     toggleSpeaker(true);
                 }
@@ -155,10 +160,10 @@ public class WebRTCManager implements ISignalingEvents {
     }
 
     @Override
-    public void onRemoteJoinToRoom(String socketId) {
+    public void onRemoteJoinToRoom(String socketId, String userName, String headUrl) {
         handler.post(() -> {
             if (_peerHelper != null) {
-                _peerHelper.onRemoteJoinToRoom(socketId);
+                _peerHelper.onRemoteJoinToRoom(socketId, userName, headUrl);
 
             }
         });

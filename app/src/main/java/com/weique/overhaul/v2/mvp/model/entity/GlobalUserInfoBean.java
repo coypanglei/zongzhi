@@ -3,6 +3,8 @@ package com.weique.overhaul.v2.mvp.model.entity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.List;
+
 public class GlobalUserInfoBean implements Cloneable {
 
 
@@ -30,10 +32,12 @@ public class GlobalUserInfoBean implements Cloneable {
     private int Sum;
     private String BirthDate;
     private String DepartmentId;
+    private List<GlobalUserDepartmentBean> Departments;
     private String Tel;
     private String SID;
     private String FullPath;
     private String DepartName;
+    private String DepartId;
     private String PartyDepartmentName;
     private String DepartmentName;
     private int EnumCommunityLevel;
@@ -46,6 +50,14 @@ public class GlobalUserInfoBean implements Cloneable {
 
     public void setComprehensiveLawEnforcementOfficer(boolean comprehensiveLawEnforcementOfficer) {
         isComprehensiveLawEnforcementOfficer = comprehensiveLawEnforcementOfficer;
+    }
+
+    public List<GlobalUserDepartmentBean> getDepartments() {
+        return Departments;
+    }
+
+    public void setDepartments(List<GlobalUserDepartmentBean> departments) {
+        Departments = departments;
     }
 
     private boolean isComprehensiveLawEnforcementOfficer;
@@ -178,6 +190,14 @@ public class GlobalUserInfoBean implements Cloneable {
         this.roleName = roleName;
     }
 
+    public String getDepartId() {
+        return DepartId;
+    }
+
+    public void setDepartId(String departId) {
+        DepartId = departId;
+    }
+
     @Override
     public boolean equals(@Nullable Object obj) {
         return this.toString().replace("null", "").replace(" ", "")
@@ -204,6 +224,7 @@ public class GlobalUserInfoBean implements Cloneable {
                 ", SID='" + SID + '\'' +
                 ", FullPath='" + FullPath + '\'' +
                 ", DepartName='" + DepartName + '\'' +
+                ", DepartId='" + DepartName + '\'' +
                 ", PartyDepartmentName='" + PartyDepartmentName + '\'' +
                 ", DepartmentName='" + DepartmentName + '\'' +
                 ", EnumCommunityLevel=" + EnumCommunityLevel +

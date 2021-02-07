@@ -50,7 +50,11 @@ public class VerticalSwipeRefreshLayout extends SwipeRefreshLayout {
 
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        try {
+            setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

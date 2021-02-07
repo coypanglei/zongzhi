@@ -7,7 +7,6 @@ import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.integration.IRepositoryManager;
 import com.jess.arms.mvp.BaseModel;
 import com.weique.overhaul.v2.app.utils.SignUtil;
-import com.weique.overhaul.v2.app.utils.StringUtil;
 import com.weique.overhaul.v2.mvp.contract.AddressBookContract;
 import com.weique.overhaul.v2.mvp.model.api.service.AddressLookService;
 import com.weique.overhaul.v2.mvp.model.entity.AddressBookItemBean;
@@ -54,7 +53,7 @@ public class AddressBookModel extends BaseModel implements AddressBookContract.M
     }
 
     @Override
-    public Observable<BaseBean<AddressBookItemBean>> getDepartmentInfoListData(int pageSize,int ignoreNumber, String departmentId) {
+    public Observable<BaseBean<AddressBookItemBean>> getDepartmentInfoListData(int pageSize, int ignoreNumber, String departmentId) {
         Map<String, Object> map = new HashMap<>(8);
         map.put("PageSize", pageSize);
         map.put("IgnoreNumber", ignoreNumber);
@@ -65,8 +64,12 @@ public class AddressBookModel extends BaseModel implements AddressBookContract.M
     }
 
     @Override
-    public Observable<BaseBean<String>> setChatList(int pageSize, int ignoreNumber, List<String> alreadyList, String toString) {
+    public Observable<BaseBean<String>> setChatList(int pageSize, int ignoreNumber,
+                                                    List<String> alreadyList,
+                                                    String toString,
+                                                    boolean videoEnable) {
         Map<String, Object> map = new HashMap<>(8);
+        map.put("videoEnable", videoEnable);
         map.put("Ids", alreadyList);
         map.put("RoomId", toString);
         return mRepositoryManager

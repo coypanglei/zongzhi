@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.example.speechrecognition.utils.ControlViewUtils;
+import com.example.speechrecognition.view.RecordClickPopupWindow;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -195,7 +197,7 @@ public class InspectionAddActivity extends BaseActivity<InspectionAddPresenter> 
     RecyclerView recyclerView;
     @BindView(R.id.tv_select_resource)
     TextView tvSelectResource;
-
+    private RecordClickPopupWindow recordPopup;
     private String ElementId;//上传图片需要的ID
 
     private InformationTypeOneSecondBean.ElementListBean elementListBean = null;
@@ -330,6 +332,28 @@ public class InspectionAddActivity extends BaseActivity<InspectionAddPresenter> 
             public void afterTextChanged(Editable s) {
 
             }
+        });
+
+        ControlViewUtils.setClick(remind, new ControlViewUtils.RecorePopupClickInterface() {
+            @Override
+            public void onRecordCreate() {
+                if (recordPopup == null) {
+                    recordPopup = new RecordClickPopupWindow(getActivity());
+                }
+                recordPopup.setEditText(remind, new RecordClickPopupWindow.RecorePopupListener() {
+                    @Override
+                    public void onRecordCreate(String str) {
+                        ControlViewUtils.setEditText(remind, str);
+                        recordPopup.clearContent(str);
+                    }
+
+
+                });
+                if (!recordPopup.isShowing()) {
+                    recordPopup.showPopupWindow();
+                }
+            }
+
         });
 
     }

@@ -82,7 +82,7 @@ public class AddressLookListSearchPresenter extends ReworkBasePresenter<AddressL
     public void getAllAddressBookListData(boolean pullToRefresh, boolean isLoadMore, String name) {
         try {
             handlePaging(pullToRefresh, isLoadMore);
-            commonGetData(mModel.getAllAddressBookListData(pageSize,ignoreNumber, name), mErrorHandler, itemBean -> {
+            commonGetData(mModel.getAllAddressBookListData(pageSize, ignoreNumber, name), mErrorHandler, itemBean -> {
                 mRootView.setAllAddressBookListData(itemBean, isLoadMore);
                 handlePaginLoadMore((itemBean == null || itemBean.getList() == null) ? 0 : itemBean.getList().size());
             });
@@ -119,8 +119,8 @@ public class AddressLookListSearchPresenter extends ReworkBasePresenter<AddressL
     }
 
 
-    public void setChatList(List<String> list, String roomId) {
-        commonGetData(mModel.setChatList(pageSize, ignoreNumber, list, roomId), mErrorHandler, itemBean -> {
+    public void setChatList(List<String> list, String roomId, boolean videoEnable) {
+        commonGetData(mModel.setChatList(pageSize, ignoreNumber, list, roomId, videoEnable), mErrorHandler, itemBean -> {
             mRootView.getChatResult(itemBean);
         });
     }

@@ -73,7 +73,7 @@
             android:paddingTop="@dimen/dp_5"
             android:paddingEnd="@dimen/dp_10"
             android:paddingBottom="@dimen/dp_5"
-            android:text="视频会话"
+            android:text="发起会话"
             android:textColor="@color/gray_666"
             android:textSize="@dimen/sp_11"
             android:visibility="gone" />

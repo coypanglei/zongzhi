@@ -3,13 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/shape_b_ffffff_c_6"
-    android:maxHeight="@dimen/dp_400"
+    android:layout_marginTop="@dimen/dp_300"
+    android:background="@drawable/shape_b_ffffff_c_10"
     android:orientation="vertical">
 
-
     <LinearLayout
-        android:id="@+id/head_view"
+        android:id="@+id/operation_layout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center"
@@ -52,5 +51,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:paddingBottom="@dimen/dp_10" />
+
 </LinearLayout>

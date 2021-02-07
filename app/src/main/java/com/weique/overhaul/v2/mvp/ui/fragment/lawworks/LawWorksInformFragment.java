@@ -19,7 +19,6 @@ import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.common.EventBusConstant;
 import com.weique.overhaul.v2.app.common.RouterHub;
-import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.di.component.DaggerLawWorksInformComponent;
 import com.weique.overhaul.v2.mvp.contract.LawWorksInformContract;
 import com.weique.overhaul.v2.mvp.model.entity.LawWorksInformBean;
@@ -94,9 +93,6 @@ public class LawWorksInformFragment extends BaseLazyLoadFragment<LawWorksInformP
             mAdapter.setEmptyView(R.layout.null_content_layout, recyclerView);
             mAdapter.setOnItemClickListener((adapter, view, position) -> {
                 try {
-                    if (AppUtils.isFastClick()) {
-                        return;
-                    }
                     LawWorksInformBean informBean = (LawWorksInformBean) adapter.getItem(position);
                     if (!informBean.getRead()) {
                         mPosition = position;

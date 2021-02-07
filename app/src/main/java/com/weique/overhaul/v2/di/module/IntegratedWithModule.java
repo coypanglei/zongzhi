@@ -7,7 +7,7 @@ import com.jess.arms.di.scope.ActivityScope;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.mvp.contract.IntegratedWithContract;
 import com.weique.overhaul.v2.mvp.model.IntegratedWithModel;
-import com.weique.overhaul.v2.mvp.ui.adapter.HomeMenuGridAdapter;
+import com.weique.overhaul.v2.mvp.ui.adapter.HomeMenuAdapter;
 
 import java.util.ArrayList;
 
@@ -36,8 +36,8 @@ public abstract class IntegratedWithModule {
      */
     @ActivityScope
     @Provides
-    static HomeMenuGridAdapter providesHomeMenuGridAdapter(IntegratedWithContract.View view) {
-        return new HomeMenuGridAdapter(R.layout.home_grid_item, new ArrayList<>());
+    static HomeMenuAdapter providesHomeMenuGridAdapter(IntegratedWithContract.View view) {
+        return new HomeMenuAdapter(R.layout.home_grid_item, new ArrayList<>());
     }
 
     /**

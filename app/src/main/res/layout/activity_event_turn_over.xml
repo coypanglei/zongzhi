@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".mvp.ui.activity.eventsreported.EventTurnOverActivity">
+
+    <include layout="@layout/include_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/dp_16">
+
+            <TextView
+                android:id="@+id/name1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="移交部门：" />
+
+            <TextView
+                android:id="@+id/turn_over_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_b_e9e9e9_c_5"
+                android:drawableEnd="@drawable/arrow_icon_down"
+                android:layout_marginStart="@dimen/dp_10"
+                android:hint="请选择移交部门"
+                android:padding="@dimen/dp_10"
+                android:textColor="@color/black_333"
+                android:textSize="@dimen/sp_16" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/name2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/dp_16"
+            android:paddingTop="@dimen/dp_16"
+            android:text="移交意见" />
+
+        <EditText
+            android:id="@+id/turn_over_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dp_16"
+            android:background="@drawable/shape_b_e9e9e9_c_5"
+            android:gravity="start"
+            android:hint="请输入移交意见"
+            android:minLines="8"
+            android:padding="@dimen/dp_16"
+            android:textColor="@color/black_333"
+            android:textSize="@dimen/sp_16" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_60"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/sure"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/dp_12"
+            android:layout_marginRight="@dimen/dp_12"
+            android:layout_weight="1"
+            android:background="@drawable/shape_b_3982f6_c_19"
+            android:text="@string/sure"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/cancel"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/dp_12"
+            android:layout_marginRight="@dimen/dp_12"
+            android:layout_weight="1"
+            android:background="@drawable/shape_b_lucency_c_19"
+            android:text="@string/picture_cancel"
+            android:textColor="@color/black_333"
+            android:textSize="16sp" />
+    </LinearLayout>
+</LinearLayout>

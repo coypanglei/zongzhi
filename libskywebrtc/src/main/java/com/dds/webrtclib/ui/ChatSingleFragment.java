@@ -27,7 +27,7 @@ public class ChatSingleFragment extends Fragment {
     private TextView wr_switch_camera;
     private TextView wr_hand_free;
     private boolean enableMic = true;
-    private boolean enableSpeaker = false;
+    private boolean enableSpeaker = true;
     private boolean videoEnable;
     private ChatSingleActivity activity;
 

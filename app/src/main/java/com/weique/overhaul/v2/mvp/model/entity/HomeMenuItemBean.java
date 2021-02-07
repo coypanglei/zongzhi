@@ -116,16 +116,6 @@ public class HomeMenuItemBean implements Parcelable {
         IsDisplay = display;
     }
 
-    @Override
-    public String toString() {
-        return "{" +
-                "Name='" + Name + '\'' +
-                ", CIndex=" + CIndex +
-                ", IconURL='" + IconURL + '\'' +
-                ", iconDrawable=" + iconDrawable +
-                ", Target='" + Target + '\'' +
-                '}';
-    }
 
     /**
      * Describe the kinds of special objects contained in this Parcelable

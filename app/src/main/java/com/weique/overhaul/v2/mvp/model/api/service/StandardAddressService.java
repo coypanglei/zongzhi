@@ -143,5 +143,4 @@ public interface StandardAddressService {
     Observable<BaseBean<String>> getDataStructureInJson(@QueryMap Map<String, Object> paramSign);
 
 
-
-}
+   }

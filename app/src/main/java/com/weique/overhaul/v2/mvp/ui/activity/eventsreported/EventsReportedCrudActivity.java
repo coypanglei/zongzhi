@@ -26,9 +26,9 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.example.agentweb.di.module.MapControlUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.gyf.immersionbar.ImmersionBar;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
@@ -55,7 +55,6 @@ import com.weique.overhaul.v2.mvp.model.entity.EventPriorityBean;
 import com.weique.overhaul.v2.mvp.model.entity.EventsReportedBean;
 import com.weique.overhaul.v2.mvp.model.entity.EventsReportedLookBean;
 import com.weique.overhaul.v2.mvp.model.entity.EventsReportedSortBean;
-import com.weique.overhaul.v2.mvp.model.entity.HomeMenuItemBean;
 import com.weique.overhaul.v2.mvp.model.entity.InformationDynamicFormSelectBean;
 import com.weique.overhaul.v2.mvp.model.entity.InformationItemPictureBean;
 import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
@@ -69,7 +68,6 @@ import com.weique.overhaul.v2.mvp.ui.adapter.NarrowDynamicFormAdapter;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonDialog;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.EventPriorityPopup;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.OptionPopup;
-import com.weique.overhaul.v2.mvp.ui.popupwindow.RecordPopup;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import org.json.JSONObject;
@@ -83,7 +81,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -162,10 +159,6 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
     RelativeLayout standardAddressLayout;
     TextView standardAddressText;
 
-    /**
-     * 快捷输入
-     */
-    private EventPriorityPopup eventPriorityPopup;
 
     private int adapterPosition = -1;
 
@@ -200,7 +193,6 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
      */
     private EventsReportedBean.ListBean listBean;
     private TimePickerView timePickerView;
-    private RecordPopup recordPopup;
 
     /**
      * 处置前 录音文件文件地址
@@ -228,6 +220,9 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
      */
     @Autowired(name = MapActivity.ADDRESS_CAN_CHANGED)
     boolean addressCanChanged;
+
+    @Autowired(name = ARouerConstant.SOURCE)
+    String source;
 
 
     /**
@@ -359,8 +354,7 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
                                             defaultValString = defaultValString.replace("\\", "");
                                         }
                                         if (defaultValString.contains("[")) {
-                                            arrayList = gson.fromJson(defaultValString, new TypeToken<List<String>>() {
-                                            }.getType());
+                                            arrayList = gson.fromJson(defaultValString, ArrayList.class);
                                         } else {
                                             if (defaultValString.contains("\"")) {
                                                 arrayList.add(gson.fromJson(defaultValString, String.class));
@@ -595,18 +589,18 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
             switch (v.getId()) {
                 case R.id.save:
                     //暂存
-                    if (this.eventsReportedLookBean.getEnumOrderStatus() != EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
-                        eventsReportedLookBean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumBean.TS);
+                    if (this.eventsReportedLookBean.getEnumOrderStatus() != EventsReportedBean.ListBean.EventsReportedEnumNewBean.EXIT) {
+                        eventsReportedLookBean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumNewBean.TS);
                     }
                     submitForm();
                     break;
                 case R.id.submit:
                     //提交
-                    if (this.eventsReportedLookBean.getEnumOrderStatus() != EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
+                    if (this.eventsReportedLookBean.getEnumOrderStatus() != EventsReportedBean.ListBean.EventsReportedEnumNewBean.EXIT) {
                         if (isSelfHandle == 0) {
-                            eventsReportedLookBean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumBean.ARCHIVE);
+                            eventsReportedLookBean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumNewBean.EVALUATE);
                         } else {
-                            eventsReportedLookBean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumBean.TRANSACTION);
+                            eventsReportedLookBean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumNewBean.PUT_ON_RECORD);
                         }
                     }
                     submitForm();
@@ -644,7 +638,6 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
                 ArmsUtils.makeText("请输入事件地址");
                 return;
             }
-
             eventsReportedLookBean.setEnumEventProcType(isSelfHandle);
             eventsReportedLookBean.setRecordUrl(frontRecordFilUrl);
             //处置前图片
@@ -701,7 +694,7 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
                     bean.setDefaultVal(bean.getDefaultVal().replace("\\", ""));
                 }
                 if (bean.isIsRequired() && StringUtil.isNullString(bean.getDefaultVal())) {
-                    ArmsUtils.makeText( "请填写或选择 " + bean.getName() + " 信息");
+                    ArmsUtils.makeText("请填写或选择 " + bean.getName() + " 信息");
                     return;
                 } else {
                     //配合夏仲翰 反人类写法
@@ -720,7 +713,7 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
             dynamicFormSelectBean.setStructureInJson((ArrayList<InformationDynamicFormSelectBean.StructureInJsonBean>) data);
             eventsReportedLookBean.setStructureInJson(gson.toJson(dynamicFormSelectBean));
             eventsReportedLookBean.setUserId(UserInfoUtil.getUserInfo().getUid());
-            if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.TS) {
+            if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumNewBean.TS) {
                 if (status == EventBusConstant.ALERT) {
                     // 暂存的id 和 recordid传值
                     eventsReportedLookBean.setId(eventsReportedLookBean.getId());
@@ -728,14 +721,16 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
                 } else {
                     mPresenter.submit(eventsReportedLookBean);
                 }
-            } else if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
+            } else if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumNewBean.EXIT) {
                 eventsReportedLookBean.setOldId(eventsReportedLookBean.getId());
                 eventsReportedLookBean.setId("");
                 eventsReportedLookBean.setSaveSubmit(false);
-                eventsReportedLookBean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumBean.TRANSACTION);
+                eventsReportedLookBean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumNewBean.PUT_ON_RECORD);
                 mPresenter.submit(eventsReportedLookBean);
-            } else if (eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.TRANSACTION
-                    || eventsReportedLookBean.getEnumOrderStatus() == EventsReportedBean.ListBean.EventsReportedEnumBean.ARCHIVE) {
+            } else if (eventsReportedLookBean.getEnumOrderStatus() ==
+                    EventsReportedBean.ListBean.EventsReportedEnumNewBean.PUT_ON_RECORD
+                    || eventsReportedLookBean.getEnumOrderStatus() ==
+                    EventsReportedBean.ListBean.EventsReportedEnumNewBean.EVALUATE) {
                 new CommonDialog.Builder(EventsReportedCrudActivity.this).setTitle("提示")
                         .setContent("确定上报事件(" + eventsReportedLookBean.getName() + ")")
                         .setPositiveButton(getString(R.string.up_tell), (v, commonDialog) -> {
@@ -763,28 +758,47 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
         try {
             switch (v.getId()) {
                 case R.id.select_event_sort:
+                    int limit = EventsReportedSortActivity.ALL;
+                    if (RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT.equals(source)) {
+                        limit = EventsReportedSortActivity.URGENCY;
+                    }
                     ARouter.getInstance()
                             .build(RouterHub.APP_EVENTSREPORTEDSORTACTIVITY)
                             .withString(ARouerConstant.SOURCE, RouterHub.APP_EVENTSREPORTEDCRUDACTIVITY)
+                            .withInt(EventsReportedSortActivity.LIMIT, limit)
                             .navigation();
                     break;
                 case R.id.select_event_priority:
-                    eventPriorityPopup = new EventPriorityPopup(this);
+                    EventPriorityPopup eventPriorityPopup = new EventPriorityPopup(this);
                     eventPriorityPopup.setOnLevelItemClick(eventPriorityBean -> {
-                        priorityImage.setImageResource(eventPriorityBean.getdrawableId());
-                        priorityValue.setTextColor(ArmsUtils.getColor(this, eventPriorityBean.getColorId()));
-                        priorityValue.setText(eventPriorityBean.getPriority());
-                        eventsReportedLookBean.setEnumEventLevel(eventPriorityBean.getmPriorityIndex());
+                        try {
+                            priorityImage.setImageResource(eventPriorityBean.getdrawableId());
+                            priorityValue.setTextColor(ArmsUtils.getColor(this, eventPriorityBean.getColorId()));
+                            priorityValue.setText(eventPriorityBean.getPriority());
+                            eventsReportedLookBean.setEnumEventLevel(eventPriorityBean.getmPriorityIndex());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     });
                     eventPriorityPopup.showPopupWindow();
                     break;
                 case R.id.map_location:
-                    ARouter.getInstance().build(RouterHub.APP_MAPACTIVITY)
-                            .withString(MapActivity.POINTS_IN_JSON, pointsInJson)
-                            .withString(MapActivity.LONANDLAT, eventsReportedLookBean.getPointsInJson())
-                            .withString(ARouerConstant.SOURCE, RouterHub.APP_EVENTSREPORTEDCRUDACTIVITY)
-                            .withBoolean(MapActivity.ADDRESS_CAN_CHANGED, addressCanChanged)
-                            .navigation();
+                    if (MapControlUtils.isTiandiTu) {
+                        ARouter.getInstance().build(RouterHub.TIANDITU_APP_COMMONWEBVIEWACTIVITY)
+                                .withString(ARouerConstant.TITLE, " 地图")
+                                .withString(MapActivity.POINTS_IN_JSON, pointsInJson)
+                                .withString(MapActivity.LONANDLAT, eventsReportedLookBean.getPointsInJson())
+                                .withString(ARouerConstant.SOURCE, RouterHub.APP_EVENTSREPORTEDCRUDACTIVITY)
+                                .withBoolean(MapActivity.ADDRESS_CAN_CHANGED, addressCanChanged)
+                                .navigation();
+                    } else {
+                        ARouter.getInstance().build(RouterHub.APP_MAPACTIVITY)
+                                .withString(MapActivity.POINTS_IN_JSON, pointsInJson)
+                                .withString(MapActivity.LONANDLAT, eventsReportedLookBean.getPointsInJson())
+                                .withString(ARouerConstant.SOURCE, RouterHub.APP_EVENTSREPORTEDCRUDACTIVITY)
+                                .withBoolean(MapActivity.ADDRESS_CAN_CHANGED, addressCanChanged)
+                                .navigation();
+                    }
                     break;
                 case R.id.record_view:
                     lastClickViewId = R.id.record_view;
@@ -1067,14 +1081,14 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
             }
             setFrontAdapterData();
             if (this.eventsReportedLookBean.getEnumOrderStatus()
-                    == EventsReportedBean.ListBean.EventsReportedEnumBean.SENDBACK) {
+                    == EventsReportedBean.ListBean.EventsReportedEnumNewBean.EXIT) {
                 save.setVisibility(View.GONE);
             } else {
-                save.setText(EventsReportedBean.ListBean.TS_S);
+                save.setText("暂存");
             }
 
             if (this.eventsReportedLookBean.getEnumOrderStatus()
-                    == EventsReportedBean.ListBean.EventsReportedEnumBean.TS) {
+                    == EventsReportedBean.ListBean.EventsReportedEnumNewBean.TS) {
                 selectEventSort.setEnabled(false);
             } else {
 
@@ -1106,8 +1120,7 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
         //处置前的 图片 数据
         try {
             String fImgInJson = eventsReportedLookBean.getImgsInJson();
-            List<String> fImgList = gson.fromJson(fImgInJson, new TypeToken<List<String>>() {
-            }.getType());
+            List<String> fImgList = gson.fromJson(fImgInJson, List.class);
             List<InformationItemPictureBean> fImgll = frontHandleImageAdapter.getData();
             for (String s : fImgList) {
                 fImgll.add(new InformationItemPictureBean(s));
@@ -1115,8 +1128,7 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
             frontHandleImageAdapter.setNewData(fImgll);
             //处置前的 video 数据
             String fVideoInJson = eventsReportedLookBean.getVideoUrl();
-            List<String> fVideolist = gson.fromJson(fVideoInJson, new TypeToken<List<String>>() {
-            }.getType());
+            List<String> fVideolist = gson.fromJson(fVideoInJson, List.class);
             List<InformationItemPictureBean> fVideoll = frontHandleVideoAdapter.getData();
             for (String s : fVideolist) {
                 fVideoll.add(new InformationItemPictureBean(s));
@@ -1126,8 +1138,7 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
             if (this.eventsReportedLookBean.getEnumEventProcType() == 0) {
                 //处置后的 image 数据
                 String aImgInJson = eventsReportedLookBean.getAfterProceedImgsInJson();
-                List<String> aImgList = gson.fromJson(aImgInJson, new TypeToken<List<String>>() {
-                }.getType());
+                List<String> aImgList = gson.fromJson(aImgInJson, List.class);
                 List<InformationItemPictureBean> aImgll = afterHandleImageAdapter.getData();
                 for (String s : aImgList) {
                     aImgll.add(new InformationItemPictureBean(s));
@@ -1135,8 +1146,7 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
                 afterHandleImageAdapter.setNewData(aImgll);
                 //处置后的 video 数据
                 String aVideoInJson = eventsReportedLookBean.getAfterProceedVideoUrl();
-                List<String> aVideolist = gson.fromJson(aVideoInJson, new TypeToken<List<String>>() {
-                }.getType());
+                List<String> aVideolist = gson.fromJson(aVideoInJson, List.class);
                 List<InformationItemPictureBean> aVideoll = afterHandleVideoAdapter.getData();
                 for (String s : aVideolist) {
                     aVideoll.add(new InformationItemPictureBean(s));
@@ -1201,8 +1211,7 @@ public class EventsReportedCrudActivity extends BaseActivity<EventsReportedCrudP
                         if (StringUtil.isNotNullString(item.getDefaultVal())) {
                             String defaultVal = item.getDefaultVal();
                             if (defaultVal.contains("[")) {
-                                List<String> arrayList = gson.fromJson(defaultVal, new TypeToken<List<String>>() {
-                                }.getType());
+                                ArrayList<String> arrayList = gson.fromJson(defaultVal, ArrayList.class);
                                 strings.addAll(arrayList);
                             }
                         }

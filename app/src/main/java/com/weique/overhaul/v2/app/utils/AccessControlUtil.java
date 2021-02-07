@@ -80,11 +80,11 @@ public class AccessControlUtil {
      * @param aClass activityName
      * @param view   view
      */
-    public static void fromActivityNameComparisonMenuControlView(Class aClass, View view) {
+    public static void fromActivityNameComparisonMenuControlViewGone(Class aClass, View view) {
         try {
             String menuString = ACache.get(AppManager.getAppManager().getmApplication()).getAsString(ACacheConstant.MENU_DATA);
             if (StringUtil.isNullString(menuString)) {
-                view.setVisibility(View.GONE);
+                view.setVisibility(View.INVISIBLE);
             } else {
                 if (menuString.contains(aClass.getSimpleName())) {
                     view.setVisibility(View.VISIBLE);
@@ -98,12 +98,36 @@ public class AccessControlUtil {
     }
 
     /**
+     * 单个
+     * 根据  根据 activity 名称  比对 首页 menu 菜单 控制 view  是否显示
+     *
+     * @param aClass activityName
+     * @param view   view
+     */
+    public static void fromActivityNameComparisonMenuControlViewInvisible(Class aClass, View view) {
+        try {
+            String menuString = ACache.get(AppManager.getAppManager().getmApplication()).getAsString(ACacheConstant.MENU_DATA);
+            if (StringUtil.isNullString(menuString)) {
+                view.setVisibility(View.INVISIBLE);
+            } else {
+                if (menuString.contains(aClass.getSimpleName())) {
+                    view.setVisibility(View.VISIBLE);
+                } else {
+                    view.setVisibility(View.INVISIBLE);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 判断有没有访问  Class 的权限
      * 根据  根据 activity 名称  比对 首页 menu 菜单 控制 view  是否显示
      *
      * @param aClass activityName
      */
-    public static boolean fromActivityNameComparisonMenuControlView(Class aClass) {
+    public static boolean fromActivityNameComparisonMenuControlViewGone(Class aClass) {
         try {
             String menuString = ACache.get(AppManager.getAppManager().getmApplication()).getAsString(ACacheConstant.MENU_DATA);
             if (StringUtil.isNullString(menuString)) {
@@ -127,7 +151,7 @@ public class AccessControlUtil {
      *
      * @param viewMap activity 名称  和其对应的是否显示的view
      */
-    public static void fromActivityNameComparisonMenuControlView(Map<String, View> viewMap) {
+    public static void fromActivityNameComparisonMenuControlViewGone(Map<String, View> viewMap) {
         try {
             Iterator<String> iterator = viewMap.keySet().iterator();
             String menuString = ACache.get(AppManager.getAppManager().getmApplication()).getAsString(ACacheConstant.MENU_DATA);

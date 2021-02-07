@@ -146,7 +146,7 @@ public class MyFragment extends BaseFragment<MyPresenter> implements MyContract.
         map.put(TaskListActivity.class.getSimpleName(), taskList);
 
         //控制view是否显示
-        AccessControlUtil.fromActivityNameComparisonMenuControlView(map);
+        AccessControlUtil.fromActivityNameComparisonMenuControlViewGone(map);
 
         initUserInfo();
         hideLoading();
@@ -290,15 +290,8 @@ public class MyFragment extends BaseFragment<MyPresenter> implements MyContract.
     private void onEventCallBack(EventBusBean eventBusBean) {
         try {
             switch (eventBusBean.getCode()) {
-                case EventBusConstant.UPDATE_HEAD_PHOTO:
-                    GlideUtil.loadImage(mContext, UserInfoUtil.getUserInfo().getHeadUrl(), headImg);
-                    break;
-                case EventBusConstant.UPDATE_HEAD_NAME:
-                    String roleName = "";
-                    if (StringUtil.isNotNullString(UserInfoUtil.getUserInfo().getRoleName())) {
-                        roleName = "(" + StringUtil.setText(UserInfoUtil.getUserInfo().getRoleName()) + ")";
-                    }
-                    name.setText(UserInfoUtil.getUserInfo().getName() + roleName);
+                case EventBusConstant.COMMON_UPDATE:
+                    initUserInfo();
                     break;
                 default:
                     break;

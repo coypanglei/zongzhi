@@ -117,12 +117,46 @@
                 android:drawablePadding="5dp"
                 android:textSize="@dimen/sp_15" />
         </LinearLayout>
+        <include layout="@layout/view_line_full_top" />
+
+        <LinearLayout
+            android:id="@+id/speech_setting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/dp_16"
+            android:paddingEnd="@dimen/dp_16">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:paddingTop="@dimen/dp_20"
+                android:paddingBottom="@dimen/dp_20"
+                android:text="@string/speech_setting"
+                android:textColor="#ff000000"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:drawableEnd="@drawable/my_icon_inter"
+                android:drawablePadding="5dp"
+                android:textSize="@dimen/sp_15" />
+        </LinearLayout>
     </LinearLayout>
+
+
+
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_10"
         android:background="@color/gray_F8F9FB" />
+
+
 
     <Button
         android:id="@+id/logout"

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -86,6 +87,11 @@ public class InformationDynamicFormSelectActivity extends BaseActivity<Informati
     @Autowired(name = DYNAMIC_FORM_JSON)
     String dynamicFormJson;
     /**
+     * 上个界面
+     */
+    @Autowired(name = ARouerConstant.SOURCE)
+    String source;
+    /**
      * 详情id
      */
     @Autowired(name = ARouerConstant.ID)
@@ -114,6 +120,8 @@ public class InformationDynamicFormSelectActivity extends BaseActivity<Informati
     LinearLayout deleteLayout;
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
+    @BindView(R.id.reporting)
+    Button reporting;
 
     /**
      * 个人信息详情
@@ -125,6 +133,12 @@ public class InformationDynamicFormSelectActivity extends BaseActivity<Informati
     private InformationDynamicFormSelectBean informationDynamicFormSelectBean;
     private String detailJson;
     private View headView;
+
+
+    /**
+     * 是否修改了数据 暂时没用
+     */
+    private boolean isChanged = false;
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -143,17 +157,27 @@ public class InformationDynamicFormSelectActivity extends BaseActivity<Informati
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
-        ARouter.getInstance().inject(this);
-        setTitle(title);
+        try {
+            ARouter.getInstance().inject(this);
+            setTitle(title);
+            //资源审核进来 显示
+            if (RouterHub.APP_RESOURCEAUDITDETAILACTIVITY.equals(source)) {
+                alertLayout.setVisibility(View.VISIBLE);
+                deleteLayout.setVisibility(View.VISIBLE);
+                //不是信息采集进来 就是来查看的 不让修改
+            } else if (InformationCollectionActivity.mType != InformationCollectionActivity.GATHER) {
+                alertLayout.setVisibility(View.GONE);
+                deleteLayout.setVisibility(View.GONE);
+            } else {
+                //其它情况 根据 用户权限等级判断显示
+                AccessControlUtil.controlByLevelCommunity(alertLayout, deleteLayout);
+            }
+            mPresenter.getDetailInfoById(id, typeId);
+            recycler.scrollToPosition(0);
 
-        if (InformationCollectionActivity.mType != InformationCollectionActivity.GATHER) {
-            alertLayout.setVisibility(View.GONE);
-            deleteLayout.setVisibility(View.GONE);
-        } else {
-            AccessControlUtil.controlByLevelCommunity(alertLayout, deleteLayout);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        mPresenter.getDetailInfoById(id, typeId);
-        recycler.scrollToPosition(0);
     }
 
 
@@ -199,15 +223,11 @@ public class InformationDynamicFormSelectActivity extends BaseActivity<Informati
                 deleteLayout.setVisibility(View.GONE);
                 return;
             }
-            alertLayout.setVisibility(View.VISIBLE);
-            deleteLayout.setVisibility(View.VISIBLE);
             //动态表单数据
             informationDynamicFormSelectBean = gson.fromJson(dynamicFormJson, InformationDynamicFormSelectBean.class);
             //用户详情数据
             detailJson = gson.toJson(o);
-
             initDynamicFormData();
-
             informationDetailBean = gson.fromJson(detailJson, InformationDetailBean.class);
             informationDetailBean.setUserId(UserInfoUtil.getUserInfo().getUid());
             informationDetailBean.setElementId(informationDetailBean.getId());
@@ -218,6 +238,15 @@ public class InformationDynamicFormSelectActivity extends BaseActivity<Informati
                 departmentId = informationDetailBean.getDepartmentId();
             }
             initHeadView();
+            if (RouterHub.APP_RESOURCEAUDITDETAILACTIVITY.equals(source)) {
+                reporting.setVisibility(View.GONE);
+            } else {
+                if (informationDetailBean.getIsAppChecked()) {
+                    AccessControlUtil.controlByLevelGrid(reporting);
+                } else {
+                    reporting.setVisibility(View.GONE);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -228,7 +257,8 @@ public class InformationDynamicFormSelectActivity extends BaseActivity<Informati
      */
     private void initDynamicFormData() {
         try {
-            ArrayList<InformationDynamicFormSelectBean.StructureInJsonBean> structureInJsonBeans = informationDynamicFormSelectBean.getStructureInJson();
+            ArrayList<InformationDynamicFormSelectBean.StructureInJsonBean> structureInJsonBeans =
+                    informationDynamicFormSelectBean.getStructureInJson();
             JSONObject jsonObject = new JSONObject(detailJson);
             for (InformationDynamicFormSelectBean.StructureInJsonBean bean : structureInJsonBeans) {
                 bean.setDefaultVal(jsonObject.getString(bean.getPropertyName()));
@@ -246,7 +276,7 @@ public class InformationDynamicFormSelectActivity extends BaseActivity<Informati
             setAdapterNewDate(structureInJsonBeans);
         } catch (JSONException e) {
             e.printStackTrace();
-            ArmsUtils.makeText( "信息解析错误 请联系服务人员");
+            ArmsUtils.makeText("信息解析错误 请联系服务人员");
         }
     }
 
@@ -327,11 +357,16 @@ public class InformationDynamicFormSelectActivity extends BaseActivity<Informati
         try {
             if (eventBusBean != null) {
                 if (eventBusBean.getData() instanceof InformationDetailBean) {
-                    informationDetailBean = (InformationDetailBean) eventBusBean.getData();
-                    //用户详情数据
-                    initHeadView();
+                    InformationDetailBean information = (InformationDetailBean) eventBusBean.getData();
+                    if (!information.equals(informationDetailBean)) {
+                        isChanged = true;
+                        informationDetailBean = information;
+                        //用户详情数据
+                        initHeadView();
+                    }
                 } else if (eventBusBean.getData() instanceof InformationTypeOneSecondBean.ElementListBean) {
-                    InformationTypeOneSecondBean.ElementListBean listBean = (InformationTypeOneSecondBean.ElementListBean) eventBusBean.getData();
+                    InformationTypeOneSecondBean.ElementListBean listBean =
+                            (InformationTypeOneSecondBean.ElementListBean) eventBusBean.getData();
                     toolbarTitle.setText(StringUtil.setText(listBean.getName()));
                 } else if (eventBusBean.getData() instanceof InformationDynamicFormSelectBean) {
                     informationDynamicFormSelectBean = (InformationDynamicFormSelectBean) eventBusBean.getData();
@@ -371,13 +406,17 @@ public class InformationDynamicFormSelectActivity extends BaseActivity<Informati
         }
     }
 
-    @OnClick({R.id.delete_layout, R.id.alert_layout})
+    @OnClick({R.id.delete_layout, R.id.alert_layout, R.id.reporting})
     public void onViewClick(View view) {
         try {
             if (AppUtils.isFastClick()) {
                 return;
             }
             switch (view.getId()) {
+                case R.id.reporting:
+                    ARouter.getInstance().build(RouterHub.APP_RESOURCEAUDITEDITACTIVITY)
+                            .withString(ARouerConstant.ID, informationDetailBean.getElementId()).navigation();
+                    break;
                 case R.id.delete_layout:
                     if (informationDetailBean == null) {
                         ArmsUtils.makeText("获取信息报错");
@@ -409,16 +448,20 @@ public class InformationDynamicFormSelectActivity extends BaseActivity<Informati
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.location_layout:
-                String pointsInJson = informationDetailBean.getPointsInJson();
-                if (StringUtil.isNotNullString(pointsInJson)) {
-                    mPresenter.getDepartment(departmentId);
-                } else {
-                    ArmsUtils.makeText("未发现定位地址");
-                }
-                break;
-            default:
+        try {
+            switch (v.getId()) {
+                case R.id.location_layout:
+                    String pointsInJson = informationDetailBean.getPointsInJson();
+                    if (StringUtil.isNotNullString(pointsInJson)) {
+                        mPresenter.getDepartment(departmentId);
+                    } else {
+                        ArmsUtils.makeText("未发现定位地址");
+                    }
+                    break;
+                default:
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

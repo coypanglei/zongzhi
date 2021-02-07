@@ -1,6 +1,7 @@
 package com.weique.overhaul.v2.mvp.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +12,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import com.alibaba.android.arouter.launcher.ARouter;
-import com.flyco.tablayout.SlidingTabLayout;
+import com.baidu.location.BDLocation;
+import com.baidu.mapapi.map.PolygonOptions;
+import com.baidu.mapapi.model.LatLng;
 import com.gongwen.marqueen.SimpleMF;
 import com.gongwen.marqueen.SimpleMarqueeView;
-import com.google.android.material.appbar.AppBarLayout;
+import com.google.gson.Gson;
 import com.jess.arms.base.BaseFragment;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
@@ -32,17 +32,21 @@ import com.weique.overhaul.v2.app.common.Constant;
 import com.weique.overhaul.v2.app.common.EventBusConstant;
 import com.weique.overhaul.v2.app.common.RouterHub;
 import com.weique.overhaul.v2.app.customview.VerticalSwipeRefreshLayout;
+import com.weique.overhaul.v2.app.service.localtion.LocSdkClient;
 import com.weique.overhaul.v2.app.utils.ACache;
 import com.weique.overhaul.v2.app.utils.ARouterUtils;
 import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.app.utils.GlideUtil;
 import com.weique.overhaul.v2.app.utils.StringUtil;
+import com.weique.overhaul.v2.app.utils.UserGridUtil;
 import com.weique.overhaul.v2.app.utils.UserInfoUtil;
 import com.weique.overhaul.v2.di.component.DaggerHomeComponent;
 import com.weique.overhaul.v2.dynamic.BaseBinderAdapterBean;
 import com.weique.overhaul.v2.mvp.contract.HomeContract;
 import com.weique.overhaul.v2.mvp.model.api.service.MainService;
 import com.weique.overhaul.v2.mvp.model.entity.CommonCollectBean;
+import com.weique.overhaul.v2.mvp.model.entity.EventsReportedBean;
+import com.weique.overhaul.v2.mvp.model.entity.EventsReportedLookBean;
 import com.weique.overhaul.v2.mvp.model.entity.HomeMenuItemBean;
 import com.weique.overhaul.v2.mvp.model.entity.PersonWorkBean;
 import com.weique.overhaul.v2.mvp.model.entity.SigninStatusBean;
@@ -50,10 +54,11 @@ import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
 import com.weique.overhaul.v2.mvp.model.entity.event.EventBusBean;
 import com.weique.overhaul.v2.mvp.presenter.HomePresenter;
 import com.weique.overhaul.v2.mvp.ui.activity.IntegratedWithActivity;
+import com.weique.overhaul.v2.mvp.ui.activity.eventsreported.EventsReportedCrudActivity;
 import com.weique.overhaul.v2.mvp.ui.activity.information.PictureLookActivity;
+import com.weique.overhaul.v2.mvp.ui.activity.map.MapActivity;
 import com.weique.overhaul.v2.mvp.ui.activity.message.MessageListActivity;
-import com.weique.overhaul.v2.mvp.ui.adapter.HomeMenuGridAdapter;
-import com.weique.overhaul.v2.mvp.ui.adapter.MyPagerAdapter;
+import com.weique.overhaul.v2.mvp.ui.adapter.HomeMenuAdapter;
 import com.weique.overhaul.v2.mvp.ui.binds.PersonWorkBinder;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonDialog;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
@@ -81,8 +86,7 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  * @author GK
  */
 public class HomeFragment extends BaseFragment<HomePresenter> implements HomeContract.View {
-    @Inject
-    HomeMenuGridAdapter homeMenuGridAdapter;
+    HomeMenuAdapter homeMenuAdapter;
     @BindView(R.id.user_photo_text)
     ImageView userPhoto;
     @BindView(R.id.name)
@@ -92,32 +96,20 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
     @BindView(R.id.c_view)
     CardView cView;
     @BindView(R.id.marquee_view)
-    SimpleMarqueeView marqueeView;
+    SimpleMarqueeView<String> marqueeView;
     @BindView(R.id.marquee_layout)
     LinearLayout marqueeLayout;
-    @BindView(R.id.recycler_grid)
-    RecyclerView recyclerGrid;
-    @BindView(R.id.tl_2)
-    SlidingTabLayout tl2;
-    @BindView(R.id.appBarLayout)
-    AppBarLayout appBarLayout;
-    @BindView(R.id.vp)
-    ViewPager vp;
+    @BindView(R.id.recycler)
+    RecyclerView recycler;
     @BindView(R.id.swipe_refresh)
     VerticalSwipeRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.coordinator_layout)
-    CoordinatorLayout coordinatorLayout;
+    private List<HomeMenuItemBean> mMenuData;
 
-
-    private ArrayList<HomeMenuItemBean> mMenuData;
-    private MyPagerAdapter mAdapter;
-
-
-    private ArrayList<Fragment> mFragments;
-    //    private final String[] strings1 = {"待办事件", "待办巡查"};
-    private final String[] strings1 = {"工作清单", "待办巡查"};
-    private TaskListHomeFragment taskListHomeFragment;
-    private PatrolsFragment patrolsFragment;
+    @Inject
+    Gson gson;
+    public static final String APP_LIST_URL = "app/login/GetNavHomeForMobile";
+    public static final String HOME_LIST_URL = "app/login/GetNavForMobile";
+    private String gridJson;
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -142,47 +134,12 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
         try {
-            appBarLayout.addOnOffsetChangedListener(new AppBarLayout.BaseOnOffsetChangedListener() {
-                @Override
-                public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                    try {
-                        if (verticalOffset < 0) {
-                            swipeRefreshLayout.setEnabled(false);
-                        } else {
-                            swipeRefreshLayout.setEnabled(true);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
             swipeRefreshLayout.setOnRefreshListener(() -> {
-                //功能模块
-                mPresenter.getHomeModuleLabel();
-                //首页  MAINACTIVITY
-                EventBus.getDefault().post(new EventBusBean(EventBusConstant.REQUEST_AGAIN), RouterHub.APP_MAINACTIVITY);
-                //更新  PatrolsFragment
-                EventBus.getDefault().post(new EventBusBean(EventBusConstant.IS_REFRESH), RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT_PATROLSFRAGMENT);
-                //更新  TaskAgentsFragment
-                EventBus.getDefault().post(new EventBusBean(EventBusConstant.SELECT), RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT);
-                //更新  TaskListHomeFragment
-                EventBus.getDefault().post(new EventBusBean(EventBusConstant.COMMON_UPDATE), RouterHub.APP_TASKLISTACTIVITY);
-                //重新获取数据
-                mPresenter.getNotice();
+                refreshData();
             });
-            initUserInfo();
             initAdapter();
-            mPresenter.getHomeModuleLabel();
-            mFragments = new ArrayList<>();
-            taskListHomeFragment = TaskListHomeFragment.newInstance();
-            mFragments.add(taskListHomeFragment);
-            patrolsFragment = PatrolsFragment.newInstance();
-            mFragments.add(patrolsFragment);
-            mAdapter = new MyPagerAdapter(getChildFragmentManager(), mFragments, strings1);
-            vp.setAdapter(mAdapter);
-            tl2.setViewPager(vp, strings1);
-            vp.setOffscreenPageLimit(strings1.length);
+            initUserInfo();
+            getHomeModuleLabel();
             mPresenter.getSignStatus();
         } catch (Exception e) {
             e.printStackTrace();
@@ -190,27 +147,19 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
 
     }
 
-    private void initUserInfo() {
-        GlideUtil.loadImage(mContext, UserInfoUtil.getUserInfo().getHeadUrl(), userPhoto);
-        String roleName = "";
-        if (StringUtil.isNotNullString(UserInfoUtil.getUserInfo().getRoleName())) {
-            roleName = "(" + StringUtil.setText(UserInfoUtil.getUserInfo().getRoleName()) + ")";
-        }
-        name.setText(UserInfoUtil.getUserInfo().getName() + roleName);
-        tagOne.setText(UserInfoUtil.getUserInfo().getFullPath());
-    }
 
     private void initAdapter() {
         try {
-            recyclerGrid.setLayoutManager(new GridLayoutManager(getActivity(),
-                    5, RecyclerView.VERTICAL, false));
+            homeMenuAdapter = new HomeMenuAdapter(R.layout.home_list_item, null);
+            recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-            recyclerGrid.setAdapter(homeMenuGridAdapter);
-            recyclerGrid.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity())
+            recycler.setAdapter(homeMenuAdapter);
+            recycler.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext())
                     .colorResId(R.color.white)
-                    .sizeResId(R.dimen.dp_15)
+                    .sizeResId(R.dimen.dp_5)
                     .build());
-            homeMenuGridAdapter.setOnItemClickListener((adapter, view, position) -> {
+            homeMenuAdapter.setEmptyView(R.layout.null_content_layout, recycler);
+            homeMenuAdapter.setOnItemClickListener((adapter, view, position) -> {
                 try {
                     if (AppUtils.isFastClick()) {
                         return;
@@ -221,12 +170,15 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
                         case RouterHub.APP_INTEGRATEDWITHACTIVITY:
                             if (mMenuData != null && mMenuData.size() > 0) {
                                 ARouter.getInstance().build(homeMenuItemBean.getTarget())
-                                        .withParcelableArrayList(IntegratedWithActivity.LIST, mMenuData)
+                                        .withParcelableArrayList(IntegratedWithActivity.LIST, (ArrayList<? extends Parcelable>) mMenuData)
                                         .navigation();
                             }
                             break;
                         case RouterHub.APP_CAPTUREACTIVITY:
                             mPresenter.getPermissionCamera();
+                            break;
+                        case RouterHub.APP_EVENTSREPORTEDCRUDACTIVITY:
+                            mPresenter.gridOperatorInformation();
                             break;
                         case RouterHub.APP_SIGNINACTIVITY:
                             mPresenter.getPermission();
@@ -238,7 +190,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
                                         .navigation();
                             } else {
                                 ARouter.getInstance().build(RouterHub.APP_ADDRESSBOOKACTIVITY)
-                                        .withString(ARouerConstant.SOURCE, RouterHub.APP_CHATSELECTACTIVITY)
+                                        .withString(ARouerConstant.SOURCE, RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT)
                                         .withString(ARouerConstant.TITLE, getString(R.string.video_hs))
                                         .navigation();
                             }
@@ -246,6 +198,7 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
                         case RouterHub.APP_ADDRESSBOOKACTIVITY:
                             if (UserInfoUtil.getUserInfo().getEnumCommunityLevel() <= StandardAddressStairBean.GRIDDING) {
                                 ARouter.getInstance().build(RouterHub.APP_ADDRESSLOOKLISTACTIVITY)
+                                        .withString(ARouerConstant.SOURCE, RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT)
                                         .navigation();
                             } else {
                                 ARouter.getInstance().build(RouterHub.APP_ADDRESSBOOKACTIVITY)
@@ -279,26 +232,48 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
         }
     }
 
-    @Override
-    public void onDestroyView() {
-        try {
-            for (Fragment fragment : mFragments) {
-                if (fragment != null) {
-                    fragment.onDestroyView();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        super.onDestroyView();
+
+    /**
+     * 刷新数据
+     */
+    private void refreshData() {
+        //功能模块
+        getHomeModuleLabel();
+        //首页  MAINACTIVITY
+        EventBus.getDefault().post(new EventBusBean(EventBusConstant.REQUEST_AGAIN), RouterHub.APP_MAINACTIVITY);
+        //更新  PatrolsFragment
+        EventBus.getDefault().post(new EventBusBean(EventBusConstant.IS_REFRESH), RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT_PATROLSFRAGMENT);
+        //更新  TaskAgentsFragment
+        EventBus.getDefault().post(new EventBusBean(EventBusConstant.SELECT), RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT);
+        //更新  TaskListHomeFragment
+        EventBus.getDefault().post(new EventBusBean(EventBusConstant.COMMON_UPDATE), RouterHub.APP_TASKLISTACTIVITY);
+        //更新  MyFragment
+        EventBus.getDefault().post(new EventBusBean(EventBusConstant.COMMON_UPDATE), RouterHub.APP_MAINACTIVITY_MYFRAGMENT);
+        //重新获取数据
+        mPresenter.getNotice();
     }
+
+    private void initUserInfo() {
+        GlideUtil.loadImage(mContext, UserInfoUtil.getUserInfo().getHeadUrl(), userPhoto);
+        String roleName = "";
+        if (StringUtil.isNotNullString(UserInfoUtil.getUserInfo().getRoleName())) {
+            roleName = "(" + StringUtil.setText(UserInfoUtil.getUserInfo().getRoleName()) + ")";
+        }
+        name.setText(UserInfoUtil.getUserInfo().getName() + roleName);
+        tagOne.setText(UserInfoUtil.getUserInfo().getFullPath());
+    }
+
 
     /**
      * @param data 当不需要参数时 {@code data} 可以为 {@code null}
      */
     @Override
     public void setData(@Nullable Object data) {
-        mPresenter.getHomeModuleLabel();
+        getHomeModuleLabel();
+    }
+
+    private void getHomeModuleLabel() {
+        mPresenter.getHomeModuleLabel(APP_LIST_URL);
     }
 
     @Override
@@ -325,13 +300,19 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
     }
 
     @Override
-    public void setMenuData(ArrayList<HomeMenuItemBean> allMenuData, List<HomeMenuItemBean> menuData, List<Boolean> booleans) {
+    public void setMenuData(List<HomeMenuItemBean> allMenuData,
+                            List<HomeMenuItemBean> menuData,
+                            List<Boolean> booleans, String url) {
         try {
-            mMenuData = allMenuData;
-            ACache.get(getActivity()).put(ACacheConstant.MENU_DATA, mMenuData.toString());
-            EventBus.getDefault().post(new EventBusBean(EventBusConstant.SET_SCAN_ICON_STATUS), RouterHub.APP_MAINACTIVITY);
-            if (menuData != null && menuData.size() > 0) {
-                homeMenuGridAdapter.setNewData(menuData);
+            if (APP_LIST_URL.equals(url)) {
+                mMenuData = allMenuData;
+                EventBus.getDefault().post(new EventBusBean(EventBusConstant.SET_SCAN_ICON_STATUS), RouterHub.APP_MAINACTIVITY);
+                if (menuData != null && menuData.size() > 0) {
+                    homeMenuAdapter.setNewData(menuData);
+                }
+                mPresenter.getHomeModuleLabel(HOME_LIST_URL);
+            } else {
+                ACache.get(getActivity()).put(ACacheConstant.MENU_DATA, gson.toJson(allMenuData));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -350,16 +331,12 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
             marqueeView.setMarqueeFactory(marqueeFactory);
             marqueeView.startFlipping();
             marqueeView.setOnItemClickListener((mView, mData, mPosition) -> {
-                try {
-                    if (AppUtils.isFastClick()) {
-                        return;
-                    }
-                    ARouter.getInstance().build(RouterHub.APP_MESSAGELISTACTIVITY)
-                            .withInt(MessageListActivity.CHECK_POS, MessageListActivity.TWO)
-                            .navigation();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (AppUtils.isFastClick()) {
+                    return;
                 }
+                ARouter.getInstance().build(RouterHub.APP_MESSAGELISTACTIVITY)
+                        .withInt(MessageListActivity.CHECK_POS, MessageListActivity.TWO)
+                        .navigation();
             });
         } catch (Exception e) {
             e.printStackTrace();
@@ -370,17 +347,13 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
     public void setSignBtnStatus(SigninStatusBean b) {
         //接口返回 false:当天已签到  true:当天未签到  所以用非
         if (b.isCheckInOrder()) {
-
             new CommonDialog.Builder(mContext).setTitle("")
                     .setContent("您今日尚未签到，点击确定进行签到")
                     .setPositiveButton("确定", (v, commonDialog) -> {
                         //跳转至签到页面
                         mPresenter.getPermission();
-
                     })
                     .setNegativeButton("取消", null).create().show();
-
-
         }
     }
 
@@ -414,15 +387,10 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
     private void onEventCallBack(EventBusBean eventBusBean) {
         try {
             switch (eventBusBean.getCode()) {
-                case EventBusConstant.UPDATE_HEAD_PHOTO:
-                    GlideUtil.loadImage(mContext, UserInfoUtil.getUserInfo().getHeadUrl(), userPhoto);
-                    break;
-                case EventBusConstant.UPDATE_HEAD_NAME:
-                    String roleName = "";
-                    if (StringUtil.isNotNullString(UserInfoUtil.getUserInfo().getRoleName())) {
-                        roleName = "(" + StringUtil.setText(UserInfoUtil.getUserInfo().getRoleName()) + ")";
-                    }
-                    name.setText(UserInfoUtil.getUserInfo().getName() + roleName);
+                case EventBusConstant.COMMON_REFRESH:
+                    refreshData();
+                case EventBusConstant.COMMON_UPDATE:
+                    initUserInfo();
                     break;
                 case EventBusConstant.GET_NOTICE:
                     mPresenter.getNotice();
@@ -435,5 +403,45 @@ public class HomeFragment extends BaseFragment<HomePresenter> implements HomeCon
         }
     }
 
+    @Override
+    public void getGridInfoSuccess(String pointsInJSON) {
+        gridJson = pointsInJSON;
+        mPresenter.getIsInGrid();
+    }
 
+    @Override
+    public void setAddressCanChanged(Boolean o) {
+        try {
+            List<List<LatLng>> latLngLists = new ArrayList<>();
+            List<PolygonOptions> ooPolygons = new ArrayList<>();
+            UserGridUtil.gridJsonToListLatLng(gridJson, latLngLists, ooPolygons);
+            // 若用百度定位sdk,需要在此初始化定位SDK
+            LocSdkClient.getInstance(getContext()).getLocationStart();
+            BDLocation location =
+                    LocSdkClient.getInstance(getContext()).getLocationStart()
+                            .getLastKnownLocation();
+            if (location == null || latLngLists.size() <= 0) {
+                ArmsUtils.makeText("获取您的定位失败");
+                return;
+            }
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            //不允许修改坐标  并 用户不在网格内
+            boolean select = false;
+            if (!o && !UserGridUtil.pointInGrid(latLng, latLngLists) && !select) {
+                ArmsUtils.makeText("您不在负责区域内，无法上报事件");
+            } else {
+                EventsReportedLookBean bean = new EventsReportedLookBean();
+                bean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumNewBean.TS);
+                ARouter.getInstance().build(RouterHub.APP_EVENTSREPORTEDCRUDACTIVITY)
+                        .withParcelable(EventsReportedCrudActivity.EVENTSREPORTEDLOOKBEAN, bean)
+                        .withInt(ARouerConstant.STATUS, EventBusConstant.ADD)
+                        .withString(ARouerConstant.SOURCE, RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT)
+                        .withString(MapActivity.POINTS_IN_JSON, gridJson)
+                        .withBoolean(MapActivity.ADDRESS_CAN_CHANGED, o)
+                        .navigation();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

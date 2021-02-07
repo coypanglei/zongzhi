@@ -26,7 +26,6 @@ import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.DeviceUtils;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.customview.MyFlexboxLayoutManager;
-import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.app.utils.NetworkUtils;
 import com.weique.overhaul.v2.app.utils.SignUtil;
 import com.weique.overhaul.v2.app.utils.StringUtil;
@@ -106,17 +105,10 @@ public class PointSetPopup extends BasePopupWindow {
                         .build());
                 mAdapter.setEmptyView(R.layout.null_content_layout, recyclerView);
                 mAdapter.setOnItemClickListener((adapter, view, position) -> {
-                    try {
-                        if (AppUtils.isFastClick()) {
-                            return;
-                        }
-                        DeviceUtils.hideSoftKeyboard(getContext(), searchText);
-                        PointsDetailBean item = (PointsDetailBean) adapter.getItem(position);
-                        listener.onSureClick(item);
-                        dismiss();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    DeviceUtils.hideSoftKeyboard(getContext(), searchText);
+                    PointsDetailBean item = (PointsDetailBean) adapter.getItem(position);
+                    listener.onSureClick(item);
+                    dismiss();
                 });
                 mAdapter.setOnLoadMoreListener(() -> {
                     Timber.e("szie" + size);

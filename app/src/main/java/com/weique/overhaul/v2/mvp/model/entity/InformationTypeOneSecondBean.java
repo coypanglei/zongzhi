@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.chad.library.adapter.base.entity.AbstractExpandableItem;
-import com.weique.overhaul.v2.mvp.model.entity.interfaces.NameIdCheckedInterface;
+import com.weique.overhaul.v2.mvp.model.entity.interfaces.NameAndIdInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -450,7 +450,7 @@ public class InformationTypeOneSecondBean {
         };
     }
 
-    public static class ElementListBean implements Parcelable, NameIdCheckedInterface {
+    public static class ElementListBean implements Parcelable, NameAndIdInterface {
         /**
          * Id : 4c18ecd7-7432-4e0e-8302-3b8ec560c87e
          * DepartmentId : 27a8465b-4c18-47e0-b677-d12e6b414a44
@@ -483,8 +483,7 @@ public class InformationTypeOneSecondBean {
         private int total;
 
 
-        private String RecordTime;
-        private boolean checked = false;
+       private String RecordTime;
 
         public String getRecordTime() {
             return RecordTime;
@@ -509,8 +508,7 @@ public class InformationTypeOneSecondBean {
             FullPath = in.readString();
             RowNum = in.readInt();
             total = in.readInt();
-            RecordTime = in.readString();
-            checked = in.readByte() != 0;
+            RecordTime =in.readString();
 
         }
 
@@ -532,6 +530,10 @@ public class InformationTypeOneSecondBean {
             return Id;
         }
 
+        @Override
+        public String getId2() {
+            return Id;
+        }
 
         public void setId(String Id) {
             this.Id = Id;
@@ -544,7 +546,6 @@ public class InformationTypeOneSecondBean {
         public void setDepartmentId(String DepartmentId) {
             this.DepartmentId = DepartmentId;
         }
-
         public String getStandardAddressId() {
             return StandardAddressId;
         }
@@ -565,18 +566,6 @@ public class InformationTypeOneSecondBean {
         public String getName() {
             return name;
         }
-
-
-        @Override
-        public void setChecked(boolean checked) {
-            this.checked = checked;
-        }
-
-        @Override
-        public boolean getChecked() {
-            return checked;
-        }
-
 
         public void setName(String name) {
             this.name = name;
@@ -693,7 +682,6 @@ public class InformationTypeOneSecondBean {
             dest.writeInt(RowNum);
             dest.writeInt(total);
             dest.writeString(RecordTime);
-            dest.writeByte((byte) (checked ? 1 : 0));
         }
     }
 }

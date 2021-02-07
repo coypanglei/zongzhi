@@ -24,7 +24,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.util.MultiTypeDelegate;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.jess.arms.utils.ArmsUtils;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.weique.overhaul.v2.R;
@@ -213,8 +212,7 @@ public class CommentCurrencyAdapter extends BaseQuickAdapter<BasicInformationBea
                         Gson gson = new Gson();
                         List<String> imgeList = new ArrayList<>();
                         if (item.getValue().contains("[")) {
-                            imgeList = gson.fromJson(item.getValue(), new TypeToken<List<String>>() {
-                            }.getType());
+                            imgeList = gson.fromJson(item.getValue(), ArrayList.class);
                         } else {
                             imgeList.add(item.getValue());
                         }

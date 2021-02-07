@@ -72,7 +72,10 @@ public class AddressBookActivity extends BaseActivity<AddressBookPresenter> impl
     SwipeRefreshLayout vSwipeRefresh;
     @BindView(R.id.belong_address)
     TextView belongAddress;
-
+    /**
+     * videoEnable
+     */
+    private boolean videoEnable;
 
     private AddressBookAdapter addressBookAdapter;
     private AddressBookDetailAdapter addressBookDetailAdapter;
@@ -145,7 +148,8 @@ public class AddressBookActivity extends BaseActivity<AddressBookPresenter> impl
                     AddressBookItemBean.ListBean dataBean = (AddressBookItemBean.ListBean) adapter.getItem(position);
                     if (dataBean != null) {
                         if (StringUtil.isNotNullString(dataBean.getEnumCommunityLevel() + "") && "0".equals(dataBean.getEnumCommunityLevel() + "")) {
-                            if (RouterHub.APP_CHATSELECTACTIVITY.equals(source)) {
+                            if (RouterHub.APP_CHATSELECTACTIVITY.equals(source) ||
+                                    RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT.equals(source)) {
                                 ARouter.getInstance()
                                         .build(RouterHub.APP_CHATSELECTACTIVITY)
                                         .withString(ARouerConstant.ID, dataBean.getId())
@@ -205,16 +209,21 @@ public class AddressBookActivity extends BaseActivity<AddressBookPresenter> impl
                                         .create().show();
                                 break;
                             case R.id.video:
+                                roomId = String.valueOf(System.currentTimeMillis() + (int) (1 + Math.random() * (50 - 1 + 1)));
+                                assert mPresenter != null;
+                                List<String> list = new ArrayList<>();
+                                //遍历集合所有选中的元素 发起视频会商
+                                String alias = listBean.getId().replace("-", "");
+                                list.add(alias);
                                 new CommonDialog.Builder(AddressBookActivity.this)
                                         .setContent("确定发起会话！")
-                                        .setPositiveButton((view1, commonDialog) -> {
-                                            roomId = String.valueOf(System.currentTimeMillis() + (int) (1 + Math.random() * (50 - 1 + 1)));
-                                            assert mPresenter != null;
-                                            List<String> list = new ArrayList<>();
-                                            //遍历集合所有选中的元素 发起视频会商
-                                            String alias = listBean.getId().replace("-", "");
-                                            list.add(alias);
-                                            mPresenter.setChatList(list, roomId);
+                                        .setPositiveButton("视频会话", (view1, commonDialog) -> {
+                                            videoEnable = true;
+                                            mPresenter.setChatList(list, roomId, true);
+                                        })
+                                        .setNegativeButton("语音会话", (view12, commonDialog) -> {
+                                            videoEnable = false;
+                                            mPresenter.setChatList(list, roomId, false);
                                         }).create().show();
                                 break;
                             default:
@@ -316,7 +325,9 @@ public class AddressBookActivity extends BaseActivity<AddressBookPresenter> impl
 
     @Override
     public void isOpen() {
-        WebrtcUtil.call(this, Constant.CHAT_IP, roomId);
+        WebrtcUtil.call(this, Constant.CHAT_IP, roomId, videoEnable,
+                UserInfoUtil.getUserInfo().getName(),
+                UserInfoUtil.getUserInfo().getHeadUrl());
         finish();
     }
 

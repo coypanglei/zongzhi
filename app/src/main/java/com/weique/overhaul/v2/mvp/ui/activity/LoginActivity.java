@@ -249,16 +249,15 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
 
             environmentList.setVisibility(View.VISIBLE);
             TreeMap<String, String> environmentMap = new TreeMap<>();
-            environmentMap.put("0.本地夏仲翰", "http://192.168.20.25");
+            environmentMap.put("本地.索奎", "http://192.168.20.5:8089");
+            environmentMap.put("本地.夏", "http://192.168.20.25");
             environmentMap.put("测.测试专属-合肥瑶海-2020-9-18", "http://47.102.147.120:9006");
-//            environmentMap.put("0.本地王琰", "http://192.168.20.114:9090");
-//            environmentMap.put("0.黄老师", "http://192.168.20.177:805");
-//            environmentMap.put("0.马玉巧", "http://192.168.20.123:80");
             environmentMap.put("测.测试1+4", "http://47.102.147.120:9013");
             environmentMap.put("测.测试静海", "http://47.102.147.120:9014");
 
             environmentMap.put("测.阿里测试", "http://47.102.147.120:2020");
             environmentMap.put("测.天津测试", "http://192.168.20.211:9011");
+            environmentMap.put("测.天津静海测试", "http://47.102.147.120:9014");
             environmentMap.put("生产.鼓楼政法委/公安", "http://xzgl.jsweique.com");
 //            environmentMap.put("2.鼓楼森林防火", "http://47.102.147.120:8090");
 //            environmentMap.put("3.鼓楼疫情", "http://47.102.147.120:8088");

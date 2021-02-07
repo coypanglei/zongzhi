@@ -5,20 +5,31 @@ import android.app.Application;
 import com.jess.arms.di.scope.ActivityScope;
 import com.jess.arms.http.imageloader.ImageLoader;
 import com.jess.arms.integration.AppManager;
+import com.jess.arms.integration.IRepositoryManager;
+import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.app.ReworkBasePresenter;
+import com.weique.overhaul.v2.app.common.Constant;
 import com.weique.overhaul.v2.app.common.EventBusConstant;
 import com.weique.overhaul.v2.app.common.RouterHub;
+import com.weique.overhaul.v2.app.utils.SignUtil;
+import com.weique.overhaul.v2.app.utils.StringUtil;
 import com.weique.overhaul.v2.mvp.contract.AddressAddAlertContract;
+import com.weique.overhaul.v2.mvp.model.api.service.InformationService;
+import com.weique.overhaul.v2.mvp.model.entity.BaseBean;
+import com.weique.overhaul.v2.mvp.model.entity.GridInformationBean;
 import com.weique.overhaul.v2.mvp.model.entity.StandardAddressBean;
 import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
 import com.weique.overhaul.v2.mvp.model.entity.event.EventBusBean;
 
 import org.simple.eventbus.EventBus;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
 
 
@@ -40,6 +51,8 @@ public class AddressAddAlertPresenter extends ReworkBasePresenter<AddressAddAler
     ImageLoader mImageLoader;
     @Inject
     AppManager mAppManager;
+    @Inject
+    IRepositoryManager mRepositoryManager;
 
     @Inject
     public AddressAddAlertPresenter(AddressAddAlertContract.Model model, AddressAddAlertContract.View rootView) {
@@ -88,5 +101,19 @@ public class AddressAddAlertPresenter extends ReworkBasePresenter<AddressAddAler
             List<StandardAddressStairBean.AddressTypeBean> addressType = standardAddressStairBean.getAddressType();
             mRootView.showPopup(addressType);
         });
+    }
+
+    public void getGridByDepartmentId(String departmentId) {
+        Map<String, Object> map = new HashMap<>(8);
+        map.put(Constant.DEPARTMENT_ID, departmentId);
+        Observable<BaseBean<GridInformationBean>> observable = mRepositoryManager.obtainRetrofitService(InformationService.class).getDepartment(SignUtil.paramSign(map));
+        commonGetData(observable, mErrorHandler,
+                gridInformationBean -> {
+                    if (gridInformationBean == null || StringUtil.isNullString(gridInformationBean.getPointsInJSON())) {
+                        ArmsUtils.makeText("获取用户区域信息失败");
+                        return;
+                    }
+                    mRootView.setGrid(gridInformationBean.getPointsInJSON());
+                });
     }
 }

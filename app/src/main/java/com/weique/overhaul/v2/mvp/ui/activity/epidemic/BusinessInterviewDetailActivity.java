@@ -13,7 +13,6 @@ import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
@@ -127,8 +126,7 @@ public class BusinessInterviewDetailActivity extends BaseActivity<BusinessInterv
             issueContent.setText(StringUtil.setText(o.getTroubleOrProblem()));
             issueFeedback.setText(StringUtil.setText(o.getSuggestion()));
             if (StringUtil.isNotNullString(o.getPhotos())) {
-                List<String> strings = gson.fromJson(o.getPhotos(),  new TypeToken<List<String>>() {
-                }.getType());
+                List<String> strings = gson.fromJson(o.getPhotos(), List.class);
                 if (simplePhotoAdapter == null) {
                     simplePhotoAdapter = new SimplePhotoAdapter(strings);
                     ArmsUtils.configRecyclerView(issuePhotoList, new GridLayoutManager(this, 5));

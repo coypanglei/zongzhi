@@ -136,7 +136,7 @@ public class SettingsActivity extends BaseActivity<SettingsPresenter> implements
         finish();
     }
 
-    @OnClick({R.id.logout, R.id.update_version, R.id.reset_password, R.id.ll_version})
+    @OnClick({R.id.logout, R.id.update_version, R.id.reset_password, R.id.ll_version, R.id.speech_setting})
     public void onViewClick(View v) {
         try {
             if (AppUtils.isFastClick()) {
@@ -166,6 +166,9 @@ public class SettingsActivity extends BaseActivity<SettingsPresenter> implements
                 case R.id.ll_version:
                     mPresenter.getAppVersionInfoCode();
 
+                    break;
+                case R.id.speech_setting:
+                    ARouter.getInstance().build(RouterHub.APP_SPEECH_SETTING_ACTIVITY).navigation();
                     break;
                 default:
             }

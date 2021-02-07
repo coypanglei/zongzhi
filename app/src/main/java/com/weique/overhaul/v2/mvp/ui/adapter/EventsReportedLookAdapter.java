@@ -8,7 +8,6 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.common.RouterHub;
@@ -58,7 +57,7 @@ public class EventsReportedLookAdapter extends BaseMultiItemQuickAdapter<Informa
     @Override
     protected void convert(@NonNull BaseViewHolder helper, InformationDynamicFormSelectBean.StructureInJsonBean item) {
         try {
-            List<String> arrayList = new ArrayList<>();
+            ArrayList<String> arrayList = new ArrayList<>();
             switch (helper.getItemViewType()) {
                 case InformationDynamicFormSelectBean.SingleLineN:
                 case InformationDynamicFormSelectBean.AutographN:
@@ -82,8 +81,7 @@ public class EventsReportedLookAdapter extends BaseMultiItemQuickAdapter<Informa
                             replaceString = item.getDefaultVal().replace("\\", "");
                         }
                         if (item.getDefaultVal().contains("[")) {
-                            arrayList = gson.fromJson(replaceString,  new TypeToken<List<String>>() {
-                            }.getType());
+                            arrayList = gson.fromJson(replaceString, ArrayList.class);
                         } else {
                             if (replaceString.contains("\"")) {
                                 arrayList.add(gson.fromJson(replaceString, String.class));
@@ -121,8 +119,7 @@ public class EventsReportedLookAdapter extends BaseMultiItemQuickAdapter<Informa
                             replaceString = item.getDefaultVal().replace("\\", "");
                         }
                         if (item.getDefaultVal().contains("[")) {
-                            arrayList = gson.fromJson(replaceString,  new TypeToken<List<String>>() {
-                            }.getType());
+                            arrayList = gson.fromJson(replaceString, ArrayList.class);
                         } else {
                             if (replaceString.contains("\"")) {
                                 arrayList.add(gson.fromJson(replaceString, String.class));
@@ -143,8 +140,7 @@ public class EventsReportedLookAdapter extends BaseMultiItemQuickAdapter<Informa
                             replaceString = item.getDefaultVal().replace("\\", "");
                         }
                         if (item.getDefaultVal().contains("[")) {
-                            arrayList = gson.fromJson(replaceString,  new TypeToken<List<String>>() {
-                            }.getType());
+                            arrayList = gson.fromJson(replaceString, ArrayList.class);
                         } else {
                             if (replaceString.contains("\"")) {
                                 arrayList.add(gson.fromJson(replaceString, String.class));
@@ -164,7 +160,7 @@ public class EventsReportedLookAdapter extends BaseMultiItemQuickAdapter<Informa
         }
     }
 
-    private void vrayImage(@NonNull BaseViewHolder helper, List<String> strings) {
+    private void vrayImage(@NonNull BaseViewHolder helper, ArrayList<String> strings) {
         try {
             RecyclerView recyclerView = helper.getView(R.id.image_recycler);
             InformationDynamicFormSelectItemAdapter informationDynamicFormSelectItemAdapter =

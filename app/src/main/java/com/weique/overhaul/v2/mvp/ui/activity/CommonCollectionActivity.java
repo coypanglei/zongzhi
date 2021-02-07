@@ -20,7 +20,6 @@ import com.blankj.utilcode.util.ObjectUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
@@ -137,7 +136,7 @@ public class CommonCollectionActivity extends BaseActivity<CommonCollectionPrese
     /**
      * 通用 选择adapter
      */
-    private CommonRecyclerPopupAdapter commonRecyclerPopupAdapter;
+    private CommonRecyclerPopupAdapter<NameAndIdBean> commonRecyclerPopupAdapter;
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -415,7 +414,7 @@ public class CommonCollectionActivity extends BaseActivity<CommonCollectionPrese
             list.add(new NameAndIdBean(bean.getKey(), bean.getValue()));
         }
         if (commonRecyclerPopupAdapter == null) {
-            commonRecyclerPopupAdapter = new CommonRecyclerPopupAdapter<NameAndIdBean>();
+            commonRecyclerPopupAdapter = new CommonRecyclerPopupAdapter();
         }
 
         commonRecyclerPopupWindow = new CommonRecyclerPopupWindow<>(this,
@@ -472,8 +471,7 @@ public class CommonCollectionActivity extends BaseActivity<CommonCollectionPrese
         changeBean = mPresenter.getChangeBean();
         Timber.e(changeBean.toString());
         if (ObjectUtils.isNotEmpty(changeBean)) {
-            List<String> imgeList = gson.fromJson(changeBean.getValue(),  new TypeToken<List<String>>() {
-            }.getType());
+            List<String> imgeList = gson.fromJson(changeBean.getValue(), ArrayList.class);
             if (ObjectUtils.isNotEmpty(imgeList) && imgeList.size() > 0) {
                 imgeList.addAll(strings);
                 changeBean.setValue(gson.toJson(imgeList));

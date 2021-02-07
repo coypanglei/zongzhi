@@ -93,6 +93,7 @@ public class AddressLookListSearchActivity extends BaseActivity<AddressLookListS
     private String temp;
     private String roomId;
     private CountDownTimer timer;
+    private boolean videoEnable;
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -229,16 +230,21 @@ public class AddressLookListSearchActivity extends BaseActivity<AddressLookListS
                                         .create().show();
                                 break;
                             case R.id.video:
+                                roomId = String.valueOf(System.currentTimeMillis() + (int) (1 + Math.random() * (50 - 1 + 1)));
+                                assert mPresenter != null;
+                                List<String> list = new ArrayList<>();
+                                //遍历集合所有选中的元素 发起视频会商
+                                String alias = listBean.getId().replace("-", "");
+                                list.add(alias);
                                 new CommonDialog.Builder(AddressLookListSearchActivity.this)
                                         .setContent("确定发起会话！")
-                                        .setPositiveButton((view1, commonDialog) -> {
-                                            roomId = String.valueOf(System.currentTimeMillis() + (int) (1 + Math.random() * (50 - 1 + 1)));
-                                            assert mPresenter != null;
-                                            List<String> list = new ArrayList<>();
-                                            //遍历集合所有选中的元素 发起视频会商
-                                            String alias = listBean.getId().replace("-", "");
-                                            list.add(alias);
-                                            mPresenter.setChatList(list, roomId);
+                                        .setPositiveButton("视频会话", (view1, commonDialog) -> {
+                                            videoEnable = true;
+                                            mPresenter.setChatList(list, roomId, true);
+                                        })
+                                        .setNegativeButton("语音会话", (view12, commonDialog) -> {
+                                            videoEnable = false;
+                                            mPresenter.setChatList(list, roomId, false);
                                         }).create().show();
                                 break;
                             default:
@@ -343,7 +349,9 @@ public class AddressLookListSearchActivity extends BaseActivity<AddressLookListS
 
     @Override
     public void isOpen() {
-        WebrtcUtil.call(this, Constant.CHAT_IP, roomId);
+        WebrtcUtil.call(this, Constant.CHAT_IP, roomId, videoEnable,
+                UserInfoUtil.getUserInfo().getName(),
+                UserInfoUtil.getUserInfo().getHeadUrl());
         finish();
     }
 }

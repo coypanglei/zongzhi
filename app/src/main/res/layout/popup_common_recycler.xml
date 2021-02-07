@@ -8,6 +8,7 @@
 
     <TextView
         android:id="@+id/name"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_45"
         android:ellipsize="middle"
@@ -18,5 +19,5 @@
         android:paddingEnd="@dimen/dp_20"
         android:textColor="@color/black_333"
         android:textSize="@dimen/sp_16"
-        tools:text=""/>
+        tools:text="11111111" />
 </LinearLayout>

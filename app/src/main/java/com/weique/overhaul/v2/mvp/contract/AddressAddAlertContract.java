@@ -23,6 +23,8 @@ import io.reactivex.Observable;
 public interface AddressAddAlertContract {
     interface View extends IView {
         void showPopup(List<? extends BaseSearchPopupBean> addressType);
+
+        void setGrid(String pointsInJSON);
     }
 
     interface Model extends IModel {

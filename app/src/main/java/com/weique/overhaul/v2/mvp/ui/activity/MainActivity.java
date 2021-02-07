@@ -30,6 +30,8 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.baidu.location.BDLocation;
 import com.baidu.mapapi.NetworkUtil;
 import com.blankj.utilcode.util.MetaDataUtils;
+import com.blankj.utilcode.util.ObjectUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.jess.arms.base.BaseActivity;
@@ -53,11 +55,14 @@ import com.weique.overhaul.v2.app.utils.AccessControlUtil;
 import com.weique.overhaul.v2.app.utils.AppProgressListenerUtil;
 import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.app.utils.DownLoadUtil;
+import com.weique.overhaul.v2.app.utils.GlideUtil;
 import com.weique.overhaul.v2.app.utils.RegexUtils;
 import com.weique.overhaul.v2.app.utils.StringUtil;
 import com.weique.overhaul.v2.app.utils.UserInfoUtil;
 import com.weique.overhaul.v2.di.component.DaggerMainComponent;
 import com.weique.overhaul.v2.mvp.contract.MainContract;
+import com.weique.overhaul.v2.mvp.model.entity.GlobalUserDepartmentBean;
+import com.weique.overhaul.v2.mvp.model.entity.GlobalUserInfoBean;
 import com.weique.overhaul.v2.mvp.model.entity.NewVersionInfoBean;
 import com.weique.overhaul.v2.mvp.model.entity.PushMessageBean;
 import com.weique.overhaul.v2.mvp.model.entity.TourVistLonAndLatBean;
@@ -65,10 +70,12 @@ import com.weique.overhaul.v2.mvp.model.entity.event.EventBusBean;
 import com.weique.overhaul.v2.mvp.presenter.MainPresenter;
 import com.weique.overhaul.v2.mvp.ui.activity.chat.voip.AsyncPlayer;
 import com.weique.overhaul.v2.mvp.ui.activity.chat.voip.SingleCallActivity;
+import com.weique.overhaul.v2.mvp.ui.adapter.CommonRecyclerPopupAdapter;
+import com.weique.overhaul.v2.mvp.ui.fragment.AppFragment;
 import com.weique.overhaul.v2.mvp.ui.fragment.HomeFragment;
 import com.weique.overhaul.v2.mvp.ui.fragment.MyFragment;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonDialog;
-import com.weique.overhaul.v2.mvp.ui.popupwindow.UrgencyPopup;
+import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonRecyclerPopupWindow;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.VersionDialog;
 
 import org.simple.eventbus.EventBus;
@@ -76,6 +83,7 @@ import org.simple.eventbus.Subscriber;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -111,8 +119,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     OkHttpClient okHttpClient;
     @BindView(R.id.content)
     FrameLayout content;
-    @BindView(R.id.urgency)
-    ImageView urgency;
     @BindView(R.id.bottom_navigation)
     BottomNavigationView bottomNavigation;
 
@@ -128,16 +134,18 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     TextView messageText;
     @BindView(R.id.toolbar_title)
     TextView title;
+    @BindView(R.id.arrow_title)
+    ImageView arrowTitle;
     @BindView(R.id.icon_news_layout)
     RelativeLayout iconNewsLayout;
     @BindView(R.id.icon_scan)
     LinearLayout iconScan;
     public static final int HOME = 0;
     public static final int MY = 1;
+    public static final int APP = 2;
     private int index;
     private int currentIndex = HOME;
     private List<BaseFragment> fragments;
-    private UrgencyPopup urgencyPopup;
     private VersionDialog dialog;
     private String mUrl;
     private NewVersionInfoBean newVersionInfoBean;
@@ -152,6 +160,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     private boolean isFirst = true;
     private PushMessageBean listBean;
     private HomeFragment homeFragment;
+    private AppFragment appFragment;
     private MyFragment myFragment;
     private CommonDialog commonDialog;
 
@@ -179,6 +188,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
      */
     @Autowired(name = ARouerConstant.ID)
     String id;
+    private CommonRecyclerPopupAdapter<GlobalUserDepartmentBean> commonRecyclerPopupAdapter;
+    private CommonRecyclerPopupWindow<GlobalUserDepartmentBean> commonRecyclerPopupWindow;
 
     @Override
     protected void onDestroy() {
@@ -236,6 +247,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     public void initData(@Nullable Bundle savedInstanceState) {
         //第一次打开
         try {
+            if (UserInfoUtil.getUserInfo() != null) {
+                setTitle(UserInfoUtil.getUserInfo().getDepartmentName());
+                arrowTitle.setColorFilter(ArmsUtils.getColor(this, R.color.white));
+            }
             initIntent();
             String alias = UserInfoUtil.getUserInfo().getUid().replace("-", "");
             JPushInterface.setAlias(this, -1, alias);//设置别名或标签
@@ -248,7 +263,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
             } else {
                 infoNumber.setVisibility(View.GONE);
             }
-
             title.setTextColor(ArmsUtils.getColor(MainActivity.this, R.color.white));
             mPresenter.getPermissionGps();
             mPresenter.getAppVersionInfo();
@@ -275,6 +289,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                     homeFragment = HomeFragment.newInstance();
                 }
 
+                if (appFragment == null) {
+                    appFragment = AppFragment.newInstance();
+                }
+
                 if (myFragment == null) {
                     myFragment = MyFragment.newInstance();
                 }
@@ -282,6 +300,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                     fragments = new ArrayList<>();
                     fragments.add(homeFragment);
                     fragments.add(myFragment);
+                    fragments.add(appFragment);
                 }
                 showFragment();
                 bottomNavigation.setItemIconTintList(null);
@@ -297,6 +316,17 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                                 scanText.setTextColor(ArmsUtils.getColor(MainActivity.this, R.color.white));
                                 messageText.setTextColor(ArmsUtils.getColor(MainActivity.this, R.color.white));
                                 title.setTextColor(ArmsUtils.getColor(MainActivity.this, R.color.white));
+                                arrowTitle.setColorFilter(ArmsUtils.getColor(this, R.color.white));
+                                break;
+                            case R.id.app_p:
+                                index = APP;
+                                showFragment();
+                                messageImg.setImageResource(R.drawable.icon_news_b);
+                                scanImg.setImageResource(R.drawable.icon_scan_bb);
+                                scanText.setTextColor(ArmsUtils.getColor(MainActivity.this, R.color.black_333));
+                                messageText.setTextColor(ArmsUtils.getColor(MainActivity.this, R.color.black_333));
+                                title.setTextColor(ArmsUtils.getColor(MainActivity.this, R.color.black_333));
+                                arrowTitle.setColorFilter(ArmsUtils.getColor(this, R.color.black_333));
                                 break;
                             case R.id.my:
                                 index = MY;
@@ -306,6 +336,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                                 scanText.setTextColor(ArmsUtils.getColor(MainActivity.this, R.color.black_333));
                                 messageText.setTextColor(ArmsUtils.getColor(MainActivity.this, R.color.black_333));
                                 title.setTextColor(ArmsUtils.getColor(MainActivity.this, R.color.black_333));
+                                arrowTitle.setColorFilter(ArmsUtils.getColor(this, R.color.black_333));
                                 break;
                             default:
                                 break;
@@ -323,20 +354,13 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     }
 
 
-    @OnClick({R.id.urgency, R.id.icon_news_layout, R.id.icon_scan})
+    @OnClick({R.id.icon_news_layout, R.id.icon_scan, R.id.toolbar_title_layout})
     public void onClickView(View v) {
         try {
             if (AppUtils.isFastClick()) {
                 return;
             }
             switch (v.getId()) {
-                //新消息
-                case R.id.urgency:
-                    if (urgencyPopup == null) {
-                        urgencyPopup = new UrgencyPopup(this);
-                    }
-                    urgencyPopup.showPopupWindow();
-                    break;
                 case R.id.icon_news_layout:
                     ARouter.getInstance().build(RouterHub.APP_MESSAGELISTACTIVITY)
                             .navigation();
@@ -344,6 +368,54 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                 //扫描
                 case R.id.icon_scan:
                     mPresenter.getPermissionCamera();
+                    break;
+                case R.id.toolbar_title_layout:
+                    GlobalUserInfoBean userInfo = UserInfoUtil.getUserInfo();
+                    if (userInfo == null) {
+                        ArmsUtils.makeText("获取用户信息失败");
+                        return;
+                    }
+                    List<GlobalUserDepartmentBean> departments = userInfo.getDepartments();
+                    if (departments == null || departments.size() <= 1) {
+                        ArmsUtils.makeText("您只有当前一个负责区域，无法切换");
+                        return;
+                    }
+                    List<GlobalUserDepartmentBean> temp = new ArrayList<>();
+                    Iterator<GlobalUserDepartmentBean> iterator = departments.iterator();
+                    while (iterator.hasNext()) {
+                        GlobalUserDepartmentBean next = iterator.next();
+                        if (!next.getDepartmentId().equals(userInfo.getDepartmentId())) {
+                            temp.add(next);
+                        }
+                    }
+                    if (commonRecyclerPopupAdapter == null) {
+                        commonRecyclerPopupAdapter = new CommonRecyclerPopupAdapter<>();
+                    }
+                    if (commonRecyclerPopupWindow == null) {
+                        commonRecyclerPopupWindow = new CommonRecyclerPopupWindow<>(this,
+                                commonRecyclerPopupAdapter, new BaseQuickAdapter.OnItemChildClickListener() {
+                            @Override
+                            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                                GlobalUserDepartmentBean bean = (GlobalUserDepartmentBean) adapter.getItem(position);
+                                if (ObjectUtils.isNotEmpty(bean)) {
+                                    userInfo.setDepartmentId(bean.getDepartmentId());
+                                    userInfo.setDepartmentName(bean.getDepartmentName());
+                                    userInfo.setFullPath(bean.getDepartmentFullPath());
+                                    userInfo.setEnumCommunityLevel(bean.getEnumCommunityLevel());
+                                    title.setText(bean.getDepartmentName());
+                                }
+                                commonRecyclerPopupWindow.dismiss();
+                                EventBus.getDefault().post(new EventBusBean(EventBusConstant.COMMON_UPDATE), RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT);
+//                                EventBus.getDefault().post(new EventBusBean(EventBusConstant.COMMON_REFRESH), RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT);
+                            }
+                        });
+                        commonRecyclerPopupWindow.setOutSideDismiss(true);
+                    }
+                    if (!commonRecyclerPopupWindow.isShowing()) {
+                        commonRecyclerPopupWindow.showPopupWindow();
+                    }
+                    commonRecyclerPopupWindow.setNewData(temp);
+
                     break;
                 default:
                     break;
@@ -404,6 +476,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     public void onAttachFragment(@NonNull Fragment fragment) {
         if (fragment instanceof HomeFragment) {
             homeFragment = (HomeFragment) fragment;
+        }
+        if (fragment instanceof AppFragment) {
+            appFragment = (AppFragment) fragment;
         }
         if (fragment instanceof MyFragment) {
             myFragment = (MyFragment) fragment;
@@ -528,17 +603,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         try {
             ProgressManager.getInstance().addResponseListener(mUrl, AppProgressListenerUtil.getApkDownloadListener());
             DownLoadUtil.downloadStart(this, mUrl, okHttpClient, newVersionInfoBean);
-            /*AppUtils.checkUrl(mUrl)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(aBoolean -> {
-                        if (aBoolean) {
-
-                        } else {
-                            ArmsUtils.makeText("安装包异常，无法下载");
-                            dialog.dismiss();
-                        }
-                    });*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -593,7 +657,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                     }
                     break;
                 case EventBusConstant.SET_SCAN_ICON_STATUS:
-                    AccessControlUtil.fromActivityNameComparisonMenuControlView(CaptureActivity.class, iconScan);
+                    AccessControlUtil.fromActivityNameComparisonMenuControlViewInvisible(CaptureActivity.class, iconScan);
                     break;
                 case EventBusConstant.DOWNLOAD_PREGRESS:
                     int progress = (int) eventBusBean.getData();
@@ -607,7 +671,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                             new CommonDialog.Builder(this)
                                     .setContent("安装包下载完成去安装")
                                     .setPositiveButton((v, commonDialog) -> {
-                                        File file = Constant.getNewVersionApkFile(newVersionInfoBean.getVersionName());
+                                        File file = Constant.
+                                                getNewVersionApkFile(newVersionInfoBean.getVersionName());
                                         if (file.exists()) {
                                             com.blankj.utilcode.util.AppUtils.installApp(file);
                                         } else {
@@ -631,8 +696,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                     } else {
                         bell = R.raw.naoling;
                     }
-                    Uri uri = Uri.parse("android.resource://" + AppManager.getAppManager().getmApplication().getPackageName() + "/" + bell);
-                    ringPlayer.play(AppManager.getAppManager().getmApplication(), uri, true, AudioManager.STREAM_RING);
+                    Uri uri = Uri.parse("android.resource://" +
+                            AppManager.getAppManager().getmApplication().getPackageName() + "/" + bell);
+                    ringPlayer.play(AppManager.getAppManager().
+                            getmApplication(), uri, true, AudioManager.STREAM_RING);
                     timer.start();
                     break;
                 case ISRUNNINGFOREGROUND_YES:
@@ -642,7 +709,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
                             timer.cancel();
                         }
                         JPushInterface.clearAllNotifications(AppManager.getAppManager().getmApplication());
-                        SingleCallActivity.openActivity(AppManager.getAppManager().getmApplication(), listBean.getRoomId(), listBean.getHeadUrl(), listBean.getWho());
+                        SingleCallActivity.openActivity(AppManager.getAppManager().getmApplication(),
+                                listBean.getRoomId(), listBean.getWho(),
+                                GlideUtil.handleUrl(this, listBean.getHeadUrl()),
+                                listBean.getVideoEnable());
                     }
                     break;
                 default:

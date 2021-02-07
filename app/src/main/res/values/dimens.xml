@@ -425,4 +425,5 @@
     <!--甘油edittext  时  无法占据  顶部导航栏 的高度-->
     <dimen name="status_bar_h_overall_s">55dp</dimen>
     <dimen name="sp_35">35sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

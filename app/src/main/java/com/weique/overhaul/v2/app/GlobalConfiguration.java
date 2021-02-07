@@ -21,6 +21,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 import com.jess.arms.base.delegate.AppLifecycles;
 import com.jess.arms.di.module.GlobalConfigModule;
 import com.jess.arms.http.imageloader.glide.GlideImageLoaderStrategy;
@@ -62,7 +64,7 @@ public final class GlobalConfiguration implements ConfigModule {
             } else {
                 domain = Api.APP_DOMAIN;
             }
-
+            SpeechUtility.createUtility(context, SpeechConstant.APPID +"=5fdc0b09");
             builder.baseurl(domain)
                     //强烈建议自己自定义图片加载逻辑, 因为 arms-imageloader-glide 提供的 GlideImageLoaderStrategy 并不能满足复杂的需求
                     //请参考 https://github.com/JessYanCoding/MVPArms/wiki#3.4

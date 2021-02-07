@@ -1,11 +1,13 @@
 package com.weique.overhaul.v2.mvp.model.entity;
 
+import android.os.Parcel;
+
 /**
  * @author GK
  * @description:
  * @date :2020/8/10 17:09
  */
-public class MatterSecondBean extends TreeBaseDataBean {
+public class MatterSecondBean extends TreeBaseDataBean<MatterSecondBean> {
 
 
     /**
@@ -62,6 +64,20 @@ public class MatterSecondBean extends TreeBaseDataBean {
     private String UpdateEmployeeName;
     private String Memo;
 
+    private int childrenCount;
+
+    protected MatterSecondBean(Parcel in) {
+        super(in);
+    }
+
+
+    public int getChildrenCount() {
+        return childrenCount;
+    }
+
+    public void setChildrenCount(int childrenCount) {
+        this.childrenCount = childrenCount;
+    }
     public String getCode() {
         return Code;
     }

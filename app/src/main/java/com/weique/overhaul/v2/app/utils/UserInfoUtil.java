@@ -103,8 +103,8 @@ public class UserInfoUtil {
             globalUserInfoBean = new Gson().fromJson(userInfo, GlobalUserInfoBean.class);
             globalUserInfoBean.setHeadUrl(url);
             Constant.globalUserInfoBean = globalUserInfoBean;
-            EventBus.getDefault().post(new EventBusBean(EventBusConstant.UPDATE_HEAD_PHOTO), RouterHub.APP_MAINACTIVITY_MYFRAGMENT);
-            EventBus.getDefault().post(new EventBusBean(EventBusConstant.UPDATE_HEAD_PHOTO), RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT);
+            EventBus.getDefault().post(new EventBusBean(EventBusConstant.COMMON_UPDATE), RouterHub.APP_MAINACTIVITY_MYFRAGMENT);
+            EventBus.getDefault().post(new EventBusBean(EventBusConstant.COMMON_UPDATE), RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -318,8 +318,8 @@ public class UserInfoUtil {
             return;
         }
         try {
-            EventBus.getDefault().post(new EventBusBean(EventBusConstant.UPDATE_HEAD_NAME, "", name), RouterHub.APP_MAINACTIVITY_MYFRAGMENT);
-            EventBus.getDefault().post(new EventBusBean(EventBusConstant.UPDATE_HEAD_NAME, "", name), RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT);
+            EventBus.getDefault().post(new EventBusBean(EventBusConstant.COMMON_UPDATE, "", name), RouterHub.APP_MAINACTIVITY_MYFRAGMENT);
+            EventBus.getDefault().post(new EventBusBean(EventBusConstant.COMMON_UPDATE, "", name), RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT);
         } catch (Exception e) {
             e.printStackTrace();
         }

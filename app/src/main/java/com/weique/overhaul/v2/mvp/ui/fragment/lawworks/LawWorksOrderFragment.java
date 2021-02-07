@@ -21,7 +21,6 @@ import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.common.ARouerConstant;
 import com.weique.overhaul.v2.app.common.EventBusConstant;
 import com.weique.overhaul.v2.app.common.RouterHub;
-import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.di.component.DaggerLawWorksOrderComponent;
 import com.weique.overhaul.v2.mvp.contract.LawWorksOrderContract;
 import com.weique.overhaul.v2.mvp.model.entity.LawWorksOrderListBean;
@@ -107,9 +106,6 @@ public class LawWorksOrderFragment extends BaseLazyLoadFragment<LawWorksOrderPre
             mAdapter.setEmptyView(R.layout.null_content_layout, recyclerView);
             mAdapter.setOnItemClickListener((adapter, view, position) -> {
                 try {
-                    if (AppUtils.isFastClick()) {
-                        return;
-                    }
                     LawWorksOrderListBean bean = (LawWorksOrderListBean) adapter.getItem(position);
                     ARouter.getInstance().build(RouterHub.APP_LAWWORKSORDERDETAILACTIVITY)
                             .withString(ARouerConstant.ID, bean.getId())

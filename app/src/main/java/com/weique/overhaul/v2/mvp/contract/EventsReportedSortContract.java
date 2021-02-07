@@ -47,6 +47,6 @@ public interface EventsReportedSortContract {
          * @param typeId       typeId
          * @return Observable
          */
-        Observable<BaseBean<EventsReportedSortBean>> getEvents(String typeId);
+        Observable<BaseBean<EventsReportedSortBean>> getEvents(String typeId,String keyword, int limit);
     }
 }

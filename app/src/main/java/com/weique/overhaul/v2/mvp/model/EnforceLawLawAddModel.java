@@ -15,7 +15,6 @@ import com.weique.overhaul.v2.mvp.model.api.service.InformationService;
 import com.weique.overhaul.v2.mvp.model.entity.BaseBean;
 import com.weique.overhaul.v2.mvp.model.entity.CommonTitleBean;
 import com.weique.overhaul.v2.mvp.model.entity.GridInformationBean;
-import com.weique.overhaul.v2.mvp.model.entity.MatterBean;
 import com.weique.overhaul.v2.mvp.model.entity.MatterSecondBean;
 import com.weique.overhaul.v2.mvp.model.entity.NameAndIdBean;
 import com.weique.overhaul.v2.mvp.model.entity.PartiesBean;
@@ -54,7 +53,7 @@ public class EnforceLawLawAddModel extends BaseModel implements EnforceLawLawAdd
     }
 
     @Override
-    public Observable<BaseBean<List<MatterBean>>> getMatterList(int ignoreNumber, int pageSize) {
+    public Observable<BaseBean<List<MatterSecondBean>>> getMatterList(int ignoreNumber, int pageSize) {
         Map<String, Object> map = new HashMap<>();
         map.put("PageSize", pageSize);
         map.put("IgnoreNumber", ignoreNumber);

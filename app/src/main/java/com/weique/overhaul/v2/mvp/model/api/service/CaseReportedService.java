@@ -9,7 +9,6 @@ import com.weique.overhaul.v2.mvp.model.entity.EntInfoBean;
 import com.weique.overhaul.v2.mvp.model.entity.EntInfoItemBean;
 import com.weique.overhaul.v2.mvp.model.entity.EntInfoItemListBean;
 import com.weique.overhaul.v2.mvp.model.entity.LawDetailBean;
-import com.weique.overhaul.v2.mvp.model.entity.MatterBean;
 import com.weique.overhaul.v2.mvp.model.entity.MatterDetailsBean;
 import com.weique.overhaul.v2.mvp.model.entity.MatterDetailsFlowBean;
 import com.weique.overhaul.v2.mvp.model.entity.MatterSecondBean;
@@ -52,7 +51,7 @@ public interface CaseReportedService {
      * @return Observable
      */
     @GET(path + "ComprehensiveLawEnforcementMattersTypes/IndexList")
-    Observable<BaseBean<List<MatterBean>>> getMatterList(@QueryMap Map<String, Object> paramSign);
+    Observable<BaseBean<List<MatterSecondBean>>> getMatterList(@QueryMap Map<String, Object> paramSign);
 
     /**
      * 获取事项列表

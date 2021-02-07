@@ -4,8 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
+    android:layout_marginTop="@dimen/dp_150"
     android:background="@drawable/shape_b_ffffff_c_10"
-    android:maxHeight="@dimen/dp_400">
+    android:paddingBottom="@dimen/dp_60">
 
 
     <LinearLayout

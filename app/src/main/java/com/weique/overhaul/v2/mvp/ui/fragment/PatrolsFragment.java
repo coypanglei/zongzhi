@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -48,9 +49,11 @@ import static com.jess.arms.utils.Preconditions.checkNotNull;
  */
 public class PatrolsFragment extends BaseLazyLoadFragment<PatrolsPresenter> implements PatrolsContract.View {
 
-    @BindView(R.id.recyclerView)
+    @BindView(R.id.recycler)
     RecyclerView recyclerView;
 
+    @BindView(R.id.sw)
+    SwipeRefreshLayout sw;
 
     private PatrolsListAdapter patrolsListAdapter;
 
@@ -78,6 +81,7 @@ public class PatrolsFragment extends BaseLazyLoadFragment<PatrolsPresenter> impl
     public void initData(@Nullable Bundle savedInstanceState) {
         ARouter.getInstance().inject(this);
         initApapter();
+        sw.setOnRefreshListener(() -> mPresenter.getPatrolsListData(true, false, "0"));
     }
 
 
@@ -158,11 +162,12 @@ public class PatrolsFragment extends BaseLazyLoadFragment<PatrolsPresenter> impl
 
     @Override
     public void showLoading() {
+        sw.setRefreshing(true);
     }
 
     @Override
     public void hideLoading() {
-//        vSwipeRefresh.setRefreshing(false);
+        sw.setRefreshing(false);
     }
 
 

@@ -1,9 +1,10 @@
 package com.weique.overhaul.v2.app.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
+import android.view.Gravity;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
@@ -12,6 +13,7 @@ import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.bigkoo.pickerview.view.TimePickerView;
+import com.shehuan.nicedialog.Utils;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.common.Constant;
 
@@ -116,7 +118,7 @@ public class PickerViewUtil {
      * @param onTimeSelectListener 回调
      * @return
      */
-    public static TimePickerView selectPickerTimeWithStartEndDialogTrue(Context activity, String precision,
+    public static TimePickerView selectPickerTimeWithStartEndDialogTrue(ViewGroup viewGroup, Activity activity, String precision,
                                                                         Calendar selectedDate, Calendar startDate, Calendar endDate,
                                                                         OnTimeSelectListener onTimeSelectListener
     ) {

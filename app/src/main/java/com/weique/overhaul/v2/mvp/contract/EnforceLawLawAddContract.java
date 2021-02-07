@@ -7,7 +7,6 @@ import com.jess.arms.mvp.IView;
 import com.weique.overhaul.v2.mvp.model.entity.BaseBean;
 import com.weique.overhaul.v2.mvp.model.entity.CommonTitleBean;
 import com.weique.overhaul.v2.mvp.model.entity.GridInformationBean;
-import com.weique.overhaul.v2.mvp.model.entity.MatterBean;
 import com.weique.overhaul.v2.mvp.model.entity.MatterSecondBean;
 import com.weique.overhaul.v2.mvp.model.entity.NameAndIdBean;
 import com.weique.overhaul.v2.mvp.model.entity.PartiesBean;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import okhttp3.MultipartBody;
 
 
 /**
@@ -35,7 +33,7 @@ public interface EnforceLawLawAddContract {
          * @param o
          * @param isLoadMore
          */
-        void setMatterList(List<MatterBean> o, boolean isLoadMore);
+        void setMatterList(List<MatterSecondBean> o, boolean isLoadMore);
 
         /**
          * 权力事项二级分类
@@ -102,7 +100,7 @@ public interface EnforceLawLawAddContract {
          *
          * @return Observable
          */
-        Observable<BaseBean<List<MatterBean>>> getMatterList(int ignoreNumber, int pageSize);
+        Observable<BaseBean<List<MatterSecondBean>>> getMatterList(int ignoreNumber, int pageSize);
 
         /**
          * 获取子集

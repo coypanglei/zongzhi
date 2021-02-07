@@ -39,6 +39,6 @@ public interface AddressBookContract {
 
     interface Model extends IModel {
         Observable<BaseBean<AddressBookItemBean>> getDepartmentInfoListData(int pageSize, int ignoreNumber, String DepartmentId);
-        Observable<BaseBean<String>> setChatList(int pageSize, int ignoreNumber, List<String> alreadyList, String toString);
+        Observable<BaseBean<String>> setChatList(int pageSize, int ignoreNumber, List<String> alreadyList, String toString, boolean videoEnable);
     }
 }

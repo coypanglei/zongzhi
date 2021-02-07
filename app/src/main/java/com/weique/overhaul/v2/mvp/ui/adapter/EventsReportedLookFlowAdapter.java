@@ -50,7 +50,7 @@ public class EventsReportedLookFlowAdapter extends BaseQuickAdapter<String, Base
                 helper.setImageResource(R.id.flow_status_image, R.drawable.icon_complete);
             } else if (adapterPosition == orderStatus) {
                 helper.setTextColor(R.id.flow_name, ArmsUtils.getColor(mContext, R.color.blue_3982f6));
-                helper.setImageResource(R.id.flow_status_image, R.drawable.unchecked);
+                helper.setImageResource(R.id.flow_status_image, R.drawable.icon_complete);
             } else {
                 helper.setTextColor(R.id.flow_name, ArmsUtils.getColor(mContext, R.color.blue_a4d8ff));
                 helper.setImageResource(R.id.flow_status_image, R.drawable.upflow);

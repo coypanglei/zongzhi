@@ -59,7 +59,6 @@ import java.security.NoSuchAlgorithmException;
  * ================================================
  */
 public class ArmsUtils {
-    static public Toast mToast;
 
     private ArmsUtils() {
         throw new IllegalStateException("you can't instantiate me!");

@@ -5,25 +5,29 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.dds.webrtclib.IViewCallback;
-import com.dds.webrtclib.PeerConnectionHelper;
 import com.dds.webrtclib.ProxyVideoSink;
 import com.dds.webrtclib.R;
 import com.dds.webrtclib.WebRTCManager;
+import com.dds.webrtclib.bean.ChatRoomItemBean;
 import com.dds.webrtclib.bean.MemberBean;
+import com.dds.webrtclib.ui.adapter.ChatAdapter;
 import com.dds.webrtclib.utils.PermissionUtil;
 import com.jess.arms.integration.EventBusManager;
 import com.jess.arms.utils.ArmsUtils;
@@ -31,7 +35,6 @@ import com.jess.arms.utils.ArmsUtils;
 import org.simple.eventbus.EventBus;
 import org.webrtc.EglBase;
 import org.webrtc.MediaStream;
-import org.webrtc.RendererCommon;
 import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoTrack;
 
@@ -47,20 +50,37 @@ import java.util.Map;
 public class ChatRoomActivity extends AppCompatActivity implements IViewCallback {
 
     private FrameLayout wr_video_view;
+    private RecyclerView rv;
 
     private WebRTCManager manager;
-    private Map<String, SurfaceViewRenderer> _videoViews = new HashMap<>();
+    private Map<String, View> _videoViews = new HashMap<>();
     private Map<String, ProxyVideoSink> _sinks = new HashMap<>();
     private List<MemberBean> _infos = new ArrayList<>();
     private VideoTrack _localVideoTrack;
 
     private int mScreenWidth;
-
+    int maxSpanCount = 3;
     private EglBase rootEglBase;
+    private boolean videoEnable = true;
+    private boolean isFirst = true;
+    private ChatAdapter chatAdapter;
+    private GridLayoutManager gridLayoutManager;
+    private ChatRoomFragment chatRoomFragment;
 
     public static void openActivity(Activity activity) {
         try {
             Intent intent = new Intent(activity, ChatRoomActivity.class);
+            activity.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void openActivity(Activity activity, boolean videoEnable) {
+        try {
+            Intent intent = new Intent(activity, ChatRoomActivity.class);
+            intent.putExtra("videoEnable", videoEnable);
             activity.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,18 +100,28 @@ public class ChatRoomActivity extends AppCompatActivity implements IViewCallback
                     | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
             super.onCreate(savedInstanceState);
             setContentView(R.layout.wr_activity_chat_room);
+            videoEnable = getIntent().getBooleanExtra("videoEnable", false);
             initView();
             initVar();
-            ChatRoomFragment chatRoomFragment = new ChatRoomFragment();
+            chatRoomFragment = new ChatRoomFragment(videoEnable);
             replaceFragment(chatRoomFragment);
-
             startCall();
             timer.start();
-
+            initAdapter();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * 初始化adapter
+     */
+    private void initAdapter() {
+        chatAdapter = new ChatAdapter(rootEglBase, videoEnable);
+        gridLayoutManager = new GridLayoutManager(this, 2, RecyclerView.VERTICAL, false);
+        rv.setLayoutManager(gridLayoutManager);
+        rv.setAdapter(chatAdapter);
     }
 
     private CountDownTimer timer = new CountDownTimer(30 * 1000, 1000) {
@@ -114,7 +144,9 @@ public class ChatRoomActivity extends AppCompatActivity implements IViewCallback
 
 
     private void initView() {
+        rv = findViewById(R.id.rv);
         wr_video_view = findViewById(R.id.wr_video_view);
+
     }
 
     private void initVar() {
@@ -124,7 +156,8 @@ public class ChatRoomActivity extends AppCompatActivity implements IViewCallback
             if (manager != null) {
                 mScreenWidth = manager.getDefaultDisplay().getWidth();
             }
-            wr_video_view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mScreenWidth));
+            wr_video_view.setLayoutParams(new RelativeLayout.
+                    LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mScreenWidth));
             rootEglBase = EglBase.create();
         } catch (Exception e) {
             e.printStackTrace();
@@ -147,14 +180,14 @@ public class ChatRoomActivity extends AppCompatActivity implements IViewCallback
     }
 
     @Override
-    public void onSetLocalStream(MediaStream stream, String userId) {
+    public void onSetLocalStream(MediaStream stream, String userId, String name, String headUrl) {
         try {
             List<VideoTrack> videoTracks = stream.videoTracks;
             if (videoTracks.size() > 0) {
                 _localVideoTrack = videoTracks.get(0);
             }
             runOnUiThread(() -> {
-                addView(userId, stream);
+                addView(userId, stream, name, headUrl);
             });
         } catch (Exception e) {
             e.printStackTrace();
@@ -162,11 +195,11 @@ public class ChatRoomActivity extends AppCompatActivity implements IViewCallback
     }
 
     @Override
-    public void onAddRemoteStream(MediaStream stream, String userId) {
+    public void onAddRemoteStream(MediaStream stream, String userId, String name, String headUrl) {
         timer.cancel();
         runOnUiThread(() -> {
             try {
-                addView(userId, stream);
+                addView(userId, stream, name, headUrl);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -189,29 +222,106 @@ public class ChatRoomActivity extends AppCompatActivity implements IViewCallback
     }
 
 
-    private void addView(String id, MediaStream stream) {
+    private void addView(String id, MediaStream stream, String name, String headUrl) {
         try {
-            SurfaceViewRenderer renderer = new SurfaceViewRenderer(ChatRoomActivity.this);
-            renderer.init(rootEglBase.getEglBaseContext(), null);
-            renderer.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
-            renderer.setMirror(true);
-            // set render
-            ProxyVideoSink sink = new ProxyVideoSink();
-            sink.setTarget(renderer);
-            if (stream.videoTracks.size() > 0) {
-                stream.videoTracks.get(0).addSink(sink);
+            if (chatAdapter != null) {
+                ChatRoomItemBean chatRoomItemBean = new ChatRoomItemBean();
+                chatRoomItemBean.setId(id);
+                chatRoomItemBean.setImageUrl(headUrl);
+                chatRoomItemBean.setMediaStream(stream);
+                chatRoomItemBean.setName(name);
+                chatAdapter.addData(chatRoomItemBean);
+                //有人加入房间后开始计时
+                if (isFirst && chatAdapter.getData() != null && chatAdapter.getData().size() > 1) {
+                    if (chatRoomFragment != null) {
+                        isFirst = false;
+                        chatRoomFragment.startDuration();
+                    }
+                }
             }
-            _videoViews.put(id, renderer);
-            _sinks.put(id, sink);
+
+            /*View inflate = View.inflate(this, R.layout.surface_view_and_name, null);
+            TextView name = inflate.findViewById(R.id.name);
+            name.setText("1111111111111");
+            SurfaceViewRenderer renderer = inflate.findViewById(R.id.svr);
+            ImageView imagePhoto = inflate.findViewById(R.id.image_photo);
+            if (videoEnable) {
+                renderer.setVisibility(View.VISIBLE);
+                imagePhoto.setVisibility(View.GONE);
+                renderer.init(rootEglBase.getEglBaseContext(), null);
+                renderer.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
+                renderer.setMirror(true);
+                // set render
+                ProxyVideoSink sink = new ProxyVideoSink();
+                sink.setTarget(renderer);
+                if (stream.videoTracks.size() > 0) {
+                    stream.videoTracks.get(0).addSink(sink);
+                }
+                _sinks.put(id, sink);
+            } else {
+                renderer.setVisibility(View.GONE);
+                imagePhoto.setVisibility(View.VISIBLE);
+//                imagePhoto.setImageResource(R.drawable.bay_p);
+//                Glide.with(this).load("http://goo.gl/gEgYUd").into(imagePhoto);
+            }
+            _videoViews.put(id, inflate);
             _infos.add(new MemberBean(id));
-            wr_video_view.addView(renderer);
+            wr_video_view.addView(inflate);
 
             int size = _infos.size();
             for (int i = 0; i < size; i++) {
                 MemberBean memberBean = _infos.get(i);
-                SurfaceViewRenderer renderer1 = _videoViews.get(memberBean.getId());
+                View view = _videoViews.get(memberBean.getId());
+                if (view != null) {
+                    RelativeLayout rd = inflate.findViewById(R.id.layout_f);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    layoutParams.height = getWidth(size);
+                    layoutParams.width = getWidth(size);
+                    layoutParams.leftMargin = getX(size, i);
+                    layoutParams.topMargin = getY(size, i);
+                    rd.setLayoutParams(layoutParams);
+                }
+
+            }*/
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void removeView(String userId) {
+        try {
+            if (chatAdapter != null) {
+                chatAdapter.setRemoveItem(userId);
+                List<ChatRoomItemBean> data = chatAdapter.getData();
+                if (data.size() <= 1) {
+                    Toast.makeText(this, "通话人员已退出房间", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+            /*ProxyVideoSink sink = _sinks.get(userId);
+            View view = _videoViews.get(userId);
+            SurfaceViewRenderer renderer = view.findViewById(R.id.svr);
+            if (sink != null) {
+                sink.setTarget(null);
+            }
+            if (renderer != null) {
+                renderer.release();
+            }
+            _sinks.remove(userId);
+            _videoViews.remove(userId);
+            _infos.remove(new MemberBean(userId));
+            wr_video_view.removeView(renderer);
+
+
+            int size = _infos.size();
+            for (int i = 0; i < _infos.size(); i++) {
+                MemberBean memberBean = _infos.get(i);
+                View vv = _videoViews.get(memberBean.getId());
+                RelativeLayout renderer1 = vv.findViewById(R.id.layout_f);
                 if (renderer1 != null) {
-                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     layoutParams.height = getWidth(size);
                     layoutParams.width = getWidth(size);
@@ -220,44 +330,9 @@ public class ChatRoomActivity extends AppCompatActivity implements IViewCallback
                     renderer1.setLayoutParams(layoutParams);
                 }
 
-            }
+            }*/
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-
-    }
-
-
-    private void removeView(String userId) {
-        ProxyVideoSink sink = _sinks.get(userId);
-        SurfaceViewRenderer renderer = _videoViews.get(userId);
-        if (sink != null) {
-            sink.setTarget(null);
-        }
-        if (renderer != null) {
-            renderer.release();
-        }
-        _sinks.remove(userId);
-        _videoViews.remove(userId);
-        _infos.remove(new MemberBean(userId));
-        wr_video_view.removeView(renderer);
-
-
-        int size = _infos.size();
-        for (int i = 0; i < _infos.size(); i++) {
-            MemberBean memberBean = _infos.get(i);
-            SurfaceViewRenderer renderer1 = _videoViews.get(memberBean.getId());
-            if (renderer1 != null) {
-                FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                layoutParams.height = getWidth(size);
-                layoutParams.width = getWidth(size);
-                layoutParams.leftMargin = getX(size, i);
-                layoutParams.topMargin = getY(size, i);
-                renderer1.setLayoutParams(layoutParams);
-            }
-
         }
 
     }
@@ -385,24 +460,33 @@ public class ChatRoomActivity extends AppCompatActivity implements IViewCallback
     }
 
     private void exit() {
-        manager.exitRoom();
-        for (SurfaceViewRenderer renderer : _videoViews.values()) {
-            renderer.release();
+        try {
+            manager.exitRoom();
+            List<ChatRoomItemBean> data = chatAdapter.getData();
+            for (View view : _videoViews.values()) {
+                SurfaceViewRenderer renderer = view.findViewById(R.id.svr);
+                renderer.release();
+            }
+            for (ChatRoomItemBean bean : data) {
+                if (bean.getSink() != null) {
+                    bean.getSink().setTarget(null);
+                }
+            }
+            _videoViews.clear();
+            _sinks.clear();
+            _infos.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        for (ProxyVideoSink sink : _sinks.values()) {
-            sink.setTarget(null);
-        }
-        _videoViews.clear();
-        _sinks.clear();
-        _infos.clear();
 
     }
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         for (int i = 0; i < permissions.length; i++) {
-            Log.i(PeerConnectionHelper.TAG, "[Permission] " + permissions[i] + " is " + (grantResults[i] == PackageManager.PERMISSION_GRANTED ? "granted" : "denied"));
             if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                 finish();
                 break;

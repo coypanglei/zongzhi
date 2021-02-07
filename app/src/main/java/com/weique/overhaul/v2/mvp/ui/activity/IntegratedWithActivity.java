@@ -29,7 +29,7 @@ import com.weique.overhaul.v2.mvp.contract.IntegratedWithContract;
 import com.weique.overhaul.v2.mvp.model.entity.HomeMenuItemBean;
 import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
 import com.weique.overhaul.v2.mvp.presenter.IntegratedWithPresenter;
-import com.weique.overhaul.v2.mvp.ui.adapter.HomeMenuGridAdapter;
+import com.weique.overhaul.v2.mvp.ui.adapter.HomeMenuAdapter;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class IntegratedWithActivity extends BaseActivity<IntegratedWithPresenter
     @Autowired(name = LIST)
     ArrayList<HomeMenuItemBean> mMenuData;
     @Inject
-    HomeMenuGridAdapter homeMenuGridAdapter;
+    HomeMenuAdapter homeMenuGridAdapter;
     @Inject
     GridLayoutManager gridLayoutManager;
     @BindView(R.id.rcv)

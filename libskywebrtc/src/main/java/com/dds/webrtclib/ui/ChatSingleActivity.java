@@ -151,7 +151,7 @@ public class ChatSingleActivity extends AppCompatActivity {
         manager = WebRTCManager.getInstance();
         manager.setCallback(new IViewCallback() {
             @Override
-            public void onSetLocalStream(MediaStream stream, String socketId) {
+            public void onSetLocalStream(MediaStream stream, String socketId,String name, String headUrl) {
                 if (stream.videoTracks.size() > 0) {
                     stream.videoTracks.get(0).addSink(localRender);
                 }
@@ -162,7 +162,7 @@ public class ChatSingleActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAddRemoteStream(MediaStream stream, String socketId) {
+            public void onAddRemoteStream(MediaStream stream, String socketId, String userName, String headUrl) {
                 if (stream.videoTracks.size() > 0) {
                     stream.videoTracks.get(0).addSink(remoteRender);
                 }

@@ -36,7 +36,6 @@ import butterknife.OnClick;
 import razerdp.basepopup.BasePopupWindow;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
-import static razerdp.util.SimpleAnimationUtils.getTranslateVerticalAnimation;
 
 
 /**
@@ -154,8 +153,7 @@ public class MyWorkRecordActivity extends BaseActivity<MyWorkRecordPresenter> im
             Drawable drawable = ContextCompat.getDrawable(this, R.drawable.down_arrows);
             screening.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
 
-            screeningPopup.setShowAnimation(getTranslateVerticalAnimation(-1f, 0f, 500))
-                    .setDismissAnimation(getTranslateVerticalAnimation(0f, -1f, 500)).showPopupWindow(layout);
+            screeningPopup.showPopupWindow(layout);
 
             screeningPopup.setOnDismissListener(new BasePopupWindow.OnDismissListener() {
                 @Override

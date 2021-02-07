@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.dds.webrtclib.bean.ConnectionInfoBean;
 import com.dds.webrtclib.bean.MediaType;
 import com.dds.webrtclib.bean.MyIceServer;
 import com.dds.webrtclib.ws.IWebSocket;
@@ -70,7 +71,7 @@ public class PeerConnectionHelper {
     public VideoSource videoSource;
     public AudioSource audioSource;
 
-    public ArrayList<String> _connectionIdArray;
+    public ArrayList<ConnectionInfoBean> _connectionIdArray;
     public Map<String, Peer> _connectionPeerDic;
 
     public String _myId;
@@ -81,7 +82,6 @@ public class PeerConnectionHelper {
     public int _mediaType;
 
     private AudioManager mAudioManager;
-
 
 
     enum Role {Caller, Receiver,}
@@ -97,25 +97,29 @@ public class PeerConnectionHelper {
     @Nullable
     private SurfaceTextureHelper surfaceTextureHelper;
 
-    private final ExecutorService executor;
+    private ExecutorService executor;
 
     public PeerConnectionHelper(IWebSocket webSocket, MyIceServer[] iceServers) {
-        this._connectionPeerDic = new HashMap<>();
-        this._connectionIdArray = new ArrayList<>();
-        this.ICEServers = new ArrayList<>();
+        try {
+            this._connectionPeerDic = new HashMap<>();
+            this._connectionIdArray = new ArrayList<>();
+            this.ICEServers = new ArrayList<>();
 
 
-        _webSocket = webSocket;
-        executor = Executors.newSingleThreadExecutor();
-        if (iceServers != null) {
-            for (MyIceServer myIceServer : iceServers) {
-                PeerConnection.IceServer iceServer = PeerConnection.IceServer
-                        .builder(myIceServer.uri)
-                        .setUsername(myIceServer.username)
-                        .setPassword(myIceServer.password)
-                        .createIceServer();
-                ICEServers.add(iceServer);
+            _webSocket = webSocket;
+            executor = Executors.newSingleThreadExecutor();
+            if (iceServers != null) {
+                for (MyIceServer myIceServer : iceServers) {
+                    PeerConnection.IceServer iceServer = PeerConnection.IceServer
+                            .builder(myIceServer.uri)
+                            .setUsername(myIceServer.username)
+                            .setPassword(myIceServer.password)
+                            .createIceServer();
+                    ICEServers.add(iceServer);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -132,37 +136,41 @@ public class PeerConnectionHelper {
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
 
-    public void onJoinToRoom(ArrayList<String> connections, String myId, boolean isVideoEnable, int mediaType) {
+    public void onJoinToRoom(List<ConnectionInfoBean> connections, String myId,
+                             boolean isVideoEnable, int mediaType, String name, String headUrl) {
         videoEnable = isVideoEnable;
         _mediaType = mediaType;
         executor.execute(() -> {
-            _connectionIdArray.addAll(connections);
-            _myId = myId;
-            if (_factory == null) {
-                _factory = createConnectionFactory();
-            }
-            if (_localStream == null) {
-                createLocalStream();
-            }
+            try {
+                _connectionIdArray.addAll(connections);
+                _myId = myId;
+                if (_factory == null) {
+                    _factory = createConnectionFactory();
+                }
+                if (_localStream == null) {
+                    createLocalStream(name, headUrl);
+                }
+                createPeerConnections();
+                addStreams(name, headUrl);
+                createOffers();
+            } catch (Exception e) {
 
 
-            createPeerConnections();
-            addStreams();
-            createOffers();
+            }
         });
 
     }
 
-    public void onRemoteJoinToRoom(String socketId) {
+    public void onRemoteJoinToRoom(String socketId, String userName, String headUrl) {
         executor.execute(() -> {
 
             if (_localStream == null) {
-                createLocalStream();
+                createLocalStream(userName, headUrl);
             }
             try {
-                Peer mPeer = new Peer(socketId);
+                Peer mPeer = new Peer(socketId, userName, headUrl);
                 mPeer.pc.addStream(_localStream);
-                _connectionIdArray.add(socketId);
+                _connectionIdArray.add(new ConnectionInfoBean(socketId, userName, headUrl));
                 _connectionPeerDic.put(socketId, mPeer);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -246,49 +254,54 @@ public class PeerConnectionHelper {
     }
 
     // 创建本地流
-    private void createLocalStream() {
-        _localStream = _factory.createLocalMediaStream("ARDAMS");
-        // 音频
-        audioSource = _factory.createAudioSource(createAudioConstraints());
-        _localAudioTrack = _factory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
-        _localStream.addTrack(_localAudioTrack);
+    private void createLocalStream(String name, String headUrl) {
+        try {
+            _localStream = _factory.createLocalMediaStream("ARDAMS");
+            // 音频
+            audioSource = _factory.createAudioSource(createAudioConstraints());
+            _localAudioTrack = _factory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
+            _localStream.addTrack(_localAudioTrack);
 
-        if (videoEnable) {
-            //创建需要传入设备的名称
-            captureAndroid = createVideoCapture();
-            // 视频
-            surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", _rootEglBase.getEglBaseContext());
-            videoSource = _factory.createVideoSource(captureAndroid.isScreencast());
-            if (_mediaType == MediaType.TYPE_MEETING) {
-                // videoSource.adaptOutputFormat(200, 200, 15);
+            if (videoEnable) {
+                //创建需要传入设备的名称
+                captureAndroid = createVideoCapture();
+                // 视频
+                surfaceTextureHelper = SurfaceTextureHelper
+                        .create("CaptureThread", _rootEglBase.getEglBaseContext());
+                videoSource = _factory.createVideoSource(captureAndroid.isScreencast());
+                if (_mediaType == MediaType.TYPE_MEETING) {
+                    // videoSource.adaptOutputFormat(200, 200, 15);
+                }
+                captureAndroid.initialize(surfaceTextureHelper, _context, videoSource.getCapturerObserver());
+                captureAndroid.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
+                _localVideoTrack = _factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
+                _localStream.addTrack(_localVideoTrack);
             }
-            captureAndroid.initialize(surfaceTextureHelper, _context, videoSource.getCapturerObserver());
-            captureAndroid.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
-            _localVideoTrack = _factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
-            _localStream.addTrack(_localVideoTrack);
-        }
 
 
-        if (viewCallback != null) {
-            viewCallback.onSetLocalStream(_localStream, _myId);
+            if (viewCallback != null) {
+                viewCallback.onSetLocalStream(_localStream, _myId, name, headUrl);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
 
     // 创建所有连接
     private void createPeerConnections() {
-        for (Object str : _connectionIdArray) {
-            Peer peer = new Peer((String) str);
-            _connectionPeerDic.put((String) str, peer);
+        for (ConnectionInfoBean bean : _connectionIdArray) {
+            Peer peer = new Peer(bean.getSocketId(), bean.getUserName(), bean.getHeadUrl());
+            _connectionPeerDic.put(bean.getSocketId(), peer);
         }
     }
 
     // 为所有连接添加流
-    private void addStreams() {
+    private void addStreams(String name, String headUrl) {
         Log.v(TAG, "为所有连接添加流");
         for (Map.Entry<String, Peer> entry : _connectionPeerDic.entrySet()) {
             if (_localStream == null) {
-                createLocalStream();
+                createLocalStream(name, headUrl);
             }
             try {
                 entry.getValue().pc.addStream(_localStream);
@@ -327,7 +340,9 @@ public class PeerConnectionHelper {
     //**************************************逻辑控制**************************************
     // 调整摄像头前置后置
     public void switchCamera() {
-        if (captureAndroid == null) return;
+        if (captureAndroid == null) {
+            return;
+        }
         if (captureAndroid instanceof CameraVideoCapturer) {
             CameraVideoCapturer cameraVideoCapturer = (CameraVideoCapturer) captureAndroid;
             cameraVideoCapturer.switchCamera(null);
@@ -357,48 +372,52 @@ public class PeerConnectionHelper {
             viewCallback = null;
         }
         executor.execute(() -> {
-            ArrayList myCopy;
-            myCopy = (ArrayList) _connectionIdArray.clone();
-            for (Object Id : myCopy) {
-                closePeerConnection((String) Id);
-            }
-            if (_connectionIdArray != null) {
-                _connectionIdArray.clear();
-            }
-            if (audioSource != null) {
-                audioSource.dispose();
-                audioSource = null;
-            }
-
-            if (videoSource != null) {
-                videoSource.dispose();
-                videoSource = null;
-            }
-
-            if (captureAndroid != null) {
-                try {
-                    captureAndroid.stopCapture();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            try {
+                ArrayList<ConnectionInfoBean> myCopy;
+                myCopy = (ArrayList<ConnectionInfoBean>) _connectionIdArray.clone();
+                for (ConnectionInfoBean bean : myCopy) {
+                    closePeerConnection(bean.getSocketId());
                 }
-                captureAndroid.dispose();
-                captureAndroid = null;
-            }
+                if (_connectionIdArray != null) {
+                    _connectionIdArray.clear();
+                }
+                if (audioSource != null) {
+                    audioSource.dispose();
+                    audioSource = null;
+                }
 
-            if (surfaceTextureHelper != null) {
-                surfaceTextureHelper.dispose();
-                surfaceTextureHelper = null;
-            }
+                if (videoSource != null) {
+                    videoSource.dispose();
+                    videoSource = null;
+                }
+
+                if (captureAndroid != null) {
+                    try {
+                        captureAndroid.stopCapture();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    captureAndroid.dispose();
+                    captureAndroid = null;
+                }
+
+                if (surfaceTextureHelper != null) {
+                    surfaceTextureHelper.dispose();
+                    surfaceTextureHelper = null;
+                }
 
 
-            if (_factory != null) {
-                _factory.dispose();
-                _factory = null;
-            }
+                if (_factory != null) {
+                    _factory.dispose();
+                    _factory = null;
+                }
 
-            if (_webSocket != null) {
-                _webSocket.close();
-                _webSocket = null;
+                if (_webSocket != null) {
+                    _webSocket.close();
+                    _webSocket = null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
 
@@ -483,6 +502,16 @@ public class PeerConnectionHelper {
     private class Peer implements SdpObserver, PeerConnection.Observer {
         private PeerConnection pc;
         private String socketId;
+        private String userName;
+        private String headUrl;
+
+        public Peer(String socketId, String userName, String headUrl) {
+            this.pc = createPeerConnection();
+            this.socketId = socketId;
+            this.userName = userName;
+            this.headUrl = headUrl;
+
+        }
 
         public Peer(String socketId) {
             this.pc = createPeerConnection();
@@ -534,7 +563,7 @@ public class PeerConnectionHelper {
         @Override
         public void onAddStream(MediaStream mediaStream) {
             if (viewCallback != null) {
-                viewCallback.onAddRemoteStream(mediaStream, socketId);
+                viewCallback.onAddRemoteStream(mediaStream, socketId, userName, headUrl);
             }
         }
 

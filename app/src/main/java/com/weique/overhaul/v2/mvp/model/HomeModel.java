@@ -9,9 +9,12 @@ import com.jess.arms.mvp.BaseModel;
 import com.weique.overhaul.v2.app.utils.SignUtil;
 import com.weique.overhaul.v2.mvp.contract.HomeContract;
 import com.weique.overhaul.v2.mvp.model.api.service.AddressLookService;
+import com.weique.overhaul.v2.mvp.model.api.service.EventsReportedService;
+import com.weique.overhaul.v2.mvp.model.api.service.InformationService;
 import com.weique.overhaul.v2.mvp.model.api.service.MainService;
 import com.weique.overhaul.v2.mvp.model.entity.AnnouncementListBean;
 import com.weique.overhaul.v2.mvp.model.entity.BaseBean;
+import com.weique.overhaul.v2.mvp.model.entity.GridInformationBean;
 import com.weique.overhaul.v2.mvp.model.entity.HomeMenuItemBean;
 import com.weique.overhaul.v2.mvp.model.entity.SigninStatusBean;
 
@@ -45,10 +48,10 @@ public class HomeModel extends BaseModel implements HomeContract.Model {
     }
 
     @Override
-    public Observable<BaseBean<ArrayList<HomeMenuItemBean>>> getHomeModuleLabel() {
+    public Observable<BaseBean<ArrayList<HomeMenuItemBean>>> getHomeModuleLabel(String url) {
         return mRepositoryManager
                 .obtainRetrofitService(MainService.class)
-                .getHomeModuleLabel(SignUtil.paramSign(null));
+                .getHomeModuleLabel(url, SignUtil.paramSign(null));
     }
 
     @Override
@@ -71,5 +74,15 @@ public class HomeModel extends BaseModel implements HomeContract.Model {
         return mRepositoryManager
                 .obtainRetrofitService(AddressLookService.class)
                 .getIsMyCheck(SignUtil.paramSign(null));
+    }
+
+    @Override
+    public Observable<BaseBean<GridInformationBean>> gridOperatorInformation() {
+        return mRepositoryManager.obtainRetrofitService(InformationService.class).getDepartment(SignUtil.paramSign(null));
+    }
+
+    @Override
+    public Observable<BaseBean<Boolean>> getIsInGrid() {
+        return mRepositoryManager.obtainRetrofitService(EventsReportedService.class).getIsInGrid(SignUtil.paramSign(null));
     }
 }

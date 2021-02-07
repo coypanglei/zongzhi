@@ -58,9 +58,11 @@ public class EventsReportedSortModel extends BaseModel implements EventsReported
      * @return Observable
      */
     @Override
-    public Observable<BaseBean<EventsReportedSortBean>> getEvents(String typeId) {
+    public Observable<BaseBean<EventsReportedSortBean>> getEvents(String typeId, String keyword, int limit) {
         Map<String, Object> map = new HashMap<>(8);
         map.put("TypeId", typeId);
+        map.put("Keyword", keyword);
+        map.put("IsArgent", limit);
         return mRepositoryManager.obtainRetrofitService(EventsReportedService.class).getEventFormType(SignUtil.paramSign(map));
     }
 }

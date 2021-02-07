@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
-import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.mvp.model.entity.interfaces.SearchShowListBean;
 import com.weique.overhaul.v2.mvp.ui.adapter.SearchShowListAdapter;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
@@ -66,9 +65,6 @@ public class SearchShowToListDialog<T extends SearchShowListBean> extends Dialog
         try {
             if (mAdapter != null) {
                 mAdapter.setOnItemClickListener((adapter, view, position) -> {
-                    if (AppUtils.isFastClick()) {
-                        return;
-                    }
                     listener.onItemClick(adapter, view, position);
                     dismiss();
                 });

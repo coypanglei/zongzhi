@@ -44,6 +44,6 @@ public interface AddressLookListSearchContract {
 
         Observable<BaseBean<AddressBookListBean>> getAllAddressBookListData(int pageSize, int ignoreNumber, String name);
 
-        Observable<BaseBean<String>> setChatList(int pageSize, int ignoreNumber, List<String> list, String roomId);
+        Observable<BaseBean<String>> setChatList(int pageSize, int ignoreNumber, List<String> list, String roomId, boolean videoEnable);
     }
 }

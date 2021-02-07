@@ -26,7 +26,11 @@ public class ARouerConstant {
      * 主键
      */
     public static final String ID = "ID";
-   /**
+    /**
+     * 接口
+     */
+    public static final String PORT = "PORT";
+    /**
      * 主键
      */
     public static final String ID2 = "ID2";

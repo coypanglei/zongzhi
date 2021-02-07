@@ -521,11 +521,11 @@ public class EnforceLawLawDetailActivity extends BaseActivity<EnforceLawLawDetai
                 NameAndIdBean bean = (NameAndIdBean) adapter.getItem(position);
                 if (bean != null) {
                     tv.setText(bean.getName());
-//                    if (tv.getId() == R.id.transaction_p) {
-//                        tv.setTag(bean.getId2());
-//                    } else {
+                    if (tv.getId() == R.id.transaction_p) {
+                        tv.setTag(bean.getId2());
+                    } else {
                         tv.setTag(bean.getId());
-//                    }
+                    }
                 }
                 commonRecyclerPopupWindow.dismiss();
             });

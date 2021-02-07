@@ -22,7 +22,6 @@ import com.weique.overhaul.v2.mvp.contract.HomeContract;
 import com.weique.overhaul.v2.mvp.model.entity.AnnouncementListBean;
 import com.weique.overhaul.v2.mvp.model.entity.HomeMenuItemBean;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonDialog;
-import com.weique.overhaul.v2.mvp.ui.popupwindow.PrefectureScreenPopup;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -54,24 +53,24 @@ public class HomePresenter extends ReworkBasePresenter<HomeContract.Model, HomeC
     @Inject
     IRepositoryManager iRepositoryManager;
 
-    public static final int MAX_ITEM_NUMBER = 9;
-    private PrefectureScreenPopup screenPopup;
+    public static final int MAX_ITEM_NUMBER = 1000;
 
     @Inject
     public HomePresenter(HomeContract.Model model, HomeContract.View rootView) {
         super(model, rootView);
     }
 
-    public void getHomeModuleLabel() {
-        commonGetData(mModel.getHomeModuleLabel(), mErrorHandler, homeMenuItemBeans -> {
+    public void getHomeModuleLabel(String url) {
+        commonGetData(mModel.getHomeModuleLabel(url), mErrorHandler, homeMenuItemBeans -> {
             try {
                 if (homeMenuItemBeans == null || homeMenuItemBeans.size() <= 0) {
+                    mRootView.setMenuData(null, null, null, url);
                     return;
                 }
                 List<HomeMenuItemBean> newItems = null;
                 List<Boolean> booleans = null;
                 //临时
-                ArrayList<HomeMenuItemBean> tempItems = new ArrayList<>();
+                List<HomeMenuItemBean> tempItems = new ArrayList<>();
                 tempItems.addAll(homeMenuItemBeans);
                 Iterator<HomeMenuItemBean> iterator = tempItems.iterator();
                 while (iterator.hasNext()) {
@@ -111,7 +110,7 @@ public class HomePresenter extends ReworkBasePresenter<HomeContract.Model, HomeC
                         }
                     }
                 }
-                mRootView.setMenuData(tempItems, newItems, booleans);
+                mRootView.setMenuData(tempItems, newItems, booleans, url);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -207,4 +206,23 @@ public class HomePresenter extends ReworkBasePresenter<HomeContract.Model, HomeC
     }
 
 
+    public void gridOperatorInformation() {
+        commonGetData(mModel.gridOperatorInformation(), mErrorHandler, gridInformationBean -> {
+            try {
+                if (gridInformationBean != null && StringUtil.isNotNullString(gridInformationBean.getPointsInJSON())) {
+                    mRootView.getGridInfoSuccess(gridInformationBean.getPointsInJSON());
+                } else {
+                    ArmsUtils.makeText("获取用户网格信息失败");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void getIsInGrid() {
+        commonGetData(mModel.getIsInGrid(), mErrorHandler, o -> {
+            mRootView.setAddressCanChanged(o);
+        });
+    }
 }

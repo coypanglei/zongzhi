@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,7 +29,6 @@ import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.utils.ArmsUtils;
-import com.lxj.xpopup.XPopup;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.common.ARouerConstant;
 import com.weique.overhaul.v2.app.common.EventBusConstant;
@@ -40,6 +40,7 @@ import com.weique.overhaul.v2.app.utils.StringUtil;
 import com.weique.overhaul.v2.app.utils.UserInfoUtil;
 import com.weique.overhaul.v2.di.component.DaggerInformationTypeSecondComponent;
 import com.weique.overhaul.v2.mvp.contract.InformationTypeSecondContract;
+import com.weique.overhaul.v2.mvp.model.SearchProjectBean;
 import com.weique.overhaul.v2.mvp.model.entity.BaseSearchPopupBean;
 import com.weique.overhaul.v2.mvp.model.entity.BasicInformationBean;
 import com.weique.overhaul.v2.mvp.model.entity.CommonCollectBean;
@@ -51,6 +52,7 @@ import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
 import com.weique.overhaul.v2.mvp.model.entity.event.EventBusBean;
 import com.weique.overhaul.v2.mvp.presenter.InformationTypeSecondPresenter;
 import com.weique.overhaul.v2.mvp.ui.adapter.InformationTypeSecondAdapter;
+import com.weique.overhaul.v2.mvp.ui.popupwindow.CommonTreeListPopup;
 import com.weique.overhaul.v2.mvp.ui.popupwindow.SearchPopup;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
@@ -189,6 +191,11 @@ public class InformationTypeSecondActivity extends BaseActivity<InformationTypeS
     private int firstOne = 1;
     private int mCount;
 
+    private CommonTreeListPopup<SearchProjectBean.DepartmentsBean> popup;
+    private SearchProjectBean.DepartmentsBean defaultDepartmentBean;
+    private SearchProjectBean.DepartmentsBean selectedObject;
+
+
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
         DaggerInformationTypeSecondComponent
@@ -216,18 +223,23 @@ public class InformationTypeSecondActivity extends BaseActivity<InformationTypeS
             if (RouterHub.APP_MAINACTIVITY_HOMEFRAGMENT_TASKLISTHOMEFRAGMENT.equals(source)) {
                 add.setVisibility(View.GONE);
             }
-            if (UserInfoUtil.getUserInfo().getEnumCommunityLevel() <= StandardAddressStairBean.GRIDDING) {
-                departmentId = UserInfoUtil.getUserInfo().getDepartmentId();
-                departmentId = UserInfoUtil.getUserInfo().getDepartmentId();
-                departmentName = UserInfoUtil.getUserInfo().getDepartmentName();
-                selectGrid.setText(StringUtil.setText(departmentName));
-                mPresenter.getGridResource(true, false, departmentId,
-                        standardAddressId, elementTypeId, mKeyWord, addMap, source);
-            } else {
-                isFirstGetGrid = true;
-                clickItem = GRID;
-                mPresenter.getGridList(true, false, "");
-            }
+            //当前用户的区域对象
+            defaultDepartmentBean = new SearchProjectBean.DepartmentsBean();
+            defaultDepartmentBean.setLevel(StandardAddressStairBean.AREA);
+            defaultDepartmentBean.setEnumCommunityLevel(UserInfoUtil.getUserInfo().getEnumCommunityLevel());
+            defaultDepartmentBean.setLeaf(true);
+            defaultDepartmentBean.setId(UserInfoUtil.getUserInfo().getDepartmentId());
+            defaultDepartmentBean.setFullPath(UserInfoUtil.getUserInfo().getFullPath());
+            defaultDepartmentBean.setName(UserInfoUtil.getUserInfo().getDepartmentName() + "(默认)");
+            selectedObject = defaultDepartmentBean;
+            selectGrid.setText(defaultDepartmentBean.getName());
+            selectGrid.setTag(defaultDepartmentBean.getId());
+            departmentId = defaultDepartmentBean.getId();
+            departmentName = defaultDepartmentBean.getName();
+            mPresenter.getGridResource(true, false, departmentId,
+                    standardAddressId, elementTypeId, mKeyWord, addMap, source);
+            isFirstGetGrid = true;
+            clickItem = GRID;
             searchEt.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -306,7 +318,7 @@ public class InformationTypeSecondActivity extends BaseActivity<InformationTypeS
         try {
             swipeRefreshLayout.setOnRefreshListener(() -> {
                 try {
-                    addMap = new HashMap<>();
+                    addMap.clear();
                     mPresenter.getGridResource(true, false,
                             departmentId, standardAddressId, elementTypeId, mKeyWord, addMap, source);
                 } catch (Exception e) {
@@ -418,12 +430,16 @@ public class InformationTypeSecondActivity extends BaseActivity<InformationTypeS
             }
             switch (view.getId()) {
                 case R.id.add:
+                    if (selectedObject.getEnumCommunityLevel() > StandardAddressStairBean.GRIDDING) {
+                        ArmsUtils.makeText("区域选择到网格,才可以添加数据");
+                        return;
+                    }
                     mPresenter.getGetNewGuidForApp();
                     break;
                 case R.id.select_grid_layout:
                     isFirstGetGrid = false;
                     clickItem = GRID;
-                    mPresenter.getGridList(true, false, "");
+                    getDepartments(true, false, "", "", false);
                     break;
                 case R.id.select_tier_layout:
                     isFirstGetGrid = false;
@@ -435,21 +451,19 @@ public class InformationTypeSecondActivity extends BaseActivity<InformationTypeS
                 case R.id.right_btn:
 
                     try {
-                        SearchDialogPopup dialogPopup = new SearchDialogPopup(this, bean);
-                        dialogPopup.setConfirmBtnClick((map, list) -> {
+                        SearchDialogFragment dialogFragment = SearchDialogFragment.newInstance(bean);
+                        dialogFragment.setConfirmBtnClick((map, list) -> {
                             addMap = map;
+                            /*
+                              当前选中的数据的集合
+                             */
                             bean.setList(list);
                             mPresenter.getGridResource(true, false,
                                     departmentId, standardAddressId,
                                     elementTypeId, mKeyWord, addMap, source);
                         });
-                        new XPopup.Builder(getContext())
-                                .moveUpToKeyboard(false)
-                                .enableDrag(false)
-                                .isDestroyOnDismiss(true)
-//                        .isThreeDrag(true)
-                                .asCustom(dialogPopup)
-                                .show();
+                        dialogFragment.setGravity(Gravity.BOTTOM);
+                        dialogFragment.show(getSupportFragmentManager());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -461,6 +475,11 @@ public class InformationTypeSecondActivity extends BaseActivity<InformationTypeS
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void getDepartments(boolean pullToRefresh, boolean isLoadMore, String s, String id, boolean addChild) {
+//        mPresenter.getGridList(pullToRefresh, isLoadMore, s);
+        mPresenter.getDepartments(id, addChild);
     }
 
     @Override
@@ -607,6 +626,7 @@ public class InformationTypeSecondActivity extends BaseActivity<InformationTypeS
                     .withString(InformationDynamicFormCrudActivity.STANDARD_ADDRESS_ID, standardAddressId)
                     .withParcelable(InformationDynamicFormCrudActivity.INFORMATIONDETAILBEAN, bean)
                     .withString(ARouerConstant.SOURCE, RouterHub.APP_INFORMATIONTYPESECONDACTIVITY)
+                    .withParcelable(ARouerConstant.DATA_BEAN, selectedObject)
                     .navigation();
         } catch (Exception e) {
             e.printStackTrace();
@@ -645,7 +665,7 @@ public class InformationTypeSecondActivity extends BaseActivity<InformationTypeS
                             try {
                                 switch (clickItem) {
                                     case GRID:
-                                        mPresenter.getGridList(true, false, keyword);
+                                        getDepartments(true, false, keyword, "", false);
                                         break;
                                     case STANDARD_ADDRESS:
                                         mPresenter.getStandardAddressByGridId(true, false,
@@ -663,7 +683,7 @@ public class InformationTypeSecondActivity extends BaseActivity<InformationTypeS
                             try {
                                 switch (clickItem) {
                                     case GRID:
-                                        mPresenter.getGridList(false, true, keyword);
+                                        getDepartments(false, true, keyword, "", false);
                                         break;
                                     case STANDARD_ADDRESS:
                                         mPresenter.getStandardAddressByGridId(false,
@@ -729,6 +749,62 @@ public class InformationTypeSecondActivity extends BaseActivity<InformationTypeS
                     ArmsUtils.makeText("未获取到您需要的信息");
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void showTreePopup(List<SearchProjectBean.DepartmentsBean> departmentsBeans, boolean addChild) {
+        try {
+            if (departmentsBeans == null || departmentsBeans.size() <= 0) {
+                ArmsUtils.makeText("未查询到相关信息");
+                return;
+            }
+            for (SearchProjectBean.DepartmentsBean bean : departmentsBeans) {
+                bean.setLeaf(bean.getEnumCommunityLevel() == StandardAddressStairBean.GRIDDING);
+            }
+
+            if (popup == null) {
+                popup = new CommonTreeListPopup<>(this, true);
+                popup.setListener(new CommonTreeListPopup.CommonTreeListPopupListener<SearchProjectBean.DepartmentsBean>() {
+                    @Override
+                    public void onItemClickGetSubset(String elementId) {
+                        getDepartments(true, false, "", elementId, true);
+                    }
+
+                    @Override
+                    public void onItemClickInput(SearchProjectBean.DepartmentsBean da) {
+                        selectGrid.setText(da.getName());
+                        selectGrid.setTag(da.getId());
+                        departmentId = da.getId();
+                        selectedObject = da;
+                        popup.dismiss();
+                        mPresenter.getGridResource(true, false, departmentId,
+                                standardAddressId, elementTypeId, mKeyWord, addMap, source);
+                    }
+
+                    @Override
+                    public void onSearchByKeyword(String keyWord) {
+//                        mKeyWord = keyWord;
+                    }
+
+                    @Override
+                    public void onLoadMore() {
+
+                    }
+                });
+            }
+            if (addChild) {
+                popup.setDataTree(departmentsBeans);
+            } else {
+                departmentsBeans.add(0, defaultDepartmentBean);
+                popup.setData(departmentsBeans, false);
+            }
+            if (!popup.isShowing()) {
+                popup.showPopupWindow();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -16,9 +16,11 @@ public class CommonRecyclerPopupAdapter<T extends NameAndIdInterface> extends Ba
 
     private List<Boolean> list;
 
+
     public CommonRecyclerPopupAdapter() {
         super(R.layout.popup_common_recycler);
     }
+
 
     @Override
     public void setNewData(@Nullable List<T> data) {
@@ -45,6 +47,11 @@ public class CommonRecyclerPopupAdapter<T extends NameAndIdInterface> extends Ba
         notifyItemChanged(pos);
     }
 
+    /**
+     * getListByPosList
+     *
+     * @return List
+     */
     public List<T> getListByPosList() {
         List<T> nameAndIdBeans = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
@@ -61,7 +68,6 @@ public class CommonRecyclerPopupAdapter<T extends NameAndIdInterface> extends Ba
             int adapterPosition = helper.getAdapterPosition();
             helper.addOnClickListener(R.id.name);
             helper.setText(R.id.name, item.getName());
-            helper.setTag(R.id.name, item.getId());
             if (list != null && list.size() > 0) {
                 if (list.get(adapterPosition)) {
                     helper.setTextColor(R.id.name, ArmsUtils.getColor(mContext, R.color.blue_5a93f7));

@@ -42,7 +42,7 @@ public class IntegratedWithRcAdapter extends BaseQuickAdapter<IntegratedWithItem
             helper.setText(R.id.label, StringUtil.setText(item.getLabel()));
             RecyclerView recyclerView = helper.getView(R.id.item_label);
             ArmsUtils.configRecyclerView(recyclerView,new GridLayoutManager(mContext, 5));
-            recyclerView.setAdapter(new HomeMenuGridAdapter(R.layout.home_grid_item, item.getHomeMenuItemBeans()));
+            recyclerView.setAdapter(new HomeMenuAdapter(R.layout.home_grid_item, item.getHomeMenuItemBeans()));
         } catch (Exception e) {
             e.printStackTrace();
         }

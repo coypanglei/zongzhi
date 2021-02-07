@@ -13,8 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.example.speechrecognition.utils.ControlViewUtils;
+import com.example.speechrecognition.view.RecordClickPopupWindow;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.common.RouterHub;
@@ -27,7 +28,7 @@ import com.weique.overhaul.v2.mvp.ui.activity.information.PictureLookActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 
 /**
  * 信息采集动态 添加  修改界面
@@ -39,6 +40,9 @@ public class NarrowDynamicFormAdapter extends BaseMultiItemQuickAdapter<Informat
     private final Gson gson;
 
     private MergeOrmFormClickListener mergeOrmFormClickListener;
+
+    private RecordClickPopupWindow recordPopup;
+
 
     /**
      * 同步映射表单 文本长度变化 监听
@@ -137,14 +141,14 @@ public class NarrowDynamicFormAdapter extends BaseMultiItemQuickAdapter<Informat
     protected void convert(@NonNull BaseViewHolder helper, InformationDynamicFormSelectBean.StructureInJsonBean item) {
         try {
             int adapterPosition = helper.getAdapterPosition();
-            List<String> arrayList = new ArrayList<>();
+            ArrayList<String> arrayList = new ArrayList<>();
             EditText editText;
             ArrayList<InformationItemPictureBean> list = new ArrayList<>();
             switch (helper.getItemViewType()) {
                 case InformationDynamicFormSelectBean.SingleLineN:
                     initEditText(helper, item);
                     break;
-               case InformationDynamicFormSelectBean.AutographN:
+                case InformationDynamicFormSelectBean.AutographN:
                     initEditText(helper, item);
                     break;
                 case InformationDynamicFormSelectBean.MultiLineN:
@@ -182,8 +186,7 @@ public class NarrowDynamicFormAdapter extends BaseMultiItemQuickAdapter<Informat
                             replaceString = item.getDefaultVal().replace("\\", "");
                         }
                         if (item.getDefaultVal().contains("[")) {
-                            arrayList = gson.fromJson(replaceString, new TypeToken<List<String>>() {
-                            }.getType());
+                            arrayList = gson.fromJson(replaceString, ArrayList.class);
                         } else {
                             if (replaceString.contains("\"")) {
                                 arrayList.add(gson.fromJson(replaceString, String.class));
@@ -213,8 +216,7 @@ public class NarrowDynamicFormAdapter extends BaseMultiItemQuickAdapter<Informat
                             replaceString = item.getDefaultVal().replace("\\", "");
                         }
                         if (item.getDefaultVal().contains("[")) {
-                            arrayList = gson.fromJson(replaceString,new TypeToken<List<String>>() {
-                            }.getType());
+                            arrayList = gson.fromJson(replaceString, ArrayList.class);
                         } else {
                             if (replaceString.contains("\"")) {
                                 arrayList.add(gson.fromJson(replaceString, String.class));
@@ -247,8 +249,7 @@ public class NarrowDynamicFormAdapter extends BaseMultiItemQuickAdapter<Informat
                             replaceString = item.getDefaultVal().replace("\\", "");
                         }
                         if (item.getDefaultVal().contains("[")) {
-                            arrayList = gson.fromJson(replaceString, new TypeToken<List<String>>() {
-                            }.getType());
+                            arrayList = gson.fromJson(replaceString, ArrayList.class);
                         } else {
                             if (replaceString.contains("\"")) {
                                 arrayList.add(gson.fromJson(replaceString, String.class));
@@ -279,6 +280,7 @@ public class NarrowDynamicFormAdapter extends BaseMultiItemQuickAdapter<Informat
     private void initEditText(@NonNull BaseViewHolder helper,
                               InformationDynamicFormSelectBean.StructureInJsonBean item) {
         try {
+
             helper.setVisible(R.id.must, item.isIsRequired());
             helper.setText(R.id.key, StringUtil.setText(item.getName()));
             EditText editText = helper.getView(R.id.value_et);
@@ -324,6 +326,26 @@ public class NarrowDynamicFormAdapter extends BaseMultiItemQuickAdapter<Informat
             } else {
                 searchBtn.setVisibility(View.GONE);
             }
+            ControlViewUtils.setClick(editText, new ControlViewUtils.RecorePopupClickInterface() {
+                @Override
+                public void onRecordCreate() {
+                    if (recordPopup == null) {
+                        recordPopup = new RecordClickPopupWindow(mContext);
+                    }
+                    recordPopup.setEditText(editText, new RecordClickPopupWindow.RecorePopupListener() {
+                        @Override
+                        public void onRecordCreate(String str) {
+                            ControlViewUtils.setEditText(editText, str);
+                            recordPopup.clearContent(str);
+                        }
+                    });
+                    if (!recordPopup.isShowing()) {
+                        recordPopup.showPopupWindow();
+                    }
+                }
+
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }

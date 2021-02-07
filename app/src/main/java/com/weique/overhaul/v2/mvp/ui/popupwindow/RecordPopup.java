@@ -36,7 +36,7 @@ public class RecordPopup extends BasePopupWindow {
     private ImageView recordBtn;
     private TimerTask timeTask;
     private Timer timeTimer = new Timer(true);
-    int countdown =0;
+    int countdown = 0;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -165,35 +165,28 @@ public class RecordPopup extends BasePopupWindow {
     }
 
     public void stopRecording() {
-        if (recordview != null) {
-            recordview.cancel();
-            //倒计时取消,handle 内存泄漏
-            timeTask.cancel();
-        }
-
-        if (mRecorder != null) {
-            mRecorder.setOnErrorListener(null);
-            mRecorder.setOnInfoListener(null);
-            mRecorder.setPreviewDisplay(null);
-            try {
-
-
-                    mRecorder.stop();
-                    mRecorder.release();
-                    mRecorder = null;
-
-            } catch (IllegalStateException e) {
-                Log.e("IllegalStateException", e.getMessage() + "");
-            } catch (RuntimeException e) {
-                Log.e("RuntimeException", e.getMessage() + "");
-            }catch (Exception e){
-                Log.e("Exception", e.getMessage() + "");
-            }finally {
+        try {
+            if (recordview != null) {
+                recordview.cancel();
+                //倒计时取消,handle 内存泄漏
+                timeTask.cancel();
+            }
+            if (mRecorder != null) {
+                mRecorder.setOnErrorListener(null);
+                mRecorder.setOnInfoListener(null);
+                mRecorder.setPreviewDisplay(null);
+                mRecorder.stop();
                 mRecorder.release();
                 mRecorder = null;
             }
-
+        } catch (IllegalStateException e) {
+            Log.e("IllegalStateException", e.getMessage() + "");
+        } catch (RuntimeException e) {
+            Log.e("RuntimeException", e.getMessage() + "");
+        } catch (Exception e) {
+            Log.e("Exception", e.getMessage() + "");
         }
+
     }
 
     @Override

@@ -34,7 +34,6 @@ import com.jess.arms.integration.lifecycle.ActivityLifecycleable;
 import com.jess.arms.mvp.IPresenter;
 import com.jess.arms.utils.ArmsUtils;
 import com.jess.arms.utils.LoadingDialog;
-import com.lxj.xpopup.impl.LoadingPopupView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import javax.inject.Inject;
@@ -60,7 +59,6 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     @Nullable
     protected P mPresenter;//如果当前页面逻辑简单, Presenter 可以为 null
     private LoadingDialog instance;
-    private LoadingPopupView loadingPopupView;
 
     @NonNull
     @Override
@@ -104,7 +102,6 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     protected void onDestroy() {
         super.onDestroy();
         if (mUnbinder != null && mUnbinder != Unbinder.EMPTY)
-            mUnbinder.unbind();
         this.mUnbinder = null;
         if (mPresenter != null)
             mPresenter.onDestroy();//释放资源
@@ -138,12 +135,6 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
 
 
     protected void showProgressDialogContCanCancel() {
-        /*loadingPopupView = new XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .asLoading("加载中...");
-        loadingPopupView.show();*/
         if (instance == null) {
             instance = new LoadingDialog.Builder(this, false).create();
         }
@@ -153,10 +144,6 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     }
 
     protected void showProgressDialog() {
-        /*loadingPopupView = new XPopup.Builder(this)
-                .isDestroyOnDismiss(true)
-                .asLoading("加载中...");
-        loadingPopupView.show();*/
         if (instance == null) {
             instance = new LoadingDialog.Builder(this, true).create();
         }
@@ -166,9 +153,6 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     }
 
     protected void hideProgressDialog() {
-        /*if (loadingPopupView != null && loadingPopupView.isShow()) {
-            loadingPopupView.dismiss();
-        }*/
         if (instance != null && instance.isShowing()) {
             instance.dismiss();
         }

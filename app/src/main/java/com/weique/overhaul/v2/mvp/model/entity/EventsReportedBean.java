@@ -26,7 +26,6 @@ public class EventsReportedBean {
      * list : [{"EventRecordId":"1fbe1ed0-e003-4206-ab06-5e86eb257aaa","EventFormTypeId":"b5ad8951-e125-463a-91d7-0acc1d2f92c3","Title":"路灯坏了，瞎黑","Name":"路灯损坏","Time":"2019-12-17","Status":"待处理","EnumEventProceedStatus":0}]
      */
 
-
     private int pageCount;
     private List<ListBean> list;
 
@@ -48,43 +47,6 @@ public class EventsReportedBean {
 
     public static class ListBean implements Parcelable {
 
-
-        /**
-         * 暂存
-         */
-        public static final String TS_S = "暂存";
-        /**
-         * 核查
-         */
-        public static final String AUDIT_S = "审核";
-        /**
-         * 办理
-         */
-        public static final String TRANSACTION_S = "办理";
-        /**
-         * 完成
-         */
-        public static final String COMPLETE_S = "完成";
-        /**
-         * 评价
-         */
-        public static final String EVALUATE_S = "评价";
-        /**
-         * 归档
-         */
-        public static final String ARCHIVE_S = "归档";
-        /**
-         * 退回
-         */
-        public static final String SENDBACK_S = "退回";
-        /**
-         * 作废
-         */
-        public static final String INVALID_S = "作废";
-
-
-        public static final String[] stausArray = {TS_S, AUDIT_S, TRANSACTION_S, COMPLETE_S, EVALUATE_S, ARCHIVE_S, SENDBACK_S, INVALID_S
-        };
         //public static final String[] stausArray1 = {"暂存", "核查上报", "正在处理", "处理完毕", "评价", "归档", "退回"};
         private String EventRecordId;
         private String CustId;
@@ -203,47 +165,90 @@ public class EventsReportedBean {
             dest.writeByte((byte) (IsJoint ? 1 : 0));
         }
 
-        //用 @IntDef "包住" 常量；
-        // @Retention 定义策略
-        // 声明构造器
-        @IntDef({EventsReportedEnumBean.TS, EventsReportedEnumBean.AUDIT,
-                EventsReportedEnumBean.TRANSACTION, EventsReportedEnumBean.INVALID,
-                EventsReportedEnumBean.COMPLETE, EventsReportedEnumBean.EVALUATE,
-                EventsReportedEnumBean.ARCHIVE, EventsReportedEnumBean.SENDBACK})
+        /**
+         * 同意协同
+         */
+        public static final int SYNCHRONIZE = 100;
+        /**
+         * 决绝协同
+         */
+        public static final int REFUSED = 101;
+
+
+        public static final String[] EVENTS_REPORTED_ENUM_TEXT = {"暂存", "立案", "待受理", "已受理"
+                , "正在处置", "处置完毕", "等待核查", "核查通过", "核查退回", "等待评价", "评价归档"
+                , "退回", "作废", "撤回", "移交处置"};
+
+        @IntDef({EventsReportedEnumNewBean.TS, EventsReportedEnumNewBean.PUT_ON_RECORD,
+                EventsReportedEnumNewBean.STAY_ACCEPT, EventsReportedEnumNewBean.ALREADY_ACCEPT,
+                EventsReportedEnumNewBean.IN_DISPOSE, EventsReportedEnumNewBean.DISPOSE_END,
+                EventsReportedEnumNewBean.WAIT_INSPECT, EventsReportedEnumNewBean.INSPECT_SUCCESS,
+                EventsReportedEnumNewBean.INSPECT_FAIL, EventsReportedEnumNewBean.WAIT_EVALUATE,
+                EventsReportedEnumNewBean.EVALUATE, EventsReportedEnumNewBean.EXIT,
+                EventsReportedEnumNewBean.CAN, EventsReportedEnumNewBean.RECALL,
+                EventsReportedEnumNewBean.TURN_OVER_DISPOSE})
         @Retention(RetentionPolicy.SOURCE)
-        public @interface EventsReportedEnumBean {
+        public @interface EventsReportedEnumNewBean {
             /**
              * 暂存
              */
             int TS = -1;
             /**
-             * 核查
+             * 立案
              */
-            int AUDIT = 0;
+            int PUT_ON_RECORD = 0;
             /**
-             * 办理
+             * 待受理
              */
-            int TRANSACTION = 1;
+            int STAY_ACCEPT = 1;
             /**
-             * 完成
+             * 已受理
              */
-            int COMPLETE = 2;
+            int ALREADY_ACCEPT = 2;
             /**
-             * 评价
+             * 处置中
              */
-            int EVALUATE = 3;
+            int IN_DISPOSE = 3;
             /**
-             * 归档
+             * 处置完毕
              */
-            int ARCHIVE = 4;
+            int DISPOSE_END = 4;
+            /**
+             * 等待核查
+             */
+            int WAIT_INSPECT = 5;
+            /**
+             * 核查通过
+             */
+            int INSPECT_SUCCESS = 6;
+            /**
+             * 核查退回
+             */
+            int INSPECT_FAIL = 7;
+            /**
+             * 待评价
+             */
+            int WAIT_EVALUATE = 8;
+            /**
+             * 评价归档
+             */
+            int EVALUATE = 9;
             /**
              * 退回
              */
-            int SENDBACK = 5;
+            int EXIT = 10;
             /**
              * 作废
              */
-            int INVALID = 6;
+            int CAN = 11;
+            /**
+             * 撤回
+             */
+            int RECALL = 12;
+            /**
+             * 移交处置
+             */
+            int TURN_OVER_DISPOSE = 13;
 
         }
 
@@ -255,22 +260,20 @@ public class EventsReportedBean {
             EventProceedNodeId = nodeId;
         }
 
-        public String getCurrentIndexString(int currentIndex) {
+        public static String getCurrentIndexString(int currentIndex) {
             //找补  暂存状态 和 下标加的1
-            if (currentIndex == EventsReportedEnumBean.SENDBACK) {
-                return "已" + stausArray[currentIndex + 1];
-            } else if (currentIndex == EventsReportedEnumBean.INVALID) {
-                return "已" + stausArray[currentIndex + 1];
-            } else if (currentIndex == EventsReportedEnumBean.ARCHIVE) {
-                return "已" + stausArray[currentIndex + 1];
-            } else if (currentIndex == EventsReportedEnumBean.TRANSACTION) {
-                return "办理中";
-            } else if (currentIndex == EventsReportedEnumBean.COMPLETE) {
-                return "待" + stausArray[currentIndex + 2];
-            } else if (currentIndex == EventsReportedEnumBean.TS) {
-                return stausArray[currentIndex + 1];
+            if (currentIndex == EventsReportedEnumNewBean.EXIT) {
+                return "已" + EVENTS_REPORTED_ENUM_TEXT[currentIndex + 1];
+            } else if (currentIndex == EventsReportedEnumNewBean.CAN) {
+                return "已" + EVENTS_REPORTED_ENUM_TEXT[currentIndex + 1];
+            } else if (currentIndex == EventsReportedEnumNewBean.EVALUATE) {
+                return "已" + EVENTS_REPORTED_ENUM_TEXT[currentIndex + 1];
+            } else if (currentIndex == EventsReportedEnumNewBean.IN_DISPOSE) {
+                return EVENTS_REPORTED_ENUM_TEXT[currentIndex + 1];
+            } else if (currentIndex == EventsReportedEnumNewBean.TS) {
+                return EVENTS_REPORTED_ENUM_TEXT[currentIndex + 1];
             } else {
-                return stausArray[currentIndex + 2] + "中";
+                return EVENTS_REPORTED_ENUM_TEXT[currentIndex + 1];
             }
         }
 

@@ -68,8 +68,7 @@
                 android:background="@null"
                 android:ellipsize="end"
                 android:gravity="end|center_vertical"
-                android:maxLength="10"
-                android:singleLine="true"
+                android:maxLines="2"
                 android:textColor="@color/gray_999"
                 android:textSize="@dimen/sp_16"
                 tools:text="..." />

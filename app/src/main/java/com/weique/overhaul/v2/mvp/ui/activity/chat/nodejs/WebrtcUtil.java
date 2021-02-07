@@ -18,8 +18,6 @@ import com.weique.overhaul.v2.app.common.Constant;
  */
 public class WebrtcUtil {
 
-//    public static final String HOST = "121.40.168.83";
-
     // turn and stun
     private static MyIceServer[] iceServers = {
             new MyIceServer("stun:stun.l.google.com:19302"),
@@ -50,7 +48,7 @@ public class WebrtcUtil {
 //     private static String WSS = "ws://192.168.20.80:3000";
 
     // one to one
-    public static void callSingle(Activity activity, String wss, String roomId, boolean videoEnable) {
+    public static void callSingle(Activity activity, String wss, String roomId, boolean videoEnable, String name, String headUrl) {
 
         try {
             if (TextUtils.isEmpty(wss)) {
@@ -67,14 +65,14 @@ public class WebrtcUtil {
 
                 }
             });
-            WebRTCManager.getInstance().connect(videoEnable ? MediaType.TYPE_VIDEO : MediaType.TYPE_AUDIO, roomId);
+            WebRTCManager.getInstance().connect(videoEnable ? MediaType.TYPE_VIDEO : MediaType.TYPE_AUDIO, roomId, name, headUrl);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     // Videoconferencing
-    public static void call(Activity activity, String wss, String roomId) {
+    public static void call(Activity activity, String wss, String roomId, String name, String headUrl) {
         try {
             if (TextUtils.isEmpty(wss)) {
                 wss = Constant.CHAT_IP;
@@ -91,7 +89,34 @@ public class WebrtcUtil {
                     ArmsUtils.snackbarText(msg);
                 }
             });
-            WebRTCManager.getInstance().connect(MediaType.TYPE_MEETING, roomId);
+            WebRTCManager.getInstance().connect(MediaType.TYPE_MEETING, roomId, name, headUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Videoconferencing
+    public static void call(Activity activity, String wss, String roomId, boolean videoEnable, String name, String headUrl) {
+        try {
+            if (TextUtils.isEmpty(wss)) {
+                wss = Constant.CHAT_IP;
+            }
+            WebRTCManager.getInstance().init(wss, iceServers, new IConnectEvent() {
+                @Override
+                public void onSuccess() {
+                    ChatRoomActivity.openActivity(activity, videoEnable);
+                }
+
+                @Override
+                public void onFailed(String msg) {
+                    ArmsUtils.snackbarText(msg);
+                }
+            });
+            if (videoEnable) {
+                WebRTCManager.getInstance().connect(MediaType.TYPE_MEETING, roomId, name, headUrl);
+            } else {
+                WebRTCManager.getInstance().connect(MediaType.TYPE_AUDIO, roomId, name, headUrl);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

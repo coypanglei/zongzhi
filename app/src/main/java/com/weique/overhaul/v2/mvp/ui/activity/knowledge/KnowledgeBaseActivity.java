@@ -49,7 +49,6 @@ import butterknife.OnClick;
 import razerdp.basepopup.BasePopupWindow;
 
 import static com.jess.arms.utils.Preconditions.checkNotNull;
-import static razerdp.util.SimpleAnimationUtils.getTranslateVerticalAnimation;
 
 
 /**
@@ -262,8 +261,7 @@ public class KnowledgeBaseActivity extends BaseActivity<KnowledgeBasePresenter> 
                         Drawable drawable = ContextCompat.getDrawable(this, R.drawable.shangla_icon);
                         fenlei.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
 
-                        listPopup.setShowAnimation(getTranslateVerticalAnimation(-1f, 0f, 500))
-                                .setDismissAnimation(getTranslateVerticalAnimation(0f, -1f, 500)).showPopupWindow(layout);
+                        listPopup.showPopupWindow(layout);
 
                         listPopup.setOnDismissListener(new BasePopupWindow.OnDismissListener() {
                             @Override
@@ -285,8 +283,7 @@ public class KnowledgeBaseActivity extends BaseActivity<KnowledgeBasePresenter> 
                             knowledgePopup = new KnowledgePopup(this, LabelList);
                         }
 
-                        knowledgePopup.setShowAnimation(getTranslateVerticalAnimation(-1f, 0f, 500))
-                                .setDismissAnimation(getTranslateVerticalAnimation(0f, -1f, 500)).showPopupWindow(layout);
+                        knowledgePopup.showPopupWindow(layout);
 
                         knowledgePopup.setListItemClickListener(new KnowledgePopup.ListItemClickListener() {
                             @Override

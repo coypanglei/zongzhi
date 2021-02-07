@@ -46,7 +46,6 @@ import com.weique.overhaul.v2.di.component.DaggerEnforceLawLawAddComponent;
 import com.weique.overhaul.v2.mvp.contract.EnforceLawLawAddContract;
 import com.weique.overhaul.v2.mvp.model.entity.EventsReportedLookBean;
 import com.weique.overhaul.v2.mvp.model.entity.LocationAndName;
-import com.weique.overhaul.v2.mvp.model.entity.MatterBean;
 import com.weique.overhaul.v2.mvp.model.entity.MatterSecondBean;
 import com.weique.overhaul.v2.mvp.model.entity.NameAndIdBean;
 import com.weique.overhaul.v2.mvp.model.entity.PartiesBean;
@@ -197,7 +196,7 @@ public class EnforceLawLawAddActivity extends BaseActivity<EnforceLawLawAddPrese
 
     private CommonRecyclerPopupAdapter commonRecyclerPopupAdapter;
     private CommonRecyclerPopupWindow<NameAndIdBean> commonRecyclerPopupWindow;
-    private CommonTreeListPopup<MatterBean> popup;
+    private CommonTreeListPopup<MatterSecondBean> popup;
     private FileImageAndNameAdapter<UploadFileRsponseBean> mAdapter;
     private SearchShowToListDialog<PartiesBean> showToListDialog;
 
@@ -645,13 +644,13 @@ public class EnforceLawLawAddActivity extends BaseActivity<EnforceLawLawAddPrese
     }
 
     @Override
-    public void setMatterList(List<MatterBean> o, boolean isLoadMore) {
+    public void setMatterList(List<MatterSecondBean> o, boolean isLoadMore) {
         try {
-            for (MatterBean matterBean : o) {
+            for (MatterSecondBean matterBean : o) {
                 matterBean.setLeaf(matterBean.getChildrenCount() == 0);
             }
             if (popup == null) {
-                popup = new CommonTreeListPopup<MatterBean>(this);
+                popup = new CommonTreeListPopup(this);
                 popup.setListener(new CommonTreeListPopup.CommonTreeListPopupListener<MatterSecondBean>() {
                     @Override
                     public void onItemClickGetSubset(String elementId) {
@@ -723,19 +722,22 @@ public class EnforceLawLawAddActivity extends BaseActivity<EnforceLawLawAddPrese
             if (commonRecyclerPopupAdapter == null) {
                 commonRecyclerPopupAdapter = new CommonRecyclerPopupAdapter();
             }
-            commonRecyclerPopupWindow = new CommonRecyclerPopupWindow<>(this,
-                    commonRecyclerPopupAdapter, (adapter, view, position) -> {
-                        NameAndIdBean bean = (NameAndIdBean) adapter.getItem(position);
-                        if (bean != null) {
-                            tv.setText(bean.getName());
-    //                        if (tv.getId() == R.id.transaction_p) {
-    //                            tv.setTag(bean.getId2());
-    //                        } else {
-                                tv.setTag(bean.getId());
-    //                        }
+            commonRecyclerPopupWindow = new CommonRecyclerPopupWindow<NameAndIdBean>(this,
+                    commonRecyclerPopupAdapter, new BaseQuickAdapter.OnItemChildClickListener() {
+                @Override
+                public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                    NameAndIdBean bean = (NameAndIdBean) adapter.getItem(position);
+                    if (bean != null) {
+                        tv.setText(bean.getName());
+                        if (tv.getId() == R.id.transaction_p) {
+                            tv.setTag(bean.getId2());
+                        } else {
+                            tv.setTag(bean.getId());
                         }
-                        commonRecyclerPopupWindow.dismiss();
-                    });
+                    }
+                    commonRecyclerPopupWindow.dismiss();
+                }
+            });
             if (!commonRecyclerPopupWindow.isShowing()) {
                 commonRecyclerPopupWindow.showPopupWindow();
             }
@@ -745,6 +747,53 @@ public class EnforceLawLawAddActivity extends BaseActivity<EnforceLawLawAddPrese
         }
     }
 
+    /**
+     * 显示popup 设置数据 带加载更多
+     *
+     * @param l
+     * @param tv
+     * @param isLoadMore
+     */
+    private void listShowPopupWithLoadMore(List<NameAndIdBean> l, TextView tv, boolean isLoadMore) {
+        try {
+            if (commonRecyclerPopupAdapter == null || !isLoadMore) {
+                commonRecyclerPopupAdapter = new CommonRecyclerPopupAdapter();
+                commonRecyclerPopupWindow = new CommonRecyclerPopupWindow<NameAndIdBean>(this,
+                        commonRecyclerPopupAdapter, new BaseQuickAdapter.OnItemChildClickListener() {
+                    @Override
+                    public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                        NameAndIdBean bean = (NameAndIdBean) adapter.getItem(position);
+                        if (bean != null) {
+                            tv.setText(bean.getName());
+                            if (tv.getId() == R.id.transaction_p) {
+                                tv.setTag(bean.getId2());
+                            } else {
+                                tv.setTag(bean.getId());
+                            }
+                        }
+                        commonRecyclerPopupWindow.dismiss();
+                    }
+                }, (BaseQuickAdapter.RequestLoadMoreListener) () -> {
+                    switch (tv.getId()) {
+                        case R.id.transaction_p:
+                            mPresenter.getAuditorList(departmentUnit.getTag().toString(), false, true);
+                            break;
+                        case R.id.department_unit:
+                            mPresenter.getLegalOperation(false, true);
+                            break;
+                        default:
+                    }
+                });
+            }
+
+            if (!commonRecyclerPopupWindow.isShowing()) {
+                commonRecyclerPopupWindow.showPopupWindow();
+            }
+            commonRecyclerPopupWindow.setNewData(l, isLoadMore);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
     @Override

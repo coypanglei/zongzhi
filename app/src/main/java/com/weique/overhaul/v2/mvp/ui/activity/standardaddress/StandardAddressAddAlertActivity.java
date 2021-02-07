@@ -155,7 +155,6 @@ public class StandardAddressAddAlertActivity extends BaseActivity<AddressAddAler
         try {
             ARouter.getInstance().inject(this);
             setTitle(activ[state]);
-
             switch (state) {
                 case EventBusConstant.ADD:
                     mStandardAddressBean = new StandardAddressBean();
@@ -163,15 +162,15 @@ public class StandardAddressAddAlertActivity extends BaseActivity<AddressAddAler
                     mStandardAddressBean.setStandardAddressTypeId(addressTypeId);
                     mStandardAddressBean.setCreateUserId(UserInfoUtil.getUserInfo().getUid());
                     mStandardAddressBean.setUpdateUserId(UserInfoUtil.getUserInfo().getUid());
+                    mPresenter.getGridByDepartmentId(departmentId);
                     break;
                 case EventBusConstant.ALERT:
                     setData();
                     break;
                 default:
-
             }
             StandardAddressBean.StandardAddressTypeBean standardAddressType = mStandardAddressBean.getStandardAddressType();
-            selectStandardAddress.setText(standardAddressType.getName());
+            selectStandardAddress.setText(StringUtil.setText(standardAddressType.getName()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -415,4 +414,8 @@ public class StandardAddressAddAlertActivity extends BaseActivity<AddressAddAler
         }
     }
 
+    @Override
+    public void setGrid(String pointsInJSON) {
+        this.pointsInJSON = pointsInJSON;
+    }
 }

@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author GreatKing
  */
-public interface TreeDataInterface<T extends TreeDataInterface> {
+public interface TreeDataInterface<T extends TreeDataInterface<T>> {
     /**
      * 获取id
      *

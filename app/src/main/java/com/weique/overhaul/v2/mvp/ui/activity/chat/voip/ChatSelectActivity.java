@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -30,6 +29,7 @@ import com.weique.overhaul.v2.app.common.ARouerConstant;
 import com.weique.overhaul.v2.app.common.Constant;
 import com.weique.overhaul.v2.app.common.RouterHub;
 import com.weique.overhaul.v2.app.utils.AppUtils;
+import com.weique.overhaul.v2.app.utils.GlideUtil;
 import com.weique.overhaul.v2.app.utils.StringUtil;
 import com.weique.overhaul.v2.app.utils.UserInfoUtil;
 import com.weique.overhaul.v2.di.component.DaggerChatSelectComponent;
@@ -73,8 +73,8 @@ public class ChatSelectActivity extends BaseActivity<ChatSelectPresenter> implem
     RecyclerView recyclerView;
     @BindView(R.id.swipeRefreshLayout)
     SwipeRefreshLayout vSwipeRefresh;
-    @BindView(R.id.btn_chat)
-    Button btnChat;
+    @BindView(R.id.bottom_view)
+    LinearLayout bottomView;
 
 
     private ChatSelectListAdapter chatSelectListAdapter;
@@ -95,6 +95,10 @@ public class ChatSelectActivity extends BaseActivity<ChatSelectPresenter> implem
      */
     private List<AddressBookListBean.ListBean> listBeanList;
 
+    /**
+     * videoEnable
+     */
+    private boolean videoEnable;
     /**
      * 最大数量
      */
@@ -125,7 +129,7 @@ public class ChatSelectActivity extends BaseActivity<ChatSelectPresenter> implem
             if (StringUtil.isNullString(id)) {
                 id = UserInfoUtil.getUserInfo().getDepartmentId();
             }
-            btnChat.setVisibility(View.GONE);
+            bottomView.setVisibility(View.GONE);
             initAdapter();
             assert mPresenter != null;
             mPresenter.getAllAddressBookListData(true, false, keyword, id);
@@ -154,7 +158,7 @@ public class ChatSelectActivity extends BaseActivity<ChatSelectPresenter> implem
                         }
                         if (view.getId() == R.id.tv_delete) {
                             assert mPresenter != null;
-                            mPresenter.visableBtn();
+                            visableBtn();
                             /*
                              * 删除选中的item
                              */
@@ -273,7 +277,7 @@ public class ChatSelectActivity extends BaseActivity<ChatSelectPresenter> implem
 
                         }
                         assert mPresenter != null;
-                        mPresenter.visableBtn();
+                        visableBtn();
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -361,7 +365,10 @@ public class ChatSelectActivity extends BaseActivity<ChatSelectPresenter> implem
 
     @Override
     public void isOpen() {
-        WebrtcUtil.call(this, Constant.CHAT_IP, roomId);
+        WebrtcUtil.call(this, Constant.CHAT_IP, roomId, videoEnable,
+                UserInfoUtil.getUserInfo().getName(),
+                GlideUtil.handleUrl(this,
+                        UserInfoUtil.getUserInfo().getHeadUrl()));
         finish();
     }
 
@@ -373,9 +380,9 @@ public class ChatSelectActivity extends BaseActivity<ChatSelectPresenter> implem
         try {
             if (!ArmsUtils.isEmpty(chatAlreadySelectListAdapter)) {
                 if (chatAlreadySelectListAdapter.getData().size() > 0) {
-                    btnChat.setVisibility(View.VISIBLE);
+                    bottomView.setVisibility(View.VISIBLE);
                 } else {
-                    btnChat.setVisibility(View.GONE);
+                    bottomView.setVisibility(View.GONE);
                 }
             }
         } catch (Exception e) {
@@ -412,15 +419,15 @@ public class ChatSelectActivity extends BaseActivity<ChatSelectPresenter> implem
     }
 
 
-    @OnClick(R.id.btn_chat)
-    public void onViewClicked() {
+    @OnClick({R.id.btn_chat, R.id.start_chat_r})
+    public void onViewClicked(View view) {
         try {
             if (AppUtils.isFastClick()) {
                 return;
             }
-            roomId = String.valueOf(System.currentTimeMillis() + (int) (1 + Math.random() * (50 - 1 + 1)));
             assert mPresenter != null;
             List<String> list = new ArrayList<>();
+            roomId = String.valueOf(System.currentTimeMillis() + (int) (1 + Math.random() * (50 - 1 + 1)));
             //遍历集合所有选中的元素 发起视频会商
             for (AddressBookListBean.ListBean listBean : chatSelectListAdapter.getData()) {
                 if (listBean.isSelect()) {
@@ -428,8 +435,17 @@ public class ChatSelectActivity extends BaseActivity<ChatSelectPresenter> implem
                     list.add(alias);
                 }
             }
-
-            mPresenter.setChatList(list, roomId);
+            switch (view.getId()) {
+                case R.id.start_chat_r:
+                    videoEnable = false;
+                    break;
+                case R.id.btn_chat:
+                    videoEnable = true;
+                    break;
+                default:
+                    break;
+            }
+            mPresenter.setChatList(list, roomId, videoEnable);
 
         } catch (Exception e) {
             e.printStackTrace();

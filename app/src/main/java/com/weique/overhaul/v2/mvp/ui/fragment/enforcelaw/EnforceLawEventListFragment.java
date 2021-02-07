@@ -150,7 +150,7 @@ public class EnforceLawEventListFragment extends BaseLazyLoadFragment<EnforceLaw
                             if (item instanceof EventsReportedBean.ListBean) {
                                 listBean = (EventsReportedBean.ListBean) item;
                                 if (listBean.getEnumOrderStatus() ==
-                                        EventsReportedBean.ListBean.EventsReportedEnumBean.TS) {
+                                        EventsReportedBean.ListBean.EventsReportedEnumNewBean.TS) {
                                     alertPosition = position;
                                     action = EventBusConstant.ALERT;
                                     mPresenter.gridOperatorInformation();
@@ -181,7 +181,7 @@ public class EnforceLawEventListFragment extends BaseLazyLoadFragment<EnforceLaw
      * @param keyword       keyword
      */
     private void getOrderList(boolean pullToRefresh, boolean isLoadMore, String keyword) {
-        if (mOrderStatus >= EventsReportedBean.ListBean.EventsReportedEnumBean.TS) {
+        if (mOrderStatus >= EventsReportedBean.ListBean.EventsReportedEnumNewBean.TS) {
             mPresenter.getEvents(pullToRefresh, isLoadMore, keyword, EventsReportedBean.SUBMITER, mOrderStatus, mOrderSortType);
         } else {
             mPresenter.getEvents(pullToRefresh, isLoadMore, keyword, EventsReportedBean.SUBMITER, mOrderSortType);
@@ -267,7 +267,7 @@ public class EnforceLawEventListFragment extends BaseLazyLoadFragment<EnforceLaw
                 ArmsUtils.makeText("您不在负责区域内，无法上报事件");
             } else {
                 EventsReportedLookBean bean = new EventsReportedLookBean();
-                bean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumBean.TS);
+                bean.setEnumOrderStatus(EventsReportedBean.ListBean.EventsReportedEnumNewBean.TS);
                 if (action == EventBusConstant.ALERT) {
                     ARouter.getInstance()
                             .build(RouterHub.APP_EVENTSREPORTEDCRUDACTIVITY)

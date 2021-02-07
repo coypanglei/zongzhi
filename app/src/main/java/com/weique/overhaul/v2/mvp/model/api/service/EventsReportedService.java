@@ -1,6 +1,7 @@
 package com.weique.overhaul.v2.mvp.model.api.service;
 
 import com.weique.overhaul.v2.mvp.model.entity.BaseBean;
+import com.weique.overhaul.v2.mvp.model.entity.DepartsBean;
 import com.weique.overhaul.v2.mvp.model.entity.EventProceedRecordBean;
 import com.weique.overhaul.v2.mvp.model.entity.EventsReportedBean;
 import com.weique.overhaul.v2.mvp.model.entity.EventsReportedSortBean;
@@ -16,6 +17,7 @@ import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
 
 /**
@@ -201,4 +203,81 @@ public interface EventsReportedService {
 
     @GET("app/EventRecords/ProceedingOrder")
     Observable<BaseBean<Object>> proceedingOrder(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 处置单据
+     *
+     * @param paramSign paramSign
+     * @return
+     */
+    @GET("/APP/EventFormType/ProceedingOrder")
+    Observable<BaseBean<Object>> proceedingOrder1(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 受理退回
+     *
+     * @param paramSign
+     * @return
+     */
+    @GET("app/EventFormType/ReceivingOrder")
+    Observable<BaseBean<Object>> receivingOrder(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 核查通过  核查退回
+     *
+     * @param paramSign
+     * @return
+     */
+    @GET("APP/EventFormType/EventRecordCheckOrder")
+    Observable<BaseBean<Object>> EventRecordCheckOrder(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * url == {@link com.weique.overhaul.v2.mvp.ui.activity.eventsreported.EventTurnOverActivity#TURN_OVER}
+     * 移交  包含上报  下派 流转
+     * url == {@link com.weique.overhaul.v2.mvp.ui.activity.eventsreported.EventTurnOverActivity#SYNERGY}
+     * 请求协同
+     *
+     * @param paramSign paramSign
+     * @return Observable
+     */
+    @GET("{path}")
+    Observable<BaseBean<DepartsBean>> setDeparts(@Path(value = "path", encoded = true) String url, @QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 移交  包含上报  下派 流转
+     *
+     * @param paramSign
+     * @return
+     */
+    @GET("APP/EventFormType/TransitOrder")
+    Observable<BaseBean<Object>> transitOrder(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 发送协同请求
+     *
+     * @param paramSign paramSign
+     * @return Observable
+     */
+    @GET("APP/EventFormType/CoopRequestCreate")
+    Observable<BaseBean<Object>> coopRequestCreate(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 同意 、 拒绝协同
+     *
+     * @param paramSign paramSign
+     * @return Observable
+     */
+    @GET("/APP/EventFormType/EventRecordCoopReceivingOrder")
+    Observable<BaseBean<Object>> eventRecordCoopReceivingOrder(@QueryMap Map<String, Object> paramSign);
+
+    /**
+     * 延期
+     *
+     * @param paramSign paramSign
+     * @return Observable
+     */
+    @GET("{path}")
+    Observable<BaseBean<Object>> eventDelayApply(@Path(value = "path", encoded = true) String url, @QueryMap Map<String, Object> paramSign);
+
+
 }

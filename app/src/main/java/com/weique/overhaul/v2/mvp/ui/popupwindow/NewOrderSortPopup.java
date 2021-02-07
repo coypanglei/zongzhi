@@ -16,7 +16,6 @@ import com.google.android.flexbox.JustifyContent;
 import com.jess.arms.utils.ArmsUtils;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.customview.MyFlexboxLayoutManager;
-import com.weique.overhaul.v2.app.utils.AppUtils;
 import com.weique.overhaul.v2.mvp.model.entity.interfaces.NameAndIdInterface;
 import com.weique.overhaul.v2.mvp.ui.adapter.NewOrderSortPopupAdapter;
 
@@ -144,9 +143,6 @@ public class NewOrderSortPopup<T extends NameAndIdInterface> extends BasePopupWi
             itemAdapter.setOnItemClickListener((adapter, view, position) -> {
                 //这里直接 已 position 对用 订单状态， -2是因为  后端定义订单状态 暂存是-1  加上全部占用了一个下标
                 try {
-                    if (AppUtils.isFastClick()) {
-                        return;
-                    }
                     mCheckPos = position;
                     Object item = adapter.getItem(position);
                     bean = (T) item;

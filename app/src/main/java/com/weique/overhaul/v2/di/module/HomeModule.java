@@ -1,15 +1,11 @@
 package com.weique.overhaul.v2.di.module;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.jess.arms.di.scope.FragmentScope;
 import com.weique.overhaul.v2.R;
 import com.weique.overhaul.v2.app.utils.ACache;
 import com.weique.overhaul.v2.mvp.contract.HomeContract;
 import com.weique.overhaul.v2.mvp.model.HomeModel;
-import com.weique.overhaul.v2.mvp.ui.adapter.HomeGridIndicatorAdapter;
-import com.weique.overhaul.v2.mvp.ui.adapter.HomeMenuGridAdapter;
+import com.weique.overhaul.v2.mvp.ui.adapter.HomeMenuAdapter;
 
 import java.util.ArrayList;
 
@@ -41,7 +37,7 @@ public abstract class HomeModule {
 
     @FragmentScope
     @Provides
-    static HomeMenuGridAdapter provideHomeMenuGridAdapter() {
-        return new HomeMenuGridAdapter(R.layout.home_grid_item, new ArrayList<>());
+    static HomeMenuAdapter provideHomeMenuGridAdapter() {
+        return new HomeMenuAdapter(R.layout.home_grid_item, new ArrayList<>());
     }
 }

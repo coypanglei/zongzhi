@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <View
             android:layout_width="match_parent"
@@ -116,82 +117,20 @@
                 app:smvTextSingleLine="true"
                 app:smvTextSize="15sp" />
         </LinearLayout>
+    </RelativeLayout>
 
-        <com.weique.overhaul.v2.app.customview.VerticalSwipeRefreshLayout
-            android:id="@+id/swipe_refresh"
+    <com.weique.overhaul.v2.app.customview.VerticalSwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/dp_10">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/marquee_layout"
-            android:layout_marginTop="@dimen/dp_5">
-
-            <androidx.coordinatorlayout.widget.CoordinatorLayout
-                android:id="@+id/coordinator_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <com.google.android.material.appbar.AppBarLayout
-                    android:id="@+id/appBarLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/transparent"
-                    app:elevation="0dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_scrollFlags="scroll">
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recycler_grid"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@color/white"
-                            android:orientation="horizontal"
-                            android:paddingTop="@dimen/dp_16"
-                            android:paddingBottom="@dimen/dp_16"
-                            app:elevation="1dp"
-                            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/dp_10"
-                            android:background="@color/gray_eee" />
-
-
-                    </LinearLayout>
-
-                    <com.flyco.tablayout.SlidingTabLayout
-                        android:id="@+id/tl_2"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:background="@color/white"
-                        app:tl_indicator_color="@color/colorPrimary"
-                        app:tl_indicator_height="2dp"
-                        app:tl_indicator_width="15dp"
-                        app:tl_indicator_width_equal_title="false"
-                        app:tl_tab_padding="10dp"
-                        app:tl_tab_space_equal="true"
-                        app:tl_textBold="SELECT"
-                        app:tl_textSelectColor="@color/colorPrimary"
-                        app:tl_textUnselectColor="@color/gray_666"
-                        app:tl_textsize="18sp" />
-                </com.google.android.material.appbar.AppBarLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:scrollbars="none"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-                    <androidx.viewpager.widget.ViewPager
-                        android:id="@+id/vp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="@dimen/dp_2" />
-                </LinearLayout>
-            </androidx.coordinatorlayout.widget.CoordinatorLayout>
-        </com.weique.overhaul.v2.app.customview.VerticalSwipeRefreshLayout>
-    </RelativeLayout>
+            android:background="@color/white"
+            android:padding="@dimen/dp_10"
+            tools:listitem="@layout/home_list_item" />
+    </com.weique.overhaul.v2.app.customview.VerticalSwipeRefreshLayout>
 </LinearLayout>

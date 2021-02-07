@@ -7,6 +7,7 @@
     <string name="app_name_yun">云创空间</string>
     <string name="app_name_gulou">鼓楼网格通</string>
     <string name="app_name_yingji">应急管理</string>
+    <string name="postpone">延期</string>
     <string name="app_name_opf">基层治理</string>
     <string name="placeholder_s">%1$sS</string>
     <string name="today_integral_s">%1$s积分</string>
@@ -111,6 +112,7 @@
     <string name="work">工作</string>
     <string name="version_update">版本更新</string>
     <string name="reset_password">修改密码</string>
+    <string name="speech_setting">语音设置</string>
     <string name="form">来源：</string>
     <string name="registration_time">登记时间</string>
     <string name="source">来源</string>
@@ -181,6 +183,7 @@
     <string name="organization_detail">公司/商户等信息</string>
     <string name="go_in">进入</string>
     <string name="go_see">查看</string>
+    <string name="go_see_handle">查看处理</string>
     <string name="is_answer">本套题已做答！</string>
     <string name="logout">安全退出</string>
     <string name="code_myself">自编码</string>
@@ -218,6 +221,7 @@
     <string name="event_detail">事件详情</string>
     <string name="call">呼叫</string>
     <string name="send_back">退回</string>
+    <string name="send_back_">撤回</string>
     <string name="order_status_text">订单状态</string>
     <string name="is_self_handle">是否自处理</string>
     <string name="slogan">共建共治共享</string>
@@ -238,6 +242,7 @@
     <string name="update_new">马上更新</string>
     <string name="background_run">后台运行</string>
     <string name="dispose_agine">再次处理</string>
+    <string name="dispose_stay">待处理</string>
     <string name="announcement_detail">通知详情</string>
     <string name="detail">详情</string>
     <string name="install">安装</string>
@@ -247,6 +252,7 @@
     <string name="privacy_policy">隐私政策</string>
     <string name="think_again">再想想</string>
     <string name="consent">同意</string>
+    <string name="expansion">展开</string>
     <string name="last_edit_time">最后编辑时间</string>
     <string name="start_chat">发起会话</string>
     <string name="agreement_dialog_content">感谢您使用社会治理网格通!\n\n
@@ -289,6 +295,8 @@
     <string name="go_to_complete">去完成</string>
     <string name="address_">地址：</string>
     <string name="is_overdue">已逾期</string>
+    <string name="home_p">首页</string>
+    <string name="app_p">应用</string>
 
     <!--视频通话-->
     <string name="av_waiting">正在等待对方接受邀请.</string>
@@ -310,12 +318,16 @@
     <string name="error_network">Failed to init due to network exception.</string>
     <string name="logining">Running in background. Please see log.</string>
     <string name="setting_su">Succeed to set</string>
+    <string name="start_chat_r">语音通话</string>
+    <string name="start_chat_v">视频通话</string>
     <string name="reporting">核查上报</string>
+
 
     <!--百度统计用的key-->
     <string name="baidu_all_zz">ae5fcf1c25</string>
     <string name="init_gridding_fail">初始化网格失败,请稍后再试</string>
     <string name="select_grid">请选择网格</string>
+    <string name="select_area">请选择区域</string>
     <string name="select_tier">请选择层级</string>
     <string name="select_standard_address">请选择标准地址</string>
     <string name="select_standard_tier">标准地址层级</string>
@@ -392,6 +404,7 @@
     <string name="department_unit">部门单位</string>
     <string name="department_unit_hint">请选择部门单位</string>
     <string name="audit_date">审核期限</string>
+    <string name="audit_feedback">审核反馈</string>
     <string name="audit_date_hint">请选择审核期限(截止时间)</string>
     <string name="day">天</string>
     <string name="organization_legal_name">法人或组织名称</string>
@@ -441,5 +454,18 @@
     <string name="be_born_hint">请选择出生日期</string>
     <string name="please_input_name_id_hint">请输入姓名或身份证号码</string>
     <string name="time_t">办理时间</string>
+    <string name="issue_describe_hint">请输入问题描述</string>
+    <string name="issue_describe">问题描述</string>
+    <string name="reject">拒绝</string>
+    <string name="handle">处理</string>
     <string name="id_card">0123456789xX</string>
+    <string name="title_activity_task_and_work_line">TaskAndWorkLine</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

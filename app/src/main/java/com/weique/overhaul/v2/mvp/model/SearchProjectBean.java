@@ -1,5 +1,10 @@
 package com.weique.overhaul.v2.mvp.model;
 
+import android.os.Parcel;
+
+import com.weique.overhaul.v2.mvp.model.entity.StandardAddressStairBean;
+import com.weique.overhaul.v2.mvp.model.entity.TreeBaseDataBean;
+
 import java.util.List;
 
 public class SearchProjectBean {
@@ -24,7 +29,7 @@ public class SearchProjectBean {
         this.entInfos = entInfos;
     }
 
-    public static class DepartmentsBean {
+    public static class DepartmentsBean extends TreeBaseDataBean<DepartmentsBean> {
         /**
          * Id : 84cdc58e-8491-4d67-b381-00b6737c4e71
          * Name : 茅村镇
@@ -33,26 +38,44 @@ public class SearchProjectBean {
          * EnumCommunityLevel : 2
          */
 
-        private String Id;
-        private String Name;
         private String PId;
         private String FullPath;
         private int EnumCommunityLevel;
 
-        public String getId() {
-            return Id;
+        public static final Creator<DepartmentsBean> CREATOR = new Creator<DepartmentsBean>() {
+            @Override
+            public DepartmentsBean createFromParcel(Parcel in) {
+                return new DepartmentsBean(in);
+            }
+
+            @Override
+            public DepartmentsBean[] newArray(int size) {
+                return new DepartmentsBean[size];
+            }
+        };
+
+
+        protected DepartmentsBean(Parcel in) {
+            super(in);
+            PId = in.readString();
+            FullPath = in.readString();
+            EnumCommunityLevel = in.readInt();
         }
 
-        public void setId(String Id) {
-            this.Id = Id;
+        public DepartmentsBean() {
         }
 
-        public String getName() {
-            return Name;
+        @Override
+        public int describeContents() {
+            return 0;
         }
 
-        public void setName(String Name) {
-            this.Name = Name;
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(PId);
+            dest.writeString(FullPath);
+            dest.writeInt(EnumCommunityLevel);
         }
 
         public String getPId() {
@@ -77,6 +100,11 @@ public class SearchProjectBean {
 
         public void setEnumCommunityLevel(int EnumCommunityLevel) {
             this.EnumCommunityLevel = EnumCommunityLevel;
+        }
+
+        @Override
+        public int getLevel() {
+            return StandardAddressStairBean.AREA - EnumCommunityLevel;
         }
     }
 
